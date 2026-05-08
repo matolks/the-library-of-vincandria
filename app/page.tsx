@@ -1,117 +1,167 @@
+/*
+TODO
+> Home Page <
+  - Make it look better
+  - Account for shrinking page size
+  - Update sections and about
+
+> Page 1 <
+  - Make look pretty
+  - Make admin stuff
+  - I also want a bar on the side to go to different sections
+
+*/
+
+/*
+background: zinc-950
+dark foreground: #202021
+small foregrounds: #202021aa
+light foreground/headings: #d2d2d2
+text: #d2d2d2cc
+mini borders: #d2d2d222
+mini border active: 
+borders: zinc-700
+
+*/
+import TopNav from "./components/TopNav";
+
+// Topics
 const sections = [
   {
     title: "Math Foundations",
+    href: "/math-foundations",
+    iconName: "math",
     description:
-      "Core mathematical tools used across engineering, algorithms, signals, hardware, and numerical modeling.",
-    courses: [
-      "Multivariable Calculus",
-      "Discrete Mathematics",
-      "Probability and Statistics",
-      "Numerical Computations",
-    ],
+      "Better description later",
   },
   {
     title: "Engineering Foundations",
+    href: "/engineering-foundations",
+    iconName: "engineering",
     description:
-      "Physics and device-level concepts that support circuits, semiconductors, and physical systems.",
-    courses: [
-      "Mechanics",
-      "Electricity and Magnetism",
-      "Quantum / Semiconductor Basics",
-    ],
+      "Better description later",
   },
   {
     title: "Programming and Software",
+    href: "/programming-and-software",
+    iconName: "programming",
     description:
-      "Software construction, low-level programming, memory, algorithms, and computational problem solving.",
-    courses: [
-      "Introduction to Systems Programming",
-      "Data Structures and Algorithms",
-    ],
+      "Better description later",
   },
   {
     title: "Computer Systems",
+    href: "/computer-systems",
+    iconName: "computer",
     description:
-      "Execution, memory, concurrency, architecture, operating systems, and applied system security.",
-    courses: [
-      "Operating Systems",
-      "Intro to Computer Architecture",
-      "System Security",
-    ],
+      "Better description later",
   },
   {
     title: "Hardware and Circuits",
+    href: "/hardware-and-circuits",
+    iconName: "circuits",
     description:
-      "Digital and electrical hardware concepts from circuit analysis through programmable logic and VLSI.",
-    courses: [
-      "Electrical Circuit Design",
-      "FPGA Design",
-      "Digital Integrated Circuits",
-    ],
+      "Better description later",
   },
   {
     title: "Signals and Networks",
+    href: "/signals-and-networks",
+    iconName: "signals",
     description:
-      "Signal behavior, frequency-domain analysis, communication systems, and networked data transfer.",
-    courses: [
-      "Signals and Systems",
-      "Communication Networks",
-    ],
+      "Better description later",
   },
   {
     title: "Engineering Communication",
+    href: "/engineering-communication",
+    iconName: "writing",
     description:
-      "Technical writing, documentation, reports, specifications, and engineering communication strategy.",
-    courses: ["Technical Writing"],
+      "Better description later",
   },
 ];
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
-      <section className="mx-auto max-w-6xl px-6 py-16">
-        <p className="text-sm font-medium uppercase tracking-[0.3em] text-zinc-500">
+    <main className="min-h-screen bg-zinc-950 text-[#d2d2d2]">
+      {/* Top navigation */}
+      <TopNav />
+
+      <section className="mx-auto max-w-6xl px-2 py-10">
+        {/* Title */}
+        <p className="text-sm font-medium uppercase tracking-[0.35em] text-[#d2d2d285]">
           The Library of Vincandria
         </p>
 
-        <h1 className="mt-6 max-w-4xl text-5xl font-semibold tracking-tight text-white md:text-7xl">
-          A structured engineering knowledge base.
+        {/* Header and description */}
+        <h1 className="mt-6 text-5xl font-semibold tracking-tight text-white md:text-7xl">
+          A structured engineering memory bank.
         </h1>
 
-        <p className="mt-6 max-w-3xl text-lg leading-8 text-zinc-400">
-          Organized course knowledge, equations, diagrams, systems concepts, and
-          technical explanations from computer engineering, mathematics,
-          hardware, software, physics, and communication.
+        <p className="mt-6 max-w-3xl text-lg leading-8 text-[#d2d2d2cc]">
+          Organized course knowledge... add better abstract when done
         </p>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-2">
+        {/* Scaffold of topics */}
+        <div className="mt-14 space-y-6 pb-8">
           {sections.map((section) => (
-            <article
+            <details
               key={section.title}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 shadow-sm"
+              className="group rounded-2xl border border-zinc-700 bg-[#202021aa] p-8 transition hover:border-[#d2d2d2] open:border-[#d2d2d2]"
             >
-              <h2 className="text-2xl font-semibold text-white">
-                {section.title}
-              </h2>
-
-              <p className="mt-3 text-sm leading-6 text-zinc-400">
-                {section.description}
-              </p>
-
-              <ul className="mt-6 space-y-2">
-                {section.courses.map((course) => (
-                  <li
-                    key={course}
-                    className="rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-zinc-300"
-                  >
-                    {course}
-                  </li>
-                ))}
-              </ul>
-            </article>
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
+                <h2 className="text-2xl font-semibold text-[#d2d2d2]">
+                  {section.title}
+                </h2>
+              <span className="text-2xl text-[#d2d2d2] transition-transform group-hover:text-white group-open:rotate-45 group-open:text-white">
+                +
+              </span>
+              </summary>
+              <div className="mt-5 border-t border-[#d2d2d222] pt-4">
+                <p className="text-lg leading-10 text-[#d2d2d2cc]">
+                  {section.description}
+                </p>
+                <a
+                  href={section.href}
+                  aria-label={`Open ${section.title}`}
+                  className="mt-4 flex justify-end text-6xl text-[#d2d2d2] pe-4 transition hover:translate-x-2 hover:text-white"
+                >
+                  →
+                </a>
+              </div>
+            </details>
           ))}
         </div>
       </section>
+      {/* Footer */}
+      <footer className="border-t border-zinc-700 py-8">
+        <div className="mx-auto flex max-w-6xl items-center justify-center gap-12">
+          <a
+            href="https://www.linkedin.com/in/vincematolka/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-2 text-sm text-[#d2d2d2aa] transition hover:text-white"
+          >
+            <img
+              src="/linkedin-icon-light.png"
+              alt="LinkedIn"
+              className="h-6 w-6 object-contain opacity-80 transition group-hover:opacity-100"
+            />
+            <span>LinkedIn</span>
+          </a>
+
+          <a
+            href="https://github.com/matolks"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-2 text-sm text-[#d2d2d2aa] transition hover:text-white"
+          >
+            <img
+              src="/github-icon-light.png"
+              alt="GitHub"
+              className="h-6 w-6 object-contain opacity-80 transition group-hover:opacity-100"
+            />
+            <span>GitHub</span>
+          </a>
+        </div>
+      </footer>
     </main>
   );
 }
