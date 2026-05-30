@@ -135,12 +135,10 @@ def upsert_topic(
         )
         topic_id = cur.fetchone()[0]
 
-        # Prisma implicit many-to-many uses a _TopicGroups join table.
-        # Table name follows Prisma convention: "_<RelationName>" alphabetically.
-        # Relation name is "TopicGroups" so table is "_TopicGroups".
-        # Columns: A = TopicGroup.id, B = Topic.id (alphabetical model name order).
+        # Prisma implicit many-to-many join table _TopicGroups.
+        # Columns: A = Topic.id, B = TopicGroup.id (alphabetical model order: Topic < TopicGroup).
         cur.execute(
-            'DELETE FROM "_TopicGroups" WHERE "B" = %s',
+            'DELETE FROM "_TopicGroups" WHERE "A" = %s',
             (topic_id,),
         )
         for group_id in group_ids:
@@ -150,9 +148,8 @@ def upsert_topic(
                 VALUES (%s, %s)
                 ON CONFLICT DO NOTHING
                 """,
-                (group_id, topic_id),
+                (topic_id, group_id),
             )
-
     conn.commit()
     return topic_id
 
@@ -188,12 +185,14 @@ def upsert_blocks(topic_id: str, blocks: list[dict]) -> int:
 
             cur.execute(
                 """
-                INSERT INTO "Block" (id, type, content, "order", language, manually_edited, "topicId", "createdAt", "updatedAt")
-                VALUES (gen_random_uuid()::text, %s, %s, %s, %s, false, %s, now(), now())
+                INSERT INTO "Block" (id, type, content, "order", language, source, citation, manually_edited, "topicId", "createdAt", "updatedAt")
+                VALUES (gen_random_uuid()::text, %s, %s, %s, %s, %s, %s, false, %s, now(), now())
                 ON CONFLICT ("topicId", "order") DO UPDATE
                     SET type       = EXCLUDED.type,
                         content    = EXCLUDED.content,
                         language   = EXCLUDED.language,
+                        source     = EXCLUDED.source,
+                        citation   = EXCLUDED.citation,
                         "updatedAt" = now()
                 WHERE "Block".manually_edited = false
                 """,
@@ -202,6 +201,8 @@ def upsert_blocks(topic_id: str, blocks: list[dict]) -> int:
                     block["content"],
                     order,
                     block.get("language"),
+                    block.get("source", "generated"),
+                    block.get("citation"),
                     topic_id,
                 ),
             )

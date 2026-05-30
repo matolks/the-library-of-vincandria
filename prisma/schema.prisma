@@ -42,16 +42,24 @@ model Topic {
 }
 
 model Block {
-  id             String   @id @default(cuid())
-  type           String
-  content        String
-  order          Int
-  language       String?
-  manually_edited Boolean @default(false)
-  topic          Topic    @relation(fields: [topicId], references: [id])
-  topicId        String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
+  id              String      @id @default(cuid())
+  type            String
+  content         String
+  order           Int
+  language        String?
+  source          BlockSource @default(generated)
+  citation        String?
+  manually_edited Boolean     @default(false)
+  topic           Topic       @relation(fields: [topicId], references: [id])
+  topicId         String
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
   @@unique([topicId, order])
+}
+
+enum BlockSource {
+  local
+  web
+  manual
+  generated
 }

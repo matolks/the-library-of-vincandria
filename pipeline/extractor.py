@@ -13,6 +13,7 @@ create new groups if nothing fits. Existing groups are passed as context.
 
 import os
 import json
+from urllib import response
 import anthropic
 from dotenv import load_dotenv
 from pipeline import db
@@ -26,6 +27,22 @@ if not ANTHROPIC_API_KEY:
 client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
 MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
+
+# Pricing per million tokens (USD). Update if Anthropic changes pricing.
+# Sonnet 4.x: $3 input / $15 output (verify at anthropic.com/pricing).
+PRICE_INPUT_PER_MTOK = float(os.getenv("CLAUDE_PRICE_INPUT", "3.00"))
+PRICE_OUTPUT_PER_MTOK = float(os.getenv("CLAUDE_PRICE_OUTPUT", "15.00"))
+
+def _extract_json(text: str) -> str:
+    """Extract JSON object/array from model output, tolerating fences and prose."""
+    candidates = [i for i in (text.find("{"), text.find("[")) if i != -1]
+    if not candidates:
+        raise ValueError(f"No JSON found in response: {text[:300]}")
+    start = min(candidates)
+    end = max(text.rfind("}"), text.rfind("]"))
+    if end < start:
+        raise ValueError(f"Malformed JSON boundaries: {text[:300]}")
+    return text[start:end + 1]
 
 TOPIC_GROUPS = [
     {"slug": "math-foundations",        "name": "Math Foundations",
@@ -53,6 +70,8 @@ Rules:
 - A topic can belong to multiple groups if it genuinely spans them.
 - You are given a suggested list of groups. Use them when they fit. If a topic belongs to a group not on the list, create a new group with a sensible slug and name.
 - Return only valid JSON. No preamble, no explanation, no markdown fences.
+- Course slugs are NOT group slugs. Groups are broad subjects spanning many courses (e.g. math-foundations, computer-systems). Never create a group named after the course itself or use the course slug as a group.
+- Every slug in any topic's "groups" array must either be a suggested group or appear in "new_groups". No exceptions.
 
 Output schema:
 {
@@ -119,22 +138,22 @@ def extract_topics(course_slug: str, chunks: list[dict]) -> dict:
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": prompt}],
     )
-
-    raw = response.content[0].text.strip()
-
+    usage = response.usage
+    cost = (
+        usage.input_tokens / 1_000_000 * PRICE_INPUT_PER_MTOK
+        + usage.output_tokens / 1_000_000 * PRICE_OUTPUT_PER_MTOK
+    )
+    print(
+        f"  [usage] in={usage.input_tokens:,} tok  "
+        f"out={usage.output_tokens:,} tok  "
+        f"cost=${cost:.4f}  "
+        f"model={MODEL}"
+    )
+    raw = response.content[0].text
     try:
-        raw = raw.strip()
-        if raw.startswith("```"):
-            lines = raw.splitlines()
-            if lines[0].startswith("```"):
-                lines = lines[1:]
-            if lines and lines[-1].strip() == "```":
-                lines = lines[:-1]
-            raw = "\n".join(lines).strip()
-        return json.loads(raw)
-    except json.JSONDecodeError as e:
-        raise ValueError(
-            f"Agent 1 returned invalid JSON: {e}\n\nRaw output:\n{raw}")
+        return json.loads(_extract_json(raw))
+    except (json.JSONDecodeError, ValueError) as e:
+        raise ValueError(f"Agent 1 returned invalid JSON: {e}\n\nRaw output:\n{raw}")
 
 
 def write_topics(course_slug: str, extraction: dict) -> dict[str, str]:
