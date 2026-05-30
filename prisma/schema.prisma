@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model TopicGroup {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?
+  topics      Topic[]  @relation("TopicGroups")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Course {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  topics    Topic[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Topic {
+  id          String       @id @default(cuid())
+  slug        String       @unique
+  title       String
+  summary     String?
+  order       Int
+  groups      TopicGroup[] @relation("TopicGroups")
+  course      Course       @relation(fields: [courseId], references: [id])
+  courseId    String
+  blocks      Block[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Block {
+  id             String   @id @default(cuid())
+  type           String
+  content        String
+  order          Int
+  language       String?
+  manually_edited Boolean @default(false)
+  topic          Topic    @relation(fields: [topicId], references: [id])
+  topicId        String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([topicId, order])
+}

@@ -1,86 +1,180 @@
-
-# Dependencies
-node_modules/
-.pnp
+# ============================================================
+# Node / Next.js
+# ============================================================
+/node_modules
+/.pnp
 .pnp.*
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-.yarn/install-state.gz
-.pnpm-store/
+/.next/
+/out/
+/build
+*.tsbuildinfo
+next-env.d.ts
 
-# Next.js
-.next/
-out/
-build/
-dist/
-
-# Environment variables
-.env*
-
-# Prisma
-prisma/generated/
-
-# Supabase
-.supabase/
-
-# Testing
-coverage/
-.nyc_output/
-playwright-report/
-test-results/
-
-# Logs
-logs/
-*.log
+# Debug logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
+.pnpm-debug.log*
 lerna-debug.log*
+*.log
+logs/
 
-# Certificates
+# Testing / coverage
+/coverage
+.nyc_output
+
+# ============================================================
+# Python
+# ============================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+.eggs/
+dist/
+build/
+develop-eggs/
+.installed.cfg
+pip-wheel-metadata/
+share/python-wheels/
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# Test / type / lint caches
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+.pyright/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.cache/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ============================================================
+# Secrets / env / credentials
+# ============================================================
+.env*
+!.env.example
+.envrc
 *.pem
+*.key
+*.cer
+*.crt
+*.p12
+*.pfx
+credentials.json
+service-account*.json
+gha-creds-*.json
+.aws/
+.gcp/
+secrets/
 
-# OS / Editor
+# ============================================================
+# Databases / local data stores
+# ============================================================
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+kuzu_db/
+*.kuzu/
+/data/
+/database/
+chroma_db/
+*.duckdb
+
+# ============================================================
+# Pipeline outputs / scratch
+# ============================================================
+/tmp_outputs/
+/outputs/
+*.chunks.json
+*.topics.json
+*.eval.json
+scratch/
+
+# ============================================================
+# Prisma
+# ============================================================
+/app/generated/prisma
+prisma/migrations/dev.db*
+
+# ============================================================
+# Vercel / deploy
+# ============================================================
+.vercel
+.netlify
+
+# ============================================================
+# IDE / editors
+# ============================================================
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+.idea/
+*.iml
+*.suo
+*.swp
+*.swo
+*~
+.cursor/
+.zed/
+.fleet/
+
+# ============================================================
+# OS
+# ============================================================
 .DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
+ehthumbs.db
 Thumbs.db
 desktop.ini
 
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
-!.vscode/launch.json
-.idea/
-*.swp
-*.swo
-*~
+# ============================================================
+# Backups / temp
+# ============================================================
+*.bak
+*.backup
+*.old
+*.orig
+*.tmp
 
-# TypeScript
-*.tsbuildinfo
-next-env.d.ts
+# ============================================================
+# Docs build
+# ============================================================
+docs/_build/
+site/
+.docusaurus/
 
-# Vercel / Deployment
-.vercel
-.netlify
-
-# Cache / Build artifacts
-.cache/
-.parcel-cache/
-.turbo/
-*.tgz
-.npm
-
-# AI tooling
-.claude/
-.anthropic/
-
-# Uploads / User content
-# Uncomment if storing uploads locally instead of Supabase Storage
-# public/uploads/
+# ============================================================
+# Misc local
+# ============================================================
+.history/
+*.local
+TODO.local.md
+NOTES.local.md
