@@ -1,0 +1,28 @@
+{
+  "name": "case_E3_duplicate_anchor_ref",
+  "description": "Sequence contains two references to the same pinned id. Reconciler must refuse pre-DB.",
+  "setup": {
+    "blocks": [
+      {
+        "id": "blk_pin",
+        "type": "paragraph",
+        "content": {"text": "pinned"},
+        "order": 0,
+        "manually_edited": true,
+        "group_id": null,
+        "generation_metadata": null
+      }
+    ]
+  },
+  "pinned_ids": ["blk_pin"],
+  "sequence": [
+    {"id": "blk_pin"},
+    {"type": "paragraph", "content": {"text": "middle"}, "group_id": null},
+    {"id": "blk_pin"}
+  ],
+  "expected": {
+    "kind": "error",
+    "error_type": "ValueError",
+    "message_contains": "duplicate anchor refs"
+  }
+}

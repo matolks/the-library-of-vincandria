@@ -138,7 +138,7 @@ def chunk_file(filepath: str, course: str, source_type: str = "other") -> list[d
                 "file": filename,
                 "page": page_num,
                 "chunk_index": global_index,
-                "text": cleaned,
+                "text": cleaned.replace("\x00", ""),
                 "source_type": source_type,
             }
             if language:

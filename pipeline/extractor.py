@@ -165,7 +165,7 @@ def extract_topics(course_slug: str, chunks: list[dict], existing: list[dict] | 
         raise ValueError(f"Agent 1 returned invalid JSON: {e}\n\nRaw output:\n{raw}")
 
 
-def write_topics(course_slug: str, extraction: dict) -> dict[str, str]:
+def write_topics(course_slug: str, extraction: dict, chunks: list[dict]) -> dict[str, str]:
     """
     Write extracted topics and groups to Supabase.
     Returns a mapping of topic slug -> topic_id for downstream agents.
@@ -174,7 +174,33 @@ def write_topics(course_slug: str, extraction: dict) -> dict[str, str]:
     course_name = extraction.get(
         "course", course_slug.replace("-", " ").title())
     course_id = db.upsert_course(slug=course_slug, name=course_name)
+    # Embed and persist chunks
+    if chunks:
+        from pipeline.embeddings import embed_documents
+        import hashlib
+        # Strip null bytes (PDF extraction artifacts); Postgres TEXT rejects them
+        chunk_texts = [c["text"] for c in chunks]
+        chunk_vectors = embed_documents(chunk_texts)
 
+        records = [
+            db.ChunkRecord(
+                content=text,
+                content_hash=hashlib.sha256(text.encode("utf-8")).hexdigest(),
+                source_path=c["file"],
+                source_type=c["source_type"],
+                chunk_index=c["chunk_index"],
+                page_number=c.get("page"),
+                section_path=None,
+                token_count=None,
+            )
+            for c, text in zip(chunks, chunk_texts)
+        ]
+        for r, vec in zip(records, chunk_vectors):
+            r.embedding = vec
+        db.upsert_chunks(course_id, records)
+        touched = {(r.source_path, r.chunk_index) for r in records}
+        orphans = db.delete_orphan_chunks(course_id, touched)
+        print(f"  Chunks: {len(records)} written, {orphans} orphan(s) removed")
     # Upsert all known groups
     group_id_map: dict[str, str] = {}
     for g in TOPIC_GROUPS:
@@ -233,9 +259,11 @@ def run(course_slug: str, chunks: list[dict]) -> dict[str, str]:
     existing = db.get_existing_topics_for_course(course_slug)
     if existing:
         print(f"  Found {len(existing)} existing topics; passing as slug anchors")
+
     extraction = extract_topics(course_slug, chunks, existing=existing)
     print(f"  Found {len(extraction.get('topics', []))} topics")
-    topic_id_map = write_topics(course_slug, extraction)
+
+    topic_id_map = write_topics(course_slug, extraction, chunks)
     print(f"  Written to database")
     return topic_id_map
 

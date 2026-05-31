@@ -1,0 +1,68 @@
+{
+  "name": "case_01_no_anchors",
+  "description": "Topic with three unedited blocks. Sequence is four new blocks. All originals deleted; four fresh inserts.",
+
+  "setup": {
+    "blocks": [
+      {
+        "id": "blk_old_a",
+        "type": "paragraph",
+        "content": {"type": "paragraph", "content": [{"type": "text", "text": "old para A"}]},
+        "order": 0,
+        "manually_edited": false,
+        "group_id": null,
+        "generation_metadata": null
+      },
+      {
+        "id": "blk_old_b",
+        "type": "paragraph",
+        "content": {"type": "paragraph", "content": [{"type": "text", "text": "old para B"}]},
+        "order": 1,
+        "manually_edited": false,
+        "group_id": null,
+        "generation_metadata": null
+      },
+      {
+        "id": "blk_old_c",
+        "type": "paragraph",
+        "content": {"type": "paragraph", "content": [{"type": "text", "text": "old para C"}]},
+        "order": 2,
+        "manually_edited": false,
+        "group_id": null,
+        "generation_metadata": null
+      }
+    ]
+  },
+
+  "pinned_ids": [],
+
+  "sequence": [
+    {
+      "type": "heading",
+      "content": {"type": "heading", "props": {"level": 1}, "content": [{"type": "text", "text": "New heading"}]},
+      "group_id": null
+    },
+    {
+      "type": "paragraph",
+      "content": {"type": "paragraph", "content": [{"type": "text", "text": "intro"}]},
+      "group_id": null
+    },
+    {
+      "type": "paragraph",
+      "content": {"type": "paragraph", "content": [{"type": "text", "text": "body"}]},
+      "group_id": null
+    },
+    {
+      "type": "paragraph",
+      "content": {"type": "paragraph", "content": [{"type": "text", "text": "outro"}]},
+      "group_id": null
+    }
+  ],
+
+  "expected": {
+    "kind": "success",
+    "block_count": 4,
+    "anchors_preserved": [],
+    "new_blocks_at_orders": [0, 1, 2, 3]
+  }
+}

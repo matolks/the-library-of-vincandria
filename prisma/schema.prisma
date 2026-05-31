@@ -23,6 +23,7 @@ model Course {
   slug      String   @unique
   name      String
   topics    Topic[]
+  chunks    Chunk[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -62,25 +63,65 @@ model TopicEdge {
   @@index([fromId])
 }
 
-model Block {
-  id              String      @id @default(cuid())
-  type            String
-  content         String
-  order           Int
-  language        String?
-  source          BlockSource @default(generated)
-  citation        String?
-  manually_edited Boolean     @default(false)
-  topic           Topic       @relation(fields: [topicId], references: [id])
-  topicId         String
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  @@unique([topicId, order])
-}
-
 enum BlockSource {
   local
   web
   manual
   generated
+}
+
+model Block {
+  id                   String      @id @default(cuid())
+  type                 BlockType
+  content              Json
+  order                Int
+  source               BlockSource @default(generated)
+  citation             String?
+  manually_edited      Boolean     @default(false)
+  generation_metadata  Json?
+  group_id             String?
+  topic                Topic       @relation(fields: [topicId], references: [id])
+  topicId              String
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+
+  @@unique([topicId, order])
+  @@index([group_id])
+  @@index([topicId, group_id])
+}
+
+enum BlockType {
+  paragraph
+  heading
+  bulletListItem
+  numberedListItem
+  codeBlock
+  math
+  plot
+  callout
+}
+
+model Chunk {
+  id          String   @id @default(cuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  content     String   @db.Text
+  contentHash String   // sha256 hex of content, for change detection
+
+  sourcePath  String   // relative path within course source dir
+  sourceType  String   // pdf, docx, xlsx, pptx, ipynb, code, markdown, txt
+  chunkIndex  Int      // position within source file
+  pageNumber  Int?     // optional, primarily for PDF chunks
+  sectionPath String?  // optional, hierarchical location ("Ch 14 > 8")
+  tokenCount  Int?     // optional, for cost reporting
+
+  embedding   Unsupported("vector(1024)")?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([courseId, sourcePath, chunkIndex])
+  @@index([courseId])
+  @@index([contentHash])
 }

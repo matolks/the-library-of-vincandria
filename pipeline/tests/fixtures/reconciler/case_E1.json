@@ -1,0 +1,40 @@
+{
+  "name": "case_E1_error_anchor_not_pinned",
+  "description": "Sequence references blk_rogue, which is not in pinned_ids. Reconciler must refuse pre-DB; setup blocks unchanged after the call.",
+
+  "setup": {
+    "blocks": [
+      {
+        "id": "blk_pinned",
+        "type": "paragraph",
+        "content": {"type": "paragraph", "content": [{"type": "text", "text": "legit pinned"}]},
+        "order": 0,
+        "manually_edited": true,
+        "group_id": null,
+        "generation_metadata": null
+      },
+      {
+        "id": "blk_other",
+        "type": "paragraph",
+        "content": {"type": "paragraph", "content": [{"type": "text", "text": "unrelated existing"}]},
+        "order": 1,
+        "manually_edited": false,
+        "group_id": null,
+        "generation_metadata": null
+      }
+    ]
+  },
+
+  "pinned_ids": ["blk_pinned"],
+
+  "sequence": [
+    {"id": "blk_pinned"},
+    {"id": "blk_rogue"}
+  ],
+
+  "expected": {
+    "kind": "error",
+    "error_type": "ValueError",
+    "message_contains": "sequence references non-pinned ids"
+  }
+}

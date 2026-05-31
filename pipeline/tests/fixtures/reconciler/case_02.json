@@ -1,0 +1,48 @@
+{
+  "name": "case_02_one_ungrouped_anchor",
+  "description": "Single ungrouped pinned block with new blocks before and after. Verifies order rewrite around a singleton anchor.",
+  "setup": {
+    "blocks": [
+      {
+        "id": "blk_a",
+        "type": "paragraph",
+        "content": {"text": "old intro"},
+        "order": 0,
+        "manually_edited": false,
+        "group_id": null,
+        "generation_metadata": null
+      },
+      {
+        "id": "blk_pin",
+        "type": "paragraph",
+        "content": {"text": "human-edited insight"},
+        "order": 1,
+        "manually_edited": true,
+        "group_id": null,
+        "generation_metadata": null
+      },
+      {
+        "id": "blk_c",
+        "type": "paragraph",
+        "content": {"text": "old outro"},
+        "order": 2,
+        "manually_edited": false,
+        "group_id": null,
+        "generation_metadata": null
+      }
+    ]
+  },
+  "pinned_ids": ["blk_pin"],
+  "sequence": [
+    {"type": "heading", "content": {"text": "New heading"}, "group_id": null},
+    {"type": "paragraph", "content": {"text": "New lead-in"}, "group_id": null},
+    {"id": "blk_pin"},
+    {"type": "paragraph", "content": {"text": "New follow-up"}, "group_id": null}
+  ],
+  "expected": {
+    "kind": "success",
+    "block_count": 4,
+    "anchors_preserved": [{"id": "blk_pin", "order": 2}],
+    "new_blocks_at_orders": [0, 1, 3]
+  }
+}

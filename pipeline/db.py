@@ -16,7 +16,21 @@ Connection is established once and reused. Call db.close() when done.
 
 import os
 import psycopg2
+import json
 from dotenv import load_dotenv
+from dataclasses import dataclass
+
+@dataclass
+class ChunkRecord:
+    content: str
+    content_hash: str
+    source_path: str
+    source_type: str
+    chunk_index: int
+    page_number: int | None = None
+    section_path: str | None = None
+    token_count: int | None = None
+    embedding: list[float] | None = None
 
 load_dotenv()
 
@@ -152,64 +166,6 @@ def upsert_topic(
             )
     conn.commit()
     return topic_id
-
-
-# ---------------------------------------------------------------------------
-# Block
-# ---------------------------------------------------------------------------
-
-def upsert_blocks(topic_id: str, blocks: list[dict]) -> int:
-    """
-    Upsert blocks for a topic. Skips any block where manually_edited = true.
-    blocks: list of dicts with keys: type, content, order, language (optional)
-    Returns count of blocks written.
-    """
-    conn = get_conn()
-    written = 0
-
-    with conn.cursor() as cur:
-        for block in blocks:
-            order = block["order"]
-
-            # Check manually_edited flag before touching
-            cur.execute(
-                """
-                SELECT manually_edited FROM "Block"
-                WHERE "topicId" = %s AND "order" = %s
-                """,
-                (topic_id, order),
-            )
-            row = cur.fetchone()
-            if row and row[0]:  # manually_edited = true
-                continue
-
-            cur.execute(
-                """
-                INSERT INTO "Block" (id, type, content, "order", language, source, citation, manually_edited, "topicId", "createdAt", "updatedAt")
-                VALUES (gen_random_uuid()::text, %s, %s, %s, %s, %s, %s, false, %s, now(), now())
-                ON CONFLICT ("topicId", "order") DO UPDATE
-                    SET type       = EXCLUDED.type,
-                        content    = EXCLUDED.content,
-                        language   = EXCLUDED.language,
-                        source     = EXCLUDED.source,
-                        citation   = EXCLUDED.citation,
-                        "updatedAt" = now()
-                WHERE "Block".manually_edited = false
-                """,
-                (
-                    block["type"],
-                    block["content"],
-                    order,
-                    block.get("language"),
-                    block.get("source", "generated"),
-                    block.get("citation"),
-                    topic_id,
-                ),
-            )
-            written += 1
-
-    conn.commit()
-    return written
 
 
 # ---------------------------------------------------------------------------
@@ -361,6 +317,277 @@ def nearest_topic_candidates(
         cols = [d[0] for d in cur.description]
         return [dict(zip(cols, r)) for r in cur.fetchall()]
     
+
+def upsert_chunks(course_id: str, chunks: list[ChunkRecord]) -> int:
+    """
+    Bulk upsert chunks by (courseId, sourcePath, chunkIndex).
+    Returns count written.
+    """
+    if not chunks:
+        return 0
+
+    from psycopg2.extras import execute_values
+
+    rows = [
+        (
+            c.content,
+            c.content_hash,
+            c.source_path,
+            c.source_type,
+            c.chunk_index,
+            c.page_number,
+            c.section_path,
+            c.token_count,
+            c.embedding,
+            course_id,
+        )
+        for c in chunks
+    ]
+
+    conn = get_conn()
+    with conn.cursor() as cur:
+        execute_values(
+            cur,
+            '''
+            INSERT INTO "Chunk" (
+                id, content, "contentHash", "sourcePath", "sourceType",
+                "chunkIndex", "pageNumber", "sectionPath", "tokenCount",
+                embedding, "courseId", "createdAt", "updatedAt"
+            )
+            VALUES %s
+            ON CONFLICT ("courseId", "sourcePath", "chunkIndex") DO UPDATE SET
+                content       = EXCLUDED.content,
+                "contentHash" = EXCLUDED."contentHash",
+                "sourceType"  = EXCLUDED."sourceType",
+                "pageNumber"  = EXCLUDED."pageNumber",
+                "sectionPath" = EXCLUDED."sectionPath",
+                "tokenCount"  = EXCLUDED."tokenCount",
+                embedding     = EXCLUDED.embedding,
+                "updatedAt"   = now()
+            ''',
+            rows,
+            template='(gen_random_uuid()::text, %s, %s, %s, %s, %s, %s, %s, %s, %s::vector, %s, now(), now())',
+        )
+    conn.commit()
+    return len(chunks)
+
+
+def delete_orphan_chunks(course_id: str, touched_keys: set[tuple[str, int]]) -> int:
+    """
+    Delete chunks for this course whose (sourcePath, chunkIndex) is not in touched_keys.
+    Returns count deleted.
+    """
+    conn = get_conn()
+    with conn.cursor() as cur:
+        if not touched_keys:
+            cur.execute('DELETE FROM "Chunk" WHERE "courseId" = %s', (course_id,))
+            deleted = cur.rowcount
+        else:
+            paths = [sp for sp, _ in touched_keys]
+            indices = [ci for _, ci in touched_keys]
+            cur.execute(
+                '''
+                DELETE FROM "Chunk"
+                WHERE "courseId" = %s
+                  AND ("sourcePath", "chunkIndex") NOT IN (
+                    SELECT * FROM unnest(%s::text[], %s::int[])
+                  )
+                ''',
+                (course_id, paths, indices),
+            )
+            deleted = cur.rowcount
+    conn.commit()
+    return deleted
+
+
+def top_chunks_for_topic(topic_id: str, k: int = 8) -> list[dict]:
+    """
+    pgvector ANN retrieval: top-k chunks in the topic's course, ranked by cosine
+    similarity against the topic's embedding. Uses the HNSW index via <=>.
+    """
+    conn = get_conn()
+    with conn.cursor() as cur:
+        cur.execute(
+            'SELECT embedding, "courseId" FROM "Topic" WHERE id = %s',
+            (topic_id,),
+        )
+        row = cur.fetchone()
+        if row is None:
+            raise ValueError(f"Topic {topic_id} not found")
+        if row[0] is None:
+            raise ValueError(f"Topic {topic_id} has no embedding")
+        target_emb, course_id = row
+
+        cur.execute(
+            '''
+            SELECT
+                id,
+                content,
+                "sourcePath",
+                "sourceType",
+                "pageNumber",
+                "sectionPath",
+                embedding <=> %s::vector AS distance
+            FROM "Chunk"
+            WHERE "courseId" = %s AND embedding IS NOT NULL
+            ORDER BY embedding <=> %s::vector
+            LIMIT %s
+            ''',
+            (target_emb, course_id, target_emb, k),
+        )
+        cols = [d[0] for d in cur.description]
+        return [dict(zip(cols, r)) for r in cur.fetchall()]
+
+
+
+def replace_topic_blocks(
+    topic_id: str,
+    pinned_ids: list[str],
+    sequence: list[dict],
+) -> dict:
+    """
+    Atomically replace this topic's blocks with the given ordered sequence.
+
+    Implements §6 step 4 of AGENT3_DESIGN.md. Single transaction; the
+    (topicId, order) unique index is upheld throughout via a negative-order
+    stash so anchors and new blocks can be repositioned without collisions.
+
+    Args:
+        topic_id: target topic.
+        pinned_ids: the expanded pinned set computed at read time (§4 atomic
+            rule). Every id here MUST appear as an anchor reference in
+            `sequence`, otherwise the function refuses without touching the DB.
+            This is the safety boundary against silently deleting user edits.
+        sequence: ordered list emitted by the model. Each item is either:
+            - Anchor reference: {"id": str}. The id must be in pinned_ids and
+              must exist on the topic. Anchor content is NOT updated here;
+              the anchor-integrity validator at the prompt layer guarantees the
+              model returned the existing id with byte-identical content.
+            - New block: {"type": str, "content": dict, "group_id"?: str|None,
+              "generation_metadata"?: dict|None}. No id field; a fresh uuid is
+              assigned at insert.
+
+    Returns:
+        {"pinned_kept": int, "new_inserted": int, "deleted": int}
+
+    Raises:
+        ValueError on any anchor/pinned mismatch or unknown anchor id.
+        psycopg2 errors propagate after the transaction is rolled back.
+    """
+    pinned_set = set(pinned_ids)
+    anchor_refs = [item["id"] for item in sequence if "id" in item]
+    anchor_set = set(anchor_refs)
+
+    # --- Pre-DB validation: refuse before opening any cursor ---
+
+    if pinned_set != anchor_set:
+        missing = sorted(pinned_set - anchor_set)
+        extra = sorted(anchor_set - pinned_set)
+        parts = []
+        if missing:
+            parts.append(f"pinned blocks missing from sequence: {missing}")
+        if extra:
+            parts.append(f"sequence references non-pinned ids: {extra}")
+        raise ValueError("; ".join(parts))
+
+    if len(anchor_refs) != len(anchor_set):
+        from collections import Counter
+        dupes = sorted(k for k, v in Counter(anchor_refs).items() if v > 1)
+        raise ValueError(f"sequence contains duplicate anchor refs: {dupes}")
+
+    conn = get_conn()
+    try:
+        with conn.cursor() as cur:
+            # Defense in depth: verify every pinned id is actually on this topic.
+            if pinned_set:
+                cur.execute(
+                    'SELECT id FROM "Block" WHERE "topicId" = %s AND id = ANY(%s)',
+                    (topic_id, list(pinned_set)),
+                )
+                present = {r[0] for r in cur.fetchall()}
+                missing_in_db = sorted(pinned_set - present)
+                if missing_in_db:
+                    raise ValueError(
+                        f"pinned ids not present on topic {topic_id}: {missing_in_db}"
+                    )
+
+            # Step 1: stash all current orders into a negative range so the
+            # unique index doesn't collide while we rewrite positions.
+            cur.execute(
+                'UPDATE "Block" SET "order" = -"order" - 1 WHERE "topicId" = %s',
+                (topic_id,),
+            )
+
+            # Step 2: delete every block on this topic that isn't pinned.
+            if pinned_set:
+                cur.execute(
+                    'DELETE FROM "Block" WHERE "topicId" = %s AND id <> ALL(%s)',
+                    (topic_id, list(pinned_set)),
+                )
+            else:
+                cur.execute(
+                    'DELETE FROM "Block" WHERE "topicId" = %s',
+                    (topic_id,),
+                )
+            deleted = cur.rowcount
+
+            # Step 3: walk the sequence, dense order starting at 0.
+            pinned_kept = 0
+            new_inserted = 0
+            for new_order, item in enumerate(sequence):
+                if "id" in item:
+                    cur.execute(
+                        """
+                        UPDATE "Block"
+                        SET "order" = %s, "updatedAt" = now()
+                        WHERE id = %s AND "topicId" = %s
+                        """,
+                        (new_order, item["id"], topic_id),
+                    )
+                    if cur.rowcount != 1:
+                        raise ValueError(
+                            f"anchor {item['id']!r} update affected "
+                            f"{cur.rowcount} rows; expected 1"
+                        )
+                    pinned_kept += 1
+                else:
+                    cur.execute(
+                        """
+                        INSERT INTO "Block" (
+                            id, type, content, "order", source, manually_edited,
+                            generation_metadata, group_id, "topicId",
+                            "createdAt", "updatedAt"
+                        )
+                        VALUES (
+                            gen_random_uuid()::text, %s, %s::jsonb, %s,
+                            'generated', false, %s::jsonb, %s, %s,
+                            now(), now()
+                        )
+                        """,
+                        (
+                            item["type"],
+                            json.dumps(item["content"]),
+                            new_order,
+                            json.dumps(item["generation_metadata"])
+                                if item.get("generation_metadata") is not None
+                                else None,
+                            item.get("group_id"),
+                            topic_id,
+                        ),
+                    )
+                    new_inserted += 1
+
+        conn.commit()
+        return {
+            "pinned_kept": pinned_kept,
+            "new_inserted": new_inserted,
+            "deleted": deleted,
+        }
+
+    except Exception:
+        conn.rollback()
+        raise
+    
 if __name__ == "__main__":
     import sys
     slug = sys.argv[1] if len(sys.argv) > 1 else "mvc-partial-derivatives"
@@ -381,3 +608,4 @@ if __name__ == "__main__":
     print(f"\nNearest {k} to '{slug}' (global):\n")
     for r in nearest_topic_candidates(topic_id, k=k, course_id=None):
         print(f"  {r['distance']:.4f}  {r['slug']:<40} {r['title']}")
+

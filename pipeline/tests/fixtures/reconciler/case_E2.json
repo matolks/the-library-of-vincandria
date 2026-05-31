@@ -1,0 +1,49 @@
+{
+  "name": "case_05_anchor_repositioned",
+  "description": "Pinned singleton moves from order 1 to order 3. Exercises the negative-stash trick under the unique (topic_id, order) constraint.",
+  "setup": {
+    "blocks": [
+      {
+        "id": "blk_a",
+        "type": "paragraph",
+        "content": {"text": "old order 0"},
+        "order": 0,
+        "manually_edited": false,
+        "group_id": null,
+        "generation_metadata": null
+      },
+      {
+        "id": "blk_pin",
+        "type": "callout",
+        "content": {"text": "important note"},
+        "order": 1,
+        "manually_edited": true,
+        "group_id": null,
+        "generation_metadata": null
+      },
+      {
+        "id": "blk_c",
+        "type": "paragraph",
+        "content": {"text": "old order 2"},
+        "order": 2,
+        "manually_edited": false,
+        "group_id": null,
+        "generation_metadata": null
+      }
+    ]
+  },
+  "pinned_ids": ["blk_pin"],
+  "sequence": [
+    {"type": "heading", "content": {"text": "Section A"}, "group_id": null},
+    {"type": "paragraph", "content": {"text": "Some new prose."}, "group_id": null},
+    {"type": "paragraph", "content": {"text": "More new prose."}, "group_id": null},
+    {"id": "blk_pin"},
+    {"type": "paragraph", "content": {"text": "Closing remark."}, "group_id": null}
+  ],
+  "expected": {
+    "kind": "success",
+    "block_count": 5,
+    "anchors_preserved": [{"id": "blk_pin", "order": 3}],
+    "new_blocks_at_orders": [0, 1, 2, 4]
+  }
+}

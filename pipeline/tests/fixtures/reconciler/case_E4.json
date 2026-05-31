@@ -1,0 +1,27 @@
+{
+  "name": "case_E4_pinned_id_not_in_db",
+  "description": "pinned_ids includes blk_ghost which doesn't exist on the topic. Error raised after cursor open, before any writes; DB must be unchanged.",
+  "setup": {
+    "blocks": [
+      {
+        "id": "blk_real",
+        "type": "paragraph",
+        "content": {"text": "real block"},
+        "order": 0,
+        "manually_edited": false,
+        "group_id": null,
+        "generation_metadata": null
+      }
+    ]
+  },
+  "pinned_ids": ["blk_ghost"],
+  "sequence": [
+    {"id": "blk_ghost"},
+    {"type": "paragraph", "content": {"text": "new"}, "group_id": null}
+  ],
+  "expected": {
+    "kind": "error",
+    "error_type": "ValueError",
+    "message_contains": "not present on topic"
+  }
+}

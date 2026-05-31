@@ -1,0 +1,19 @@
+{
+  "name": "case_06_empty_topic_first_run",
+  "description": "Cold start: topic has no blocks, pinned_ids empty, sequence is all new. First-generation path.",
+  "setup": {
+    "blocks": []
+  },
+  "pinned_ids": [],
+  "sequence": [
+    {"type": "heading", "content": {"text": "Intro"}, "group_id": null},
+    {"type": "paragraph", "content": {"text": "First paragraph."}, "group_id": null},
+    {"type": "paragraph", "content": {"text": "Second paragraph."}, "group_id": null}
+  ],
+  "expected": {
+    "kind": "success",
+    "block_count": 3,
+    "anchors_preserved": [],
+    "new_blocks_at_orders": [0, 1, 2]
+  }
+}

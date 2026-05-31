@@ -1,0 +1,72 @@
+{
+  "name": "case_03_grouped_anchor_full_cohort",
+  "description": "Block group of 2; only one member is manually_edited but both are pinned via §4 atomic expansion. Both preserved contiguously; flanking new blocks.",
+
+  "setup": {
+    "blocks": [
+      {
+        "id": "blk_intro",
+        "type": "paragraph",
+        "content": {"type": "paragraph", "content": [{"type": "text", "text": "old intro"}]},
+        "order": 0,
+        "manually_edited": false,
+        "group_id": null,
+        "generation_metadata": null
+      },
+      {
+        "id": "blk_math",
+        "type": "math",
+        "content": {"type": "math", "props": {"mode": "display", "latex": "f(x,y) = x^2 + y^2"}},
+        "order": 1,
+        "manually_edited": true,
+        "group_id": "grp_eq_caption",
+        "generation_metadata": null
+      },
+      {
+        "id": "blk_caption",
+        "type": "paragraph",
+        "content": {"type": "paragraph", "content": [{"type": "text", "text": "the paraboloid centered at the origin"}]},
+        "order": 2,
+        "manually_edited": false,
+        "group_id": "grp_eq_caption",
+        "generation_metadata": null
+      },
+      {
+        "id": "blk_outro",
+        "type": "paragraph",
+        "content": {"type": "paragraph", "content": [{"type": "text", "text": "old outro"}]},
+        "order": 3,
+        "manually_edited": false,
+        "group_id": null,
+        "generation_metadata": null
+      }
+    ]
+  },
+
+  "pinned_ids": ["blk_math", "blk_caption"],
+
+  "sequence": [
+    {
+      "type": "heading",
+      "content": {"type": "heading", "props": {"level": 2}, "content": [{"type": "text", "text": "Example surface"}]},
+      "group_id": null
+    },
+    {"id": "blk_math"},
+    {"id": "blk_caption"},
+    {
+      "type": "paragraph",
+      "content": {"type": "paragraph", "content": [{"type": "text", "text": "regenerated commentary"}]},
+      "group_id": null
+    }
+  ],
+
+  "expected": {
+    "kind": "success",
+    "block_count": 4,
+    "anchors_preserved": [
+      {"id": "blk_math", "order": 1},
+      {"id": "blk_caption", "order": 2}
+    ],
+    "new_blocks_at_orders": [0, 3]
+  }
+}

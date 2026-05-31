@@ -1,0 +1,40 @@
+{
+  "name": "case_04_all_pinned_group_only",
+  "description": "Whole topic is one pinned group of two; sequence references both members in original order. Verifies the no-new-no-delete path.",
+  "setup": {
+    "blocks": [
+      {
+        "id": "blk_g1",
+        "type": "math",
+        "content": {"latex": "f(x) = x^2"},
+        "order": 0,
+        "manually_edited": true,
+        "group_id": "grp_eq",
+        "generation_metadata": null
+      },
+      {
+        "id": "blk_g2",
+        "type": "paragraph",
+        "content": {"text": "where x ranges over the reals."},
+        "order": 1,
+        "manually_edited": false,
+        "group_id": "grp_eq",
+        "generation_metadata": null
+      }
+    ]
+  },
+  "pinned_ids": ["blk_g1", "blk_g2"],
+  "sequence": [
+    {"id": "blk_g1"},
+    {"id": "blk_g2"}
+  ],
+  "expected": {
+    "kind": "success",
+    "block_count": 2,
+    "anchors_preserved": [
+      {"id": "blk_g1", "order": 0},
+      {"id": "blk_g2", "order": 1}
+    ],
+    "new_blocks_at_orders": []
+  }
+}
