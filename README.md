@@ -1,4 +1,4 @@
-# The Library of Vincandira
+# The Library of Vincandria
 
 A personal knowledge graph that transforms raw university course materials into a structured, publicly browsable website. A local Ollama model parses and chunks your files. Claude API agents extract concepts, map relationships, and generate teaching content. You refine everything through an admin block editor.
 
@@ -17,10 +17,10 @@ This is the first module running on AIStack, a local AI platform designed to sup
 | Chunker (Ollama, Stage 1)          | Done        |
 | Agent 1 — Extractor (topics)       | Done        |
 | Agent 2 — Mapper (dependencies)    | Done        |
-| Agent 3 — Block Generator          | Next        |
-| Agent 4 — Web Enricher             | Deferred    |
-| `ingest.py` orchestrator           | Not started |
-| Eval harness (`pipeline/evals/`)   | Not started |
+| Agent 3 — Block Generator          | Done        |
+| Agent 4 — Web Enricher             | Done, v1    |
+| Course pipeline orchestrator       | Done, CLI   |
+| Eval harness (`pipeline/evals/`)   | Done, v1    |
 | Public website                     | Not started |
 | Admin dashboard + BlockNote editor | Not started |
 
@@ -34,11 +34,11 @@ AIStack (your drive)           This repo                        Public
       course files              writes to Supabase               from database
 ```
 
-You drop files onto the drive and run one command. The pipeline runs in two stages:
+You drop files onto the drive and run the course pipeline. The pipeline has one local stage and four API-backed agents:
 
 **Stage 1, Local (Ollama).** Reads every file, extracts raw text, and chunks it into clean passages. Tags chunks with `source_type` (lectures, exams, homework, reference, topics) inferred from the folder structure. No API calls. Nothing leaves your machine.
 
-**Stage 2, Claude API.** Agents run in sequence on the chunked text: extract topics and assign them to broad groups, map dependencies between topics, generate teaching blocks for each topic. Results write to Supabase. Both topics and the prerequisite graph live in Postgres (the graph as a `TopicEdge` table queried via recursive CTEs). The website reflects changes immediately.
+**Stage 2, Claude API + Voyage.** Agents run in sequence on the chunked text: extract topics and assign them to broad groups, map dependencies between topics, enrich sparse/thin topics with allow-listed web chunks, then generate teaching blocks for each topic. Results write to Supabase. Both topics and the prerequisite graph live in Postgres (the graph as a `TopicEdge` table queried via recursive CTEs). The website reflects changes immediately.
 
 When you add new material, drop the files in and run the command again. The pipeline is idempotent. It upserts existing records rather than duplicating them. Blocks you have manually edited in the admin are flagged and skipped on re-ingestion.
 
@@ -52,8 +52,8 @@ When you add new material, drop the files in and run the command again. The pipe
 | Topic embeddings (1024-dim)             | Voyage `voyage-3.5-lite` (API) | Strong retrieval quality at low cost. Used by the mapper for candidate retrieval. |
 | Topic extraction + group assignment     | Claude API                     | Requires consistent structured JSON output across varied content.                 |
 | Dependency mapping                      | Claude API                     | Requires cross-topic directional reasoning.                                       |
-| Block generation (teaching content)     | Claude API                     | Teaching quality depends on reasoning depth.                                      |
-| Web enrichment (deferred)               | Claude API                     | Refines blocks against external sources with citations.                           |
+| Block generation (teaching content)     | Claude API                     | Teaching quality depends on reasoning depth and schema-following.                 |
+| Web enrichment                          | Curated HTTPS fetch + Voyage   | Adds allow-listed web chunks into the same retrieval/provenance path.             |
 
 ---
 
@@ -97,7 +97,7 @@ The graph database directory (`graphs/course_graph/`) is no longer used. Kuzu wa
 ## Repo structure
 
 ```
-the-library-of-vincandira/
+the-library-of-vincandria/
 ├── app/
 │   ├── admin/
 │   │   ├── page.tsx               # admin dashboard
@@ -125,13 +125,18 @@ the-library-of-vincandira/
 │   └── schema.prisma
 │
 ├── pipeline/
-│   ├── ingest.py                  # entry point, orchestrates all stages (not yet built)
+│   ├── course_orchestrator.py     # extractor -> mapper -> enricher -> block_gen, with aggregate status/cost
 │   ├── chunker.py                 # Ollama: parse files, extract text, chunk
 │   ├── embeddings.py              # Voyage embeddings (1024-dim, batched)
 │   ├── extractor.py               # Claude Agent 1: topics + group assignment
 │   ├── mapper.py                  # Claude Agent 2: prereq graph → Postgres TopicEdge
-│   ├── block_gen.py               # Claude Agent 3: generate teaching blocks (not yet built)
-│   ├── enricher.py                # Claude Agent 4: web-sourced refinement (deferred)
+│   ├── block_gen.py               # Claude Agent 3 CLI + topic context/target resolution
+│   ├── orchestrator.py            # Agent 3 per-topic generation/retry/reconcile flow
+│   ├── prompt.py                  # Agent 3 prompt contract
+│   ├── block_schema.py            # generated block schema validation
+│   ├── anchor_integrity.py        # pinned/manual block integrity validation
+│   ├── llm.py                     # Anthropic wrapper + token/cost accounting
+│   ├── enricher.py                # Agent 4 web chunks for sparse/thin topics
 │   ├── parsers/
 │   │   ├── pdf.py                 # pymupdf
 │   │   ├── docx.py                # python-docx
@@ -139,8 +144,8 @@ the-library-of-vincandira/
 │   │   ├── pptx.py                # python-pptx
 │   │   ├── ipynb.py               # nbformat
 │   │   └── code.py                # raw text + language tag
-│   ├── db.py                      # Supabase write client + pgvector retrieval
-│   └── evals/                     # ground truth + eval scripts (not yet built)
+│   ├── db.py                      # Supabase write client + pgvector retrieval + block reconciliation
+│   └── evals/                     # live DB eval/regression harness
 │
 ├── scripts/
 │   ├── query_prereqs.py           # query 1-hop and transitive prereqs for a topic
@@ -217,39 +222,78 @@ Two helper scripts ship alongside:
 - `scripts/query_prereqs.py <topic-slug>` prints 1-hop prereqs and all transitive ancestors with depth (via recursive CTE). Used for sanity-checking the graph.
 - `scripts/drop_bad_edges.py` deletes known-wrong edges identified in manual review. These four edges are the seed data for the eval harness.
 
-**Agent 3, Block Generator** (`pipeline/block_gen.py`, not yet built)
+**Agent 3, Block Generator** (`pipeline/block_gen.py`, `pipeline/orchestrator.py`)
 
-Takes one topic at a time. Returns page blocks ordered the way a professor would teach it: concept definition first, example or worked problem second, key insight last. Skips any block with `manually_edited: true`. Every block is tagged with a `source` (`local`, `web`, `manual`, or `generated`) and optional `citation`.
+Takes one topic at a time. It retrieves prerequisite topics, top source chunks, and existing blocks, then asks Claude to return a complete ordered teaching page as strict JSON. Output is validated before any write: block schema, anchor integrity, and source chunk IDs all have to pass.
+
+Agent 3 refuses sparse topics before prompt construction. Sparse/thin coverage is fixed by Agent 4, then generation is retried. For manually edited blocks, the generator uses relative-order anchor pinning:
+
+- A manually edited ungrouped block is pinned as a singleton.
+- If any block in a `group_id` is manually edited, the whole group is pinned atomically.
+- The model must copy pinned anchor `id`, `content`, and `group_id` exactly, preserve relative anchor order, and keep grouped anchors contiguous.
+- Non-pinned blocks are replaced transactionally via `db.replace_topic_blocks`.
+
+Generated blocks use BlockNote-shaped JSON and record structured provenance in `generation_metadata.source_chunk_ids`. The model never writes citation prose; citation rendering is downstream.
 
 ```json
 {
   "blocks": [
     {
-      "type": "text",
-      "order": 1,
-      "source": "local",
-      "content": "The Fourier Transform decomposes a time-domain signal..."
+      "type": "heading",
+      "content": [{ "type": "text", "text": "Lagrange Multipliers" }],
+      "props": { "level": 1 },
+      "generation_metadata": { "source_chunk_ids": [] }
     },
     {
-      "type": "code",
-      "order": 2,
-      "language": "math",
-      "source": "local",
-      "content": "X(f) = ∫ x(t)e^{-j2πft} dt"
-    },
-    {
-      "type": "callout",
-      "order": 3,
-      "source": "generated",
-      "content": "Multiplication in frequency = convolution in time."
+      "type": "math",
+      "content": [],
+      "props": {
+        "mode": "display",
+        "latex": "\\nabla f(x,y) = -\\lambda\\,\\nabla g(x,y)"
+      },
+      "generation_metadata": {
+        "source_chunk_ids": ["e158233e-ce9a-471d-97a9-0ffcc8a1404f"]
+      }
     }
   ]
 }
 ```
 
-**Agent 4, Enricher** (`pipeline/enricher.py`, deferred)
+Agent 3 CLI:
 
-Refines existing blocks against external sources. Adds new blocks with `source: "web"` and a citation URL. Respects `manually_edited`.
+```bash
+# Inspect one topic's retrieval context and pinning state
+python3 -m pipeline.block_gen --topic-slug mvc-lagrange-multipliers
+
+# Generate a course without writing
+python3 -m pipeline.block_gen --course multivariable-calculus --dry-run --json
+
+# Persist, with optional pacing to avoid Anthropic output-token rate limits
+python3 -m pipeline.block_gen --course multivariable-calculus --json --pause-seconds 75
+```
+
+**Agent 4, Enricher** (`pipeline/enricher.py`)
+
+Adds allow-listed web pages as `Chunk` rows with `sourceType='web'`, then embeds them with Voyage so Agent 3 sees them through the same `top_chunks_for_topic` retrieval path as local source chunks. V1 uses curated URLs for known sparse topics and can include thin topics.
+
+Source policy is intentionally narrow: exact allow-list hosts such as Wikipedia, MIT OCW, MathWorld, OpenStax, Paul's Online Math Notes, and Khan Academy, plus `.edu` hosts. Raw web text is chunked, cached under `.cache/agent4`, embedded, and upserted by `(courseId, sourcePath, chunkIndex)`.
+
+```bash
+# Dry-run sparse-topic enrichment
+python3 -m pipeline.enricher --course multivariable-calculus --dry-run
+
+# Include thin topics as well as sparse topics
+python3 -m pipeline.enricher --course multivariable-calculus --include-thin
+```
+
+**Course orchestrator** (`pipeline/course_orchestrator.py`)
+
+Runs `extractor -> mapper -> enricher -> block_gen` and emits one aggregate JSON report with stage statuses, input/output tokens, cache tokens, and USD cost.
+
+```bash
+python3 -m pipeline.course_orchestrator --course multivariable-calculus --dry-run --include-thin
+python3 -m pipeline.course_orchestrator --course multivariable-calculus --include-thin
+```
 
 ---
 
@@ -275,18 +319,21 @@ Four levels: `TopicGroup ⇄ Topic → Block`, with `Course` grouping topics wit
 
 `Topic` to `TopicGroup` is many-to-many (a topic like "Convolution" belongs to both Math Foundations and Signals & Networks). `Topic` to `Course` is many-to-one. `TopicEdge` is a self-referential relation on `Topic` with a `kind` enum (currently only `PREREQUISITE_OF`) and a `confidence` float.
 
-The `manually_edited` flag on `Block` is critical. When re-ingestion runs, any block with this flag set to `true` is skipped. This is what lets you edit content in the admin without the pipeline overwriting your work. Any block edited through the admin API has this set automatically.
+The `manually_edited` flag on `Block` is critical. When block generation reruns, any manually edited block becomes an anchor. If it belongs to a `group_id`, the full group is pinned atomically so generated content cannot split a coupled equation/caption or plot/explanation pair. This is what lets you edit content in the admin without the pipeline overwriting your work. Any block edited through the admin API should set this flag automatically once the editor exists.
 
-`Block.source` records provenance (`local`, `web`, `manual`, `generated`) and `Block.citation` holds an optional URL for web-sourced content.
+`Block.source` records broad provenance (`local`, `web`, `manual`, `generated`). Generated block provenance lives in `Block.generation_metadata`, especially `source_chunk_ids`, which references `Chunk.id`. Human-readable citations are rendered downstream from chunk metadata. `Block.citation` still exists in the schema for older code but Agent 3 does not write citation text.
 
 `Topic.embedding` is a 1024-dim `vector` column with an HNSW index, populated by Voyage during extraction and queried by the mapper via cosine distance (`<=>`).
+
+`Chunk.embedding` is also a 1024-dim `vector`, populated for both local and Agent 4 web chunks. Agent 3 retrieves source context from chunks in the topic's course by cosine distance.
 
 ```
 TopicGroup     { id, slug, name, description }
 Course         { id, slug, name }
 Topic          { id, slug, title, summary, order, courseId, embedding(vector 1024), topicGroups (m2m) }
 TopicEdge      { fromId, toId, kind, confidence, createdAt }
-Block          { id, type, content, order, language?, source, citation?, manually_edited, topicId }
+Block          { id, type, content, order, source, citation?, manually_edited, generation_metadata, group_id, topicId }
+Chunk          { id, courseId, content, contentHash, sourcePath, sourceType, chunkIndex, pageNumber?, sectionPath?, tokenCount?, embedding(vector 1024) }
 _TopicGroups   { A: Topic.id, B: TopicGroup.id }   # Prisma implicit m2m join
 ```
 
@@ -296,14 +343,22 @@ Row Level Security is enabled on all pipeline-written tables with public-read po
 
 ## Verified state (multivariable-calculus)
 
-- 16 source files, 94 chunks
+- 16 local source files, 94 original local chunks
 - 18 topics extracted, all linked to `math-foundations`
 - Slugs stable across re-runs (anchored via prior-extraction lookup)
 - All topic embeddings populated
-- 50 prerequisite edges (53 generated, 3 manually dropped as known false positives)
+- Agent 4 enrichment brought all topics above coverage threshold: no sparse topics and no thin topics under `strong>=0.75`, `strong_min=3`
+- Generated block pages persisted for all 18 topics
+- 1,054 generated blocks currently persisted
+- 60 unique chunk IDs referenced by generated block provenance; all resolve to same-course chunks
+- Provenance references include local `exams`, local `homework`, and Agent 4 `web` chunks
+- 50 prerequisite edges; known-bad mapper edges from `scripts/drop_bad_edges.py` are excluded
 - No cycles
 - Transitive ancestor queries validated against manual calc-curriculum intuition (e.g. `mvc-lagrange-multipliers` correctly resolves to 7 ancestors across 2 depth levels)
 - Mapper cost per run: ~$0.13
+- Full Agent 3 dry run: 18/18 topics ok, 980 candidate blocks, ~$2.82
+- Full Agent 3 persisted run: 18/18 topics ok, 1,054 blocks, ~$3.00
+- Final content-generation eval: all checks passing (`no_sparse_topics`, block schemas, source chunk IDs, pinned anchors, prereq cycles, known-bad edges)
 
 ---
 
@@ -328,7 +383,7 @@ Row Level Security is enabled on all pipeline-written tables with public-read po
 
 Admin routes are protected by Next.js middleware. Unauthenticated requests redirect to `/login`.
 
-Block types: `text`, `code`, `image`, `callout`, `graph`
+Block types: `paragraph`, `heading`, `bulletListItem`, `numberedListItem`, `codeBlock`, `callout`, `math`, `plot`
 
 ---
 
@@ -341,25 +396,27 @@ Block types: `text`, `code`, `image`, `callout`, `graph`
 mkdir -p /Volumes/AIStack/modules/knowledge/docs/<course-name>/{lectures,exams,homework}
 cp ~/Downloads/*.pdf /Volumes/AIStack/modules/knowledge/docs/<course-name>/lectures/
 
-# 2. Run the pipeline (once ingest.py exists)
-cd ~/code/the-library-of-vincandira
-python3 -m pipeline.ingest --course <course-name>
+# 2. Run the course pipeline
+cd ~/code/the-library-of-vincandria
+python3 -m pipeline.course_orchestrator --course <course-name> --include-thin
 ```
 
 ### Add files to an existing course
 
 ```bash
 cp ~/Downloads/new-lecture.pdf /Volumes/AIStack/modules/knowledge/docs/<course-name>/lectures/
-python3 -m pipeline.ingest --course <course-name> --file new-lecture.pdf
+python3 -m pipeline.course_orchestrator --course <course-name> --include-thin
 ```
 
-### Reset and re-ingest a course
+The extractor treats its chunk set as authoritative, so use a full-course rerun after adding material. Single-file chunking is useful for inspection, not for safe course reconciliation.
+
+### Regenerate a course
 
 ```bash
-python3 -m pipeline.ingest --course <course-name> --reset
+python3 -m pipeline.course_orchestrator --course <course-name> --include-thin
 ```
 
-`--reset` clears all blocks for the course that do not have `manually_edited: true`.
+The old `pipeline.ingest` wrapper is not present yet. `db.reset_course(course_id)` exists as a lower-level helper for clearing non-manual blocks, but there is no public reset CLI at the moment.
 
 ### Run individual agents
 
@@ -375,11 +432,26 @@ python3 -m pipeline.extractor --course <course-name> --chunks /tmp/chunks.json
 python3 -m pipeline.mapper <course-name> --dry-run
 python3 -m pipeline.mapper <course-name>
 
+# Enrich sparse/thin topics with allow-listed web chunks
+python3 -m pipeline.enricher --course <course-name> --dry-run
+python3 -m pipeline.enricher --course <course-name> --include-thin
+
+# Generate teaching blocks
+python3 -m pipeline.block_gen --course <course-name> --dry-run --json
+python3 -m pipeline.block_gen --course <course-name> --json --pause-seconds 75
+
+# Run the full course pipeline
+python3 -m pipeline.course_orchestrator --course <course-name> --dry-run --include-thin
+python3 -m pipeline.course_orchestrator --course <course-name> --include-thin
+
 # Inspect the graph
 python3 -m scripts.query_prereqs <topic-slug>
 
 # Apply known eval-grade edge fixes (one-off, idempotent)
 python3 -m scripts.drop_bad_edges
+
+# Run content-generation evals
+python3 -m pipeline.evals.content_generation --course <course-name>
 ```
 
 ---
@@ -424,7 +496,7 @@ SUPABASE_SERVICE_ROLE_KEY=
 
 # Anthropic
 ANTHROPIC_API_KEY=
-CLAUDE_MODEL=claude-sonnet-4-5-20250929
+CLAUDE_MODEL=claude-sonnet-4-6
 
 # Optional pricing override (USD per million tokens)
 CLAUDE_PRICE_INPUT=3.00
@@ -468,10 +540,10 @@ NEXTAUTH_URL=http://localhost:3000
 2. ~~`pipeline/chunker.py`~~ done, validated on multivariable-calculus (94 chunks, 16 files)
 3. ~~`pipeline/extractor.py`~~ done, validated on multivariable-calculus (18 topics, clean group assignment, slug stability)
 4. ~~`pipeline/mapper.py`~~ done, validated on multivariable-calculus (50 edges, no cycles, transitive queries correct)
-5. `pipeline/block_gen.py` next focus
-6. `pipeline/ingest.py` orchestrator, aggregates token/cost across agents
-7. `pipeline/evals/` formalize eval harness; seed with the 4 forbidden edges from `drop_bad_edges.py`
-8. Public website render from populated database
-9. Admin dashboard BlockNote editor wired to blocks table with `manually_edited` flag
-10. `pipeline/enricher.py` web enrichment with citations
+5. ~~`pipeline/enricher.py`~~ done, v1 allow-listed web chunks for sparse/thin topics
+6. ~~`pipeline/block_gen.py` + `pipeline/orchestrator.py`~~ done, validated and persisted across multivariable-calculus
+7. ~~`pipeline/course_orchestrator.py`~~ done, aggregates status/token/cost across agents
+8. ~~`pipeline/evals/`~~ done, seeded with the 4 forbidden edges from `drop_bad_edges.py`
+9. Public website render from populated database
+10. Admin dashboard BlockNote editor wired to blocks table with `manually_edited` flag
 11. Phase 2 upload UI trigger pipeline from browser

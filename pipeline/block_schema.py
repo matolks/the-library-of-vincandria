@@ -93,6 +93,8 @@ def validate_block_schema(block: dict) -> list[str]:
             errs.append(f'math.props.mode must be "display"; got {mode!r}')
         if not isinstance(latex, str) or not latex.strip():
             errs.append(f"math.props.latex must be a non-empty string; got {latex!r}")
+        elif "$" in latex:
+            errs += _validate_latex_no_dollar(latex, "math.props.latex")
         if "label" in props and not isinstance(props["label"], str):
             errs.append(
                 f"math.props.label, if present, must be a string; "
@@ -147,7 +149,7 @@ def _validate_inline_item(item, path: str) -> list[str]:
         props = item.get("props")
         if not isinstance(props, dict) or not isinstance(props.get("latex"), str):
             return [f"{path}: inline math missing `props.latex` string"]
-        return []
+        return _validate_latex_no_dollar(props["latex"], f"{path}.props.latex")
     if itype == "link":
         href = item.get("href")
         if not isinstance(href, str) or not href:
@@ -253,4 +255,13 @@ def _validate_generation_metadata(meta) -> list[str]:
         return ["generation_metadata.source_chunk_ids must be an array of strings"]
     if not all(isinstance(i, str) for i in ids):
         return ["generation_metadata.source_chunk_ids must contain only strings"]
+    return []
+
+
+def _validate_latex_no_dollar(latex: str, path: str) -> list[str]:
+    if "$" in latex:
+        return [
+            f"{path} must contain raw LaTeX without dollar delimiters; "
+            f"got {latex!r}"
+        ]
     return []

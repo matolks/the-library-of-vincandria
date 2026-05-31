@@ -18,6 +18,7 @@ from dotenv import load_dotenv
 from pipeline import db
 from pipeline.embeddings import embed_documents
 from pipeline.db import set_topic_embeddings
+from dataclasses import dataclass
 
 load_dotenv()
 
@@ -33,6 +34,15 @@ MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
 # Sonnet 4.x: $3 input / $15 output (verify at anthropic.com/pricing).
 PRICE_INPUT_PER_MTOK = float(os.getenv("CLAUDE_PRICE_INPUT", "3.00"))
 PRICE_OUTPUT_PER_MTOK = float(os.getenv("CLAUDE_PRICE_OUTPUT", "15.00"))
+
+
+@dataclass(frozen=True)
+class ExtractionLLMResult:
+    extraction: dict
+    input_tokens: int
+    output_tokens: int
+    usd_cost: float
+    model: str
 
 def _extract_json(text: str) -> str:
     """Extract JSON object/array from model output, tolerating fences and prose."""
@@ -132,10 +142,14 @@ Course text (chunked):
 Extract all topics from this course and assign them to groups."""
 
 
-def extract_topics(course_slug: str, chunks: list[dict], existing: list[dict] | None = None) -> dict:
+def extract_topics_with_usage(
+    course_slug: str,
+    chunks: list[dict],
+    existing: list[dict] | None = None,
+) -> ExtractionLLMResult:
     """
     Call Claude to extract topics from chunks.
-    Returns the parsed JSON response dict.
+    Returns the parsed JSON response dict plus usage accounting.
     """
     course_name = course_slug.replace("-", " ").title()
     prompt = _build_user_prompt(course_name, chunks, existing or [])
@@ -160,9 +174,24 @@ def extract_topics(course_slug: str, chunks: list[dict], existing: list[dict] | 
     )
     raw = response.content[0].text
     try:
-        return json.loads(_extract_json(raw))
+        extraction = json.loads(_extract_json(raw))
     except (json.JSONDecodeError, ValueError) as e:
         raise ValueError(f"Agent 1 returned invalid JSON: {e}\n\nRaw output:\n{raw}")
+    return ExtractionLLMResult(
+        extraction=extraction,
+        input_tokens=usage.input_tokens,
+        output_tokens=usage.output_tokens,
+        usd_cost=cost,
+        model=MODEL,
+    )
+
+
+def extract_topics(course_slug: str, chunks: list[dict], existing: list[dict] | None = None) -> dict:
+    """
+    Call Claude to extract topics from chunks.
+    Returns the parsed JSON response dict.
+    """
+    return extract_topics_with_usage(course_slug, chunks, existing).extraction
 
 
 def write_topics(course_slug: str, extraction: dict, chunks: list[dict]) -> dict[str, str]:

@@ -8,15 +8,20 @@ BAD_EDGES = [
     ("mvc-lines-planes-3d", "mvc-multivariable-functions"),
 ]
 
-with get_conn() as conn, conn.cursor() as cur:
-    for from_slug, to_slug in BAD_EDGES:
-        cur.execute(
-            '''
-            DELETE FROM "TopicEdge"
-            WHERE "fromId" = (SELECT id FROM "Topic" WHERE slug = %s)
-              AND "toId"   = (SELECT id FROM "Topic" WHERE slug = %s)
-            ''',
-            (from_slug, to_slug),
-        )
-        print(f"deleted {from_slug} -> {to_slug}: {cur.rowcount} row")
-    conn.commit()
+def main() -> None:
+    with get_conn() as conn, conn.cursor() as cur:
+        for from_slug, to_slug in BAD_EDGES:
+            cur.execute(
+                '''
+                DELETE FROM "TopicEdge"
+                WHERE "fromId" = (SELECT id FROM "Topic" WHERE slug = %s)
+                  AND "toId"   = (SELECT id FROM "Topic" WHERE slug = %s)
+                ''',
+                (from_slug, to_slug),
+            )
+            print(f"deleted {from_slug} -> {to_slug}: {cur.rowcount} row")
+        conn.commit()
+
+
+if __name__ == "__main__":
+    main()

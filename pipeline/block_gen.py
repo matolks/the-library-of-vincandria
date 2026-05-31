@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import time
 from dataclasses import dataclass
 from typing import Optional
 
@@ -266,7 +267,33 @@ def _resolve_topic_id(slug: str) -> str:
     return row[0]
 
 
-# ---- CLI for eyeballing ---------------------------------------------------
+def _resolve_generation_targets(
+    course_slug: str, topic_slug: str | None
+) -> list[tuple[str, str]]:
+    conn = db.get_conn()
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            SELECT t.id, t.slug
+            FROM "Topic" t
+            JOIN "Course" c ON c.id = t."courseId"
+            WHERE c.slug = %s
+              AND (%s::text IS NULL OR t.slug = %s)
+            ORDER BY t."order"
+            """,
+            (course_slug, topic_slug, topic_slug),
+        )
+        rows = cur.fetchall()
+    if not rows:
+        if topic_slug:
+            raise SystemExit(
+                f"No topic with slug={topic_slug!r} in course={course_slug!r}"
+            )
+        raise SystemExit(f"No topics in course={course_slug!r}")
+    return [(r[0], r[1]) for r in rows]
+
+
+# ---- CLI ------------------------------------------------------------------
 
 def _print_context(ctx: TopicContext) -> None:
     print("=== TOPIC ===")
@@ -311,9 +338,18 @@ def _print_context(ctx: TopicContext) -> None:
 
 def _main() -> None:
     parser = argparse.ArgumentParser(
-        description="Inspect the context block_gen will see for one topic.",
+        description="Generate teaching blocks for a course or inspect one topic context.",
     )
-    parser.add_argument("--topic-slug", required=True)
+    parser.add_argument("--course", help="course slug for generation")
+    parser.add_argument("--topic", help="optional topic slug for generation")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="validate model output without writing blocks")
+    parser.add_argument("--json", action="store_true",
+                        help="emit full GenerationResult objects as JSON")
+    parser.add_argument("--pause-seconds", type=float, default=0.0,
+                        help="sleep between topic generations to respect API rate limits")
+    parser.add_argument("--topic-slug",
+                        help="legacy context-inspection mode for one topic")
     parser.add_argument("--k", type=int, default=8, help="top-K chunks (default: 8)")
     parser.add_argument(
         "--floor",
@@ -324,13 +360,75 @@ def _main() -> None:
     args = parser.parse_args()
 
     try:
-        topic_id = _resolve_topic_id(args.topic_slug)
-        ctx = get_topic_context(
-            topic_id,
-            chunk_k=args.k,
-            chunk_similarity_floor=args.floor,
+        if args.topic_slug:
+            topic_id = _resolve_topic_id(args.topic_slug)
+            ctx = get_topic_context(
+                topic_id,
+                chunk_k=args.k,
+                chunk_similarity_floor=args.floor,
+            )
+            _print_context(ctx)
+            return
+
+        if not args.course:
+            raise SystemExit("--course is required unless --topic-slug is used")
+
+        from dataclasses import asdict
+
+        from pipeline.orchestrator import generate_blocks_for_topic
+
+        targets = _resolve_generation_targets(args.course, args.topic)
+        totals = {
+            "topics": len(targets),
+            "ok": 0,
+            "refused_sparse": 0,
+            "failed_validation": 0,
+            "failed_parse": 0,
+            "blocks_written": 0,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_creation_tokens": 0,
+            "cache_read_tokens": 0,
+            "usd_cost": 0.0,
+        }
+
+        for i, (topic_id, slug) in enumerate(targets):
+            if i and args.pause_seconds > 0:
+                time.sleep(args.pause_seconds)
+            result = generate_blocks_for_topic(topic_id, dry_run=args.dry_run)
+            if args.json:
+                print(json.dumps(asdict(result), sort_keys=True))
+            else:
+                print(
+                    f"{slug}: status={result.status} attempts={result.attempts} "
+                    f"blocks={result.blocks_written} "
+                    f"cost=${result.usd_cost:.4f} "
+                    f"top_similarity={result.top_similarity:.3f}"
+                )
+
+            if result.status in totals:
+                totals[result.status] += 1
+            totals["blocks_written"] += result.blocks_written
+            totals["input_tokens"] += result.input_tokens
+            totals["output_tokens"] += result.output_tokens
+            totals["cache_creation_tokens"] += result.cache_creation_tokens
+            totals["cache_read_tokens"] += result.cache_read_tokens
+            totals["usd_cost"] += result.usd_cost
+
+        print(
+            "TOTAL: "
+            f"topics={totals['topics']} ok={totals['ok']} "
+            f"refused_sparse={totals['refused_sparse']} "
+            f"failed_validation={totals['failed_validation']} "
+            f"failed_parse={totals['failed_parse']} "
+            f"blocks={totals['blocks_written']} "
+            f"input_tokens={totals['input_tokens']} "
+            f"output_tokens={totals['output_tokens']} "
+            f"cache_create={totals['cache_creation_tokens']} "
+            f"cache_read={totals['cache_read_tokens']} "
+            f"cost=${totals['usd_cost']:.4f} "
+            f"dry_run={args.dry_run}"
         )
-        _print_context(ctx)
     finally:
         db.close()
 

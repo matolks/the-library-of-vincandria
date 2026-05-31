@@ -68,6 +68,7 @@ Each newly generated (non-anchor) block may include:
 listing chunk IDs from the user prompt that materially grounded the block. Use an empty array when no chunks contributed.
 
 Each anchor block in your output MUST include its `id` and `content` exactly as provided in PINNED ANCHORS. Do not include `generation_metadata` on anchors; their provenance is unchanged.
+Pinned-anchor `content` is persisted BlockNote JSON and may be an object rather than the generated-block content array. Copy pinned anchor objects exactly; do not normalize them to the generated-block schema.
 
 AUTHORING RULES
 
@@ -145,9 +146,20 @@ def _render_user_prompt(context: "TopicContext") -> str:
             )
             parts.append(header)
             for blk in cohort.blocks:
-                parts.append(f"  - id={blk.id}, type={blk.type}, group_id={blk.group_id}")
+                anchor = {
+                    "id": blk.id,
+                    "type": blk.type,
+                    "content": blk.content,
+                    "group_id": blk.group_id,
+                }
+                parts.append("  Copy this anchor object exactly:")
                 parts.append(
-                    f"    content: {json.dumps(blk.content, sort_keys=True, separators=(',', ':'))}"
+                    "  "
+                    + json.dumps(
+                        anchor,
+                        sort_keys=True,
+                        separators=(",", ":"),
+                    )
                 )
     parts.append("")
 
