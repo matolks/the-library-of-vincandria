@@ -1,0 +1,82 @@
+{
+  "course_slug": "multivariable-calculus",
+  "judge_version": "judge.v1",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-05-31T18:27:04.840539+00:00",
+  "topics": [
+    {
+      "topic_id": "bed01221-f9ac-424e-b168-b85a1b2b52f6",
+      "topic_slug": "mvc-quadric-surfaces",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9105,
+      "output_tokens": 1829,
+      "cache_creation_tokens": 1078,
+      "cache_read_tokens": 0,
+      "usd_cost": 0.0587925,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "52670df1-c7ba-4e70-9006-8282865186ba",
+          "description": "The substitution is computed incorrectly: substituting x=-t, y=2t into 3x\u00b2+2y\u00b2 gives 3(-t)\u00b2+2(2t)\u00b2=3t\u00b2+8t\u00b2=11t\u00b2, which is correct, but the prose writes '3t\u00b2+8t\u00b2=11t\u00b2' yet labels the intermediate step as '3t\u00b2+8t\u00b2' when it should be '3(-t)\u00b2+2(2t)\u00b2=3t\u00b2+2\u00b74t\u00b2=3t\u00b2+8t\u00b2=11t\u00b2' \u2014 this part is actually fine. However, the source chunk (5beb7c3d) shows the correct equation is 2+t=3(-t)\u00b2+2(2t)\u00b2=11t\u00b2, giving 11t\u00b2-t-2=0, which matches the prose. No error here on the quadratic. BUT the prose states '2 + t = 3t^2 + 8t^2 = 11t^2' skipping the step that 2(2t)^2 = 8t^2, which is correct. Re-examining: the actual error is that the prose writes the substitution result as '3t^2 + 8t^2 = 11t^2' but 2*(2t)^2 = 2*4t^2 = 8t^2, so 3t^2+8t^2=11t^2 is correct. The prose is actually correct here.",
+          "suggested_fix": null
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "87a29c32-550c-4fa3-bf5b-e6853fc163a8",
+          "description": "The example equation $x^2 - 9y^2 + 4z^2 = 36$ is claimed to be a hyperboloid of one sheet, but the standard form $x^2/36 - y^2/4 + z^2/9 = 1$ has two positive terms (x\u00b2 and z\u00b2) and one negative term (y\u00b2), which is indeed a hyperboloid of one sheet; however, the source chunk (584d8241) confirms this classification, so the classification is correct. The issue is that the prose says 'vertical traces are hyperbolas' and 'The waist of the surface occurs at z=0 and is the smallest ellipse,' but for this surface aligned along the y-axis the waist is at y=0, not z=0.",
+          "suggested_fix": "Change 'The waist of the surface occurs at z=0' to 'The waist occurs at the coordinate plane perpendicular to the axis of the negative term (here y=0)' to correctly describe the general case."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "9a8d935a-1e97-42fe-b5ed-d7f670845576",
+          "description": "The plot expression 'sqrt(max(0, 1 + x^2/4 + y^2/9))' represents z = sqrt(1 + x\u00b2/4 + y\u00b2/9), which is the upper sheet of the hyperboloid z\u00b2 - x\u00b2/4 - y\u00b2/9 = 1, but the standard form presented in the preceding display-math block is x\u00b2/a\u00b2 - y\u00b2/b\u00b2 - z\u00b2/c\u00b2 = 1 (axis along x), so the plot title 'z\u00b2 \u2212 x\u00b2/4 \u2212 y\u00b2/9 = 1' is inconsistent with the standard form equation shown, creating a mismatch between the definition and the plotted example.",
+          "suggested_fix": "Either change the standard form in the display-math to z\u00b2/c\u00b2 - x\u00b2/a\u00b2 - y\u00b2/b\u00b2 = 1 to match the plot, or change the plot expression to reflect the x-axis-aligned two-sheeted hyperboloid."
+        },
+        {
+          "category": "broken_plot_spec",
+          "severity": "medium",
+          "block_id": "6d3fe8ec-4a12-4cd0-816e-1e8f373d7bc7",
+          "description": "The plot expression 'sqrt(1 + x^2/4 - y^2/4)' can produce NaN when x^2/4 - y^2/4 < -1 (e.g., x=0, y=3 gives sqrt(1-9/4)=sqrt(-1.25)), but the domain includes y in [-2,2] where y=2 gives sqrt(1+x^2/4-1)=sqrt(x^2/4) which is fine at the boundary; however at x=0, y=2: sqrt(1+0-1)=0 which is fine. At x=0, y values up to 2: sqrt(1-y^2/4) \u2014 at y=2 this is 0, valid. The expression is actually safe within the given domain, so this is not broken.",
+          "suggested_fix": null
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "e111299d-40b9-4703-b4dc-51c7a90cbfce",
+          "description": "The elliptic cylinder $x^2 + 4z^2 = 16$ and hyperbolic cylinder $x^2 - z^2 = 1$ are described as distinct surface types but only the parabolic cylinder gets a plot; the elliptic and hyperbolic cylinders have no accompanying plots.",
+          "suggested_fix": "Add surface3d plot blocks for the elliptic cylinder and hyperbolic cylinder examples."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "8e2a54cc-8c3e-4834-8db9-6a2d18468b39",
+          "description": "The parabolic cylinder is described as 'every horizontal slice is a copy of the same parabola,' but for z=x\u00b2 the horizontal slices (z=k) are pairs of vertical lines x=\u00b1\u221ak, not parabolas; the parabola shape appears in slices perpendicular to the y-axis (y=k), which are all the same parabola z=x\u00b2.",
+          "suggested_fix": "Change 'every horizontal slice' to 'every slice y=k (parallel to the xz-plane)' to correctly describe the invariant cross-sections."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "817ae812-da42-4bc5-addc-154a9b0db7cc",
+          "description": "The paragraph beginning 'Computing the three coordinate-plane traces confirms this:' directly interprets the display-math/equation in block 8ae7da11 but neither block has a group_id linking them.",
+          "suggested_fix": "Assign the same group_id to blocks 8ae7da11 and 817ae812 (and the subsequent bullet blocks) to couple the worked example equation with its interpretation."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 7,
+    "cost": 0.0587925,
+    "in": 9105,
+    "out": 1829,
+    "cache_create": 1078,
+    "cache_read": 0,
+    "severity_low": 0,
+    "severity_medium": 3,
+    "severity_high": 4
+  }
+}

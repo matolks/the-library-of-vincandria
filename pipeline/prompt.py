@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from pipeline.block_gen import TopicContext
 
 
-PROMPT_VERSION = "agent3.v1"
+PROMPT_VERSION = "agent3.v2"
 
 
 SYSTEM_PROMPT = """\
@@ -26,7 +26,7 @@ THREE LOCKED CONTRACTS
 
 1. Anchor pinning by relative order. Pinned blocks listed under "PINNED ANCHORS" in the user prompt MUST appear in your output. Their `id` and `content` MUST be byte-identical to what you receive. Their absolute position in the new sequence is your choice. Their relative order with respect to each other MUST be preserved. Grouped anchors (sharing a `group_id`) MUST remain contiguous in the same internal order shown.
 
-2. Atomic group coupling. Blocks that genuinely couple (a display equation and its explanation, a plot and its caption) share a `group_id`. Default is null. Use group_id sparingly. Once grouped, blocks in the cohort are never separated.
+2. Atomic group coupling. Blocks that genuinely couple (a display equation and its explanation, a plot and its caption) share a `group_id`. Default is null. Once grouped, blocks in the cohort are never separated.
 
 3. No citation text. You never write attributions, footnote markers, or parenthetical source references. When a block draws materially on a source chunk, populate `generation_metadata.source_chunk_ids` with the relevant chunk IDs. Citation rendering happens downstream.
 
@@ -55,6 +55,14 @@ PlotSpec:
   }
 Domain keys are kind-dependent: function2d requires domain.x; surface3d and levelcurves require domain.x and domain.y; parametric2d and parametric3d require domain.t.
 
+Plot expression syntax — mathjs dialect, NOT JavaScript:
+- Functions are bare names: sqrt, cbrt, exp, log, log2, log10, sin, cos, tan, asin, acos, atan, atan2, sinh, cosh, tanh, abs, min, max, pow, hypot, floor, ceil, sign.
+- Constants: pi, e.
+- Power operator is `^`, not `**`. Multiplication must be explicit (write `2*x`, not `2x`).
+- Do NOT prefix anything with `Math.` — write `sqrt(1 - x^2 - y^2)`, NOT `Math.sqrt(1 - x*x - y*y)`.
+- Variables come from the domain keys: function2d uses `x`; surface3d and levelcurves use `x` and `y`; parametric2d and parametric3d use `t`.
+- Examples: "x^2 + y^2", "sin(x*y)", "sqrt(max(0, 1 - x^2 - y^2))", ["cos(t)", "sin(t)"], "exp(-(x^2 + y^2))".
+
 OUTPUT FORMAT
 
 Return a single JSON object, no prose preamble, no markdown fences:
@@ -74,10 +82,22 @@ AUTHORING RULES
 
 - Write teaching prose. Do not stitch chunk text together; chunks are background context, not source to be quoted.
 - Prefer inline math for short equations embedded in sentences. Use display math blocks only when the equation deserves a line of its own.
-- Emit plot blocks only when a visualization materially aids understanding. Default is no plot.
-- Use group_id only when adjacency is genuinely required.
-- Respect the relative order of pinned anchors and the internal order of grouped cohorts.
 - Output language: English.
+- Respect the relative order of pinned anchors and the internal order of grouped cohorts.
+
+When to emit a plot block. A plot is warranted when the topic involves a shape, surface, region, or curve whose geometry is the explanation. Concrete cases:
+- A topic enumerating distinct geometric forms (quadric surfaces — one plot per form: ellipsoid, paraboloid, hyperboloid of one sheet, hyperboloid of two sheets, cone, hyperbolic paraboloid). Emit one plot per form.
+- A specific function being graphed to discuss extrema, level sets, or monotonicity.
+- A parametric curve being traced in 2D or 3D.
+- A region of integration in the plane or in space.
+- A vector field or gradient field being visualized at a point or over a region.
+Do NOT emit a plot for: algebraic identities (chain rule, product rule), purely definitional statements, or formula derivations with no concrete domain. When the prose says "consider the surface S" or "the graph of f", a plot is warranted; emit it.
+
+When to use group_id. Set the same group_id on two or more adjacent blocks ONLY when separating them would break meaning. Canonical cases:
+- A display math block followed by a paragraph that explicitly interprets that exact equation ("This says that the gradient is perpendicular to the level curve at every point."). Group them.
+- A plot block followed by a caption paragraph that names features visible in that plot ("The saddle at the origin shows..."). Group them.
+- A worked-example pair: a math block stating an example computation followed by the paragraph that walks through it. Group them.
+A paragraph that merely follows an equation in topic order is NOT grouped — group only when separation would make the second block read as a non-sequitur. Use a fresh `group_id` per cohort; the value is opaque (any short string works).
 """
 
 

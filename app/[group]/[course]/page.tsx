@@ -26,9 +26,9 @@ export default async function CoursePage({ params }: PageProps) {
     <article className="max-w-[960px]">
       <Link
         href={`/${group}`}
-        className="mb-6 inline-block font-mono text-[10px] font-light uppercase tracking-[0.4em] text-[#d2d2d266] transition-colors hover:text-[#d2d2d2]"
+        className="mb-6 inline-block font-mono text-[12px] font-light uppercase tracking-[0.4em] text-[#d2d2d266] transition-colors hover:text-[#d2d2d2]"
       >
-        ← {courseRecord.name}
+        ← {group}
       </Link>
 
       <h1 className="mb-4 font-serif font-medium leading-[1.05] tracking-tight text-[#f0f0f0] text-[clamp(2rem,5vw,3.5rem)]">
