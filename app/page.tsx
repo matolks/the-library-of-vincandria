@@ -1,5 +1,4 @@
 import Link from "next/link";
-import TopNav from "./components/TopNav";
 
 const sections = [
   {
@@ -48,8 +47,7 @@ const sections = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#0e0e0f] text-[#d2d2d2]">
-      <TopNav />
+    <main>
 
       <section className="mx-auto max-w-[1100px] px-10 py-20">
         {/* Eyebrow */}
