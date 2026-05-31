@@ -1,0 +1,49 @@
+=== HIGH-severity findings (post-rerun): 21 ===
+
+--- by category ---
+   13  missing_plot
+    8  factual_error
+
+--- by (topic, category) — same-topic clusters ---
+    3  mvc-quadric-surfaces                          missing_plot  *CLUSTER*
+    2  mvc-quadric-surfaces                          factual_error
+    2  mvc-parametric-curves                         missing_plot
+    2  mvc-multivariable-functions                   missing_plot
+    2  mvc-chain-rule                                factual_error
+    1  mvc-vector-calculus-ops                       missing_plot
+    1  mvc-arc-length                                factual_error
+    1  mvc-motion-3d                                 missing_plot
+    1  mvc-motion-3d                                 factual_error
+    1  mvc-limits-continuity                         factual_error
+    1  mvc-tangent-planes                            factual_error
+    1  mvc-tangent-planes                            missing_plot
+    1  mvc-gradient-directional-derivatives          missing_plot
+    1  mvc-optimization                              missing_plot
+    1  mvc-double-integrals                          missing_plot
+
+--- cross-topic clusters by category ---
+    9 topics  missing_plot  *CROSS-TOPIC CLUSTER*
+    6 topics  factual_error  *CROSS-TOPIC CLUSTER*
+
+--- all high findings ---
+  [mvc-arc-length] factual_error: The arc length is stated as $L = \frac{2\sqrt{2}-1}{3}$, but the correct value is $\frac{2^{3/2}-1}{3} = \frac{2\sqrt{2}-1}{3}$ — this is ac
+  [mvc-chain-rule] factual_error: The partial derivative f_y at (1,1,1) is stated as 1, but f_y = -z + 2xyz = -1 + 2(1)(1)(1) = 1 is correct; however f_z = -y + xy^2 = -1 + (
+  [mvc-chain-rule] factual_error: f_y at (1,1,1) is computed as 1, but f_y = -z + 2xyz = -(1) + 2(1)(1)(1) = 1 is indeed correct; however the source chunk (5a40a5da) computes
+  [mvc-double-integrals] missing_plot: The worked example describes a specific triangular region with vertices (0,0), (1,0), (1,1) whose shape is essential for understanding the l
+  [mvc-gradient-directional-derivatives] missing_plot: The paragraph describes level curves of f(x,y) = x²+y² as concentric circles with the gradient pointing radially outward, a geometric relati
+  [mvc-limits-continuity] factual_error: The displayed algebraic manipulation '|x²y/(x²+y²)| = |x| · x²/(x²+y²) · (y²+x²−x²+x²)/(x²+y²)' is mathematically incorrect and does not sim
+  [mvc-motion-3d] factual_error: The paragraph claims 'the helix traces along the cylinder x² + y² = 16 and rises above it, reflecting that the upward acceleration produces 
+  [mvc-motion-3d] missing_plot: The worked example describes a specific 3D helix r(t) = ⟨4cos t, 4sin t, 4 + t²⟩ whose shape is central to understanding the tangential acce
+  [mvc-multivariable-functions] missing_plot: Worked Example 2 describes the open interior of an ellipse as the domain of f(x,y) = ln(4 - x² - 4y²), a specific geometric region that warr
+  [mvc-multivariable-functions] missing_plot: Worked Example 3 describes three specific parabolic level curves of f(x,y) = x² - y - 1 in the xy-plane, a concrete geometric object, but no
+  [mvc-optimization] missing_plot: Worked Example 2 uses the specific function f(x,y)=xy(x-2)(y+3) whose shape and five critical points would benefit from a surface3d plot, bu
+  [mvc-parametric-curves] missing_plot: The helix section introduces a specific 3D parametric curve whose shape is central to the discussion, but no surface3d or other supported pl
+  [mvc-parametric-curves] missing_plot: The intersection curve r(t) = ⟨t, 1−t, t⟩ is a specific geometric object (a line in 3D space) described in a worked example, but no plot acc
+  [mvc-quadric-surfaces] factual_error: The paragraph claims the plot shows the upper sheet of a hyperboloid of one sheet (x²+y²−z²=−1), but the standard one-sheet hyperboloid has 
+  [mvc-quadric-surfaces] factual_error: The plot for the Hyperboloid of One Sheet uses expression sqrt(1 + x^2 + y^2), which computes z = sqrt(1+x²+y²) and represents the upper she
+  [mvc-quadric-surfaces] missing_plot: The Elliptic Cylinder section describes a specific 3D surface (x²/a² + z²/c² = 1 extruded in y) with no accompanying surface3d plot, while o
+  [mvc-quadric-surfaces] missing_plot: The Parabolic Cylinder section describes a specific 3D surface (z = x² extruded in y) with no accompanying surface3d plot.
+  [mvc-quadric-surfaces] missing_plot: The Hyperbolic Cylinder section describes a specific 3D surface (x²/a² − z²/c² = 1 extruded in y) with no accompanying surface3d plot.
+  [mvc-tangent-planes] factual_error: The paragraph refers to the point on the level surface F(x,y,z) = c as '(a, b, c_0)' where c_0 is used both as the z-coordinate of the point
+  [mvc-tangent-planes] missing_plot: The worked example on the logarithmic surface g(x,y) = ln(x)/y^2 describes a specific surface whose shape matters for understanding the tang
+  [mvc-vector-calculus-ops] missing_plot: The worked example describes a specific helix r(t) = ⟨cos t, sin t, t⟩ whose 3D shape is central to understanding the tangent vector and spe
