@@ -23,16 +23,19 @@ export default async function CoursePage({ params }: PageProps) {
   if (!courseRecord) notFound();
 
   return (
-    <article className="max-w-[760px]">
-      <p className="mb-6 font-mono text-[10px] font-light uppercase tracking-[0.4em] text-[#d2d2d266]">
-        Course
-      </p>
+    <article className="max-w-[960px]">
+      <Link
+        href={`/${group}`}
+        className="mb-6 inline-block font-mono text-[10px] font-light uppercase tracking-[0.4em] text-[#d2d2d266] transition-colors hover:text-[#d2d2d2]"
+      >
+        ← {courseRecord.name}
+      </Link>
 
       <h1 className="mb-4 font-serif font-medium leading-[1.05] tracking-tight text-[#f0f0f0] text-[clamp(2rem,5vw,3.5rem)]">
         {courseRecord.name}
       </h1>
 
-      <p className="mb-12 font-mono text-[11px] font-light tracking-[0.08em] text-[#d2d2d255]">
+      <p className="mb-12 font-mono text-[12px] font-light tracking-[0.08em] text-[#d2d2d255]">
         {courseRecord.topics.length} topic{courseRecord.topics.length === 1 ? "" : "s"}
       </p>
 

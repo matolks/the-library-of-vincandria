@@ -51,20 +51,20 @@ export default function Home() {
 
       <section className="mx-auto max-w-[1100px] px-10 py-20">
         {/* Eyebrow */}
-        <p className="font-mono text-[10px] font-light tracking-[0.4em] uppercase text-[#d2d2d266] mb-8">
+        <p className="font-mono text-[14px] font-light tracking-[0.4em] uppercase text-[#d2d2d266] mb-8">
           The Library of Vincandria
         </p>
 
         {/* Headline */}
-        <h1 className="font-serif font-medium leading-[1.05] tracking-tight text-[#f0f0f0] max-w-[880px] mb-5">
-          <span className="block text-[clamp(3rem,7vw,6.5rem)]">A structured</span>
-          <span className="block text-[clamp(3rem,7vw,6.5rem)]">
-            <em className="italic text-[#d2d2d288]">engineering</em>{" "}memory bank.
+        <h1 className="font-serif font-medium leading-[1.05] tracking-tight text-[#f0f0f0] mb-5">
+          <span className="block whitespace-nowrap text-[clamp(3rem,6.5vw,5.5rem)]">
+            A structured <em className="italic text-[#d2d2d288]">engineering</em>
           </span>
+          <span className="block text-[clamp(3rem,6.5vw,5.5rem)]">memory bank.</span>
         </h1>
 
         {/* Subtext */}
-        <p className="text-[15px] font-light text-[#d2d2d299] max-w-[520px] leading-relaxed mb-20">
+        <p className="text-[16px] font-light text-[#d2d2d299] max-w-[620px] leading-relaxed mb-20">
           Organized course knowledge across mathematics, systems, hardware, and software from a computer engineer.
         </p>
 

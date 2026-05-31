@@ -25,24 +25,19 @@ export default async function CourseLayout({ params, children }: LayoutProps) {
   if (!courseRecord) notFound();
 
   return (
-    <div className="mx-auto flex max-w-[1100px] gap-12 px-10 py-12">
-      <aside className="sticky top-12 hidden h-[calc(100vh-6rem)] w-64 shrink-0 overflow-y-auto lg:block">
-        <Link
-          href={`/${group}`}
-          className="mb-6 block font-mono text-[10px] font-light uppercase tracking-[0.3em] text-[#d2d2d266] transition-colors hover:text-[#d2d2d2]"
-        >
-          ← {group}
-        </Link>
-        <Link
-          href={`/${group}/${course}`}
-          className="mb-6 block font-serif text-[1.1rem] font-medium text-[#e8e8e8] transition-colors hover:text-white"
-        >
-          {courseRecord.name}
-        </Link>
-        <div className="mb-4 h-px w-8 bg-[#d2d2d233]" />
-        <TopicSidebar basePath={`/${group}/${course}`} topics={courseRecord.topics} />
+    <div className="flex gap-12 py-12">
+      <aside className="sticky top-12 hidden h-[calc(100vh-6rem)] w-64 shrink-0 flex-col pl-8 lg:flex">
+        <div className="shrink-0">
+          <p className="mb-6 font-mono text-[10px] font-light uppercase tracking-[0.3em] text-[#d2d2d266]">
+            Topics
+          </p>
+          <div className="mb-4 h-px w-8 bg-[#d2d2d233]" />
+        </div>
+        <div className="scrollbar-hover min-h-0 flex-1 overflow-y-auto">
+          <TopicSidebar basePath={`/${group}/${course}`} topics={courseRecord.topics} />
+        </div>
       </aside>
-      <main className="min-w-0 flex-1">{children}</main>
+      <main className="min-w-0 flex-1 px-10"><div className="mx-auto max-w-[900px]">{children}</div></main>
     </div>
   );
 }

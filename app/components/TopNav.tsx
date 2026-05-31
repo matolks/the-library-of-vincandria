@@ -19,7 +19,7 @@ export default function TopNav() {
     <nav className="border-b border-zinc-700 bg-zinc-950">
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7">
         {sections.map((section) => {
-          const isActive = pathname !== "/" && pathname === section.href;
+          const isActive = pathname === section.href || pathname.startsWith(section.href + "/");
           return (
             <a
               key={section.title}

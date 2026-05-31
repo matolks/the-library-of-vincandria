@@ -40,7 +40,7 @@ export default async function GroupPage({ params }: PageProps) {
 
   return (
     <section className="mx-auto max-w-[1100px] px-10 py-20">
-      <p className="mb-8 font-mono text-[10px] font-light uppercase tracking-[0.4em] text-[#d2d2d266]">
+      <p className="mb-8 font-mono text-[14px] font-light uppercase tracking-[0.4em] text-[#d2d2d266]">
         <Link href="/" className="transition-colors hover:text-[#d2d2d2]">
           The Library of Vincandria
         </Link>

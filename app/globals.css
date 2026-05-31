@@ -17,3 +17,45 @@
     text-decoration: none;
   }
 }
+
+/* Sidebar scrollbar — hidden until hovered */
+.scrollbar-hover {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+.scrollbar-hover::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollbar-hover::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 3px;
+  transition: background 0.15s;
+}
+.scrollbar-hover::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-hover:hover {
+  scrollbar-color: #d2d2d233 transparent;
+}
+.scrollbar-hover:hover::-webkit-scrollbar-thumb {
+  background: #d2d2d233;
+}
+
+/* Page scrollbar — always thin and subtle */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #d2d2d322 transparent;
+}
+html::-webkit-scrollbar {
+  width: 8px;
+}
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+html::-webkit-scrollbar-thumb {
+  background: #d2d2d322;
+  border-radius: 4px;
+}
+html::-webkit-scrollbar-thumb:hover {
+  background: #d2d2d255;
+}

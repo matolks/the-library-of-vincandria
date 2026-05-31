@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import "katex/dist/katex.min.css";
-
+import Link from "next/link";
 import { prisma } from "@/app/lib/prisma";
 import { BlockRenderer } from "@/app/components/BlockRenderer";
 import type { Block } from "@/types/blocks";
@@ -39,10 +39,13 @@ export default async function TopicPage({ params }: PageProps) {
   });
 
   return (
-    <article className="max-w-[760px]">
-      <p className="mb-6 font-mono text-[10px] font-light uppercase tracking-[0.4em] text-[#d2d2d266]">
-        {topicRecord.course.name}
-      </p>
+    <article className="max-w-[860px]">
+      <Link
+        href={`/${group}/${course}`}
+        className="mb-6 inline-block font-mono text-[10px] font-light uppercase tracking-[0.4em] text-[#d2d2d266] transition-colors hover:text-[#d2d2d2]"
+      >
+        ← {topicRecord.course.name}
+      </Link>
 
       <h1 className="mb-4 font-serif font-medium leading-[1.05] tracking-tight text-[#f0f0f0] text-[clamp(2rem,5vw,3.5rem)]">
         {topicRecord.title}
