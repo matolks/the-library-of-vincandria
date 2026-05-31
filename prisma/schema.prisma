@@ -99,6 +99,7 @@ enum BlockType {
   math
   plot
   callout
+  image
 }
 
 model Chunk {

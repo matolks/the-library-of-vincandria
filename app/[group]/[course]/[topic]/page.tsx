@@ -10,6 +10,12 @@ interface PageProps {
   params: Promise<{ group: string; course: string; topic: string }>;
 }
 
+interface CitationItem {
+  key: string;
+  label: string;
+  href?: string;
+}
+
 export default async function TopicPage({ params }: PageProps) {
   const { group, course, topic } = await params;
 
@@ -54,6 +60,24 @@ export default async function TopicPage({ params }: PageProps) {
     } as Block;
   });
 
+  const citationChunkIds = collectSourceChunkIds(blocks);
+  const chunks = citationChunkIds.length
+    ? await prisma.chunk.findMany({
+        where: {
+          id: { in: citationChunkIds },
+          courseId: topicRecord.courseId,
+        },
+        select: {
+          id: true,
+          sourcePath: true,
+          sourceType: true,
+          pageNumber: true,
+          sectionPath: true,
+        },
+      })
+    : [];
+  const citations = buildCitationItems(citationChunkIds, chunks);
+
   return (
     <article className="max-w-[860px]">
       <Link
@@ -76,6 +100,8 @@ export default async function TopicPage({ params }: PageProps) {
       <div className="mb-8 h-px w-12 bg-[#d2d2d233]" />
 
       <BlockRenderer blocks={blocks} />
+
+      <CitationFooter citations={citations} />
 
       {(prev || next) && (
         <nav className="mt-20 grid grid-cols-2 gap-4 border-t border-[#ffffff18] pt-8">
@@ -112,5 +138,108 @@ export default async function TopicPage({ params }: PageProps) {
         </nav>
       )}
     </article>
+  );
+}
+
+function collectSourceChunkIds(blocks: Block[]): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const block of blocks) {
+    const ids = block.generation_metadata?.source_chunk_ids;
+    if (!Array.isArray(ids)) continue;
+    for (const id of ids) {
+      if (typeof id !== "string" || seen.has(id)) continue;
+      seen.add(id);
+      out.push(id);
+    }
+  }
+  return out;
+}
+
+function buildCitationItems(
+  orderedIds: string[],
+  chunks: Array<{
+    id: string;
+    sourcePath: string;
+    sourceType: string;
+    pageNumber: number | null;
+    sectionPath: string | null;
+  }>
+): CitationItem[] {
+  const byId = new Map(chunks.map((chunk) => [chunk.id, chunk]));
+  const seen = new Set<string>();
+  const out: CitationItem[] = [];
+  for (const id of orderedIds) {
+    const chunk = byId.get(id);
+    if (!chunk) continue;
+    const key = [
+      chunk.sourcePath,
+      chunk.pageNumber ?? "",
+      chunk.sectionPath ?? "",
+    ].join("|");
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({
+      key,
+      ...formatCitation(chunk),
+    });
+  }
+  return out;
+}
+
+function formatCitation(chunk: {
+  sourcePath: string;
+  sourceType: string;
+  pageNumber: number | null;
+  sectionPath: string | null;
+}): { label: string; href?: string } {
+  const isWeb = chunk.sourceType === "web" || /^https?:\/\//.test(chunk.sourcePath);
+  const page = chunk.pageNumber ? `, p. ${chunk.pageNumber}` : "";
+  const section = chunk.sectionPath ? `, ${chunk.sectionPath}` : "";
+  if (isWeb) {
+    const url = /^https?:\/\//.test(chunk.sourcePath) ? chunk.sourcePath : undefined;
+    const label = url ? domainLabel(url) : chunk.sourcePath;
+    return { label: `${label}${section}${page}`, href: url };
+  }
+  return { label: `${basename(chunk.sourcePath)}${section}${page}` };
+}
+
+function domainLabel(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
+
+function basename(path: string): string {
+  return path.split("/").filter(Boolean).at(-1) ?? path;
+}
+
+function CitationFooter({ citations }: { citations: CitationItem[] }) {
+  if (!citations.length) return null;
+
+  return (
+    <section className="mt-16 border-t border-[#ffffff18] pt-6">
+      <h2 className="mb-3 font-mono text-[10px] font-light uppercase tracking-[0.35em] text-[#d2d2d266]">
+        Sources
+      </h2>
+      <ol className="space-y-1.5 pl-5 text-[12px] font-light leading-relaxed text-[#d2d2d280]">
+        {citations.map((citation) => (
+          <li key={citation.key} className="pl-1">
+            {citation.href ? (
+              <a
+                href={citation.href}
+                className="underline decoration-[#d2d2d244] underline-offset-4 transition-colors hover:text-[#e8e8e8]"
+              >
+                {citation.label}
+              </a>
+            ) : (
+              citation.label
+            )}
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }

@@ -1,0 +1,521 @@
+{
+  "course_slug": "multivariable-calculus",
+  "judge_version": "judge.v2",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-05-31T19:28:39.519949+00:00",
+  "topics": [
+    {
+      "topic_id": "bed01221-f9ac-424e-b168-b85a1b2b52f6",
+      "topic_slug": "mvc-quadric-surfaces",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8873,
+      "output_tokens": 1202,
+      "cache_creation_tokens": 1200,
+      "cache_read_tokens": 0,
+      "usd_cost": 0.049149,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "84b860ba-83d1-4465-9eca-55dccea3b250",
+          "description": "The plot expression 'sqrt(1 + x^2/4 + y^2/9)' renders only the upper half of the hyperboloid of one sheet, but the equation in the preceding display-math is x\u00b2/4 + y\u00b2/9 \u2212 z\u00b2 = 1, which means z = \u00b1sqrt(x\u00b2/4 + y\u00b2/9 \u2212 1), not sqrt(1 + x\u00b2/4 + y\u00b2/9); the expression shown is actually the upper sheet of a hyperboloid of two sheets (z\u00b2 = 1 + x\u00b2/4 + y\u00b2/9).",
+          "suggested_fix": "Change the expression to 'sqrt(max(0, x^2/4 + y^2/9 - 1))' and widen the domain so the waist region is visible, e.g. x: [-4, 4], y: [-4, 4]."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "64e3c210-52ac-4635-a1b5-614d596c6899",
+          "description": "The plot expression 'sqrt(1 + x^2/4 + y^2/4)' correctly represents the upper sheet of z\u00b2 \u2212 x\u00b2/4 \u2212 y\u00b2/4 = 1, but the title says 'z\u00b2 \u2212 x\u00b2/4 \u2212 y\u00b2/4 = 1' while the preceding display-math uses a\u00b2=4, b\u00b2=4 for x and y, which is consistent; however the hyperboloid-of-one-sheet plot (block 84b860ba) uses the same expression, making both plots visually identical and the one-sheet plot factually wrong.",
+          "suggested_fix": "Fix the hyperboloid-of-one-sheet plot (block 84b860ba) as described separately; the two-sheets plot expression here is correct for its own surface."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "b881e303-b67c-42b6-af7b-9603025e6ccc",
+          "description": "The section enumerates three distinct cylinder types (elliptic, parabolic, hyperbolic) but only one plot block follows (the parabolic cylinder), leaving the elliptic and hyperbolic cylinders without any visualization.",
+          "suggested_fix": "Add a surface3d plot for the elliptic cylinder (e.g., expression for z as a function of x with y as the free axis) and one for the hyperbolic cylinder."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "8e2441e4-29e5-49b5-87e1-7b5eb2766913",
+          "description": "The ellipsoid plot shows only the upper half (z \u2265 0) due to the sqrt expression, so the lower half of the ellipsoid is never visualized, materially misrepresenting the closed surface described in the prose.",
+          "suggested_fix": "Add a second surface3d plot for the lower half using '-sqrt(max(0, 1 - x^2/4 - y^2/9))' and group both with the upper-half plot, or note explicitly in the title that only the upper half is shown."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "e398383a-e74e-4a65-84db-7f922bc2acb5",
+          "description": "The display-math block showing the substitution '2 + t = 11t\u00b2' is immediately followed by a paragraph (f92fda1f) that explicitly walks through that computation ('Rearranging gives 11t\u00b2 \u2212 t \u2212 2 = 0'), but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks e398383a and f92fda1f."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "1e15ef7c-b720-4951-b6ea-431d4408d8f5",
+          "description": "The ellipsoid display-math block is immediately followed by a paragraph (ccd3e879) that directly interprets it ('Every trace \u2026 is an ellipse \u2026 The surface has intercepts at \u2026'), but they share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 1e15ef7c and ccd3e879."
+        }
+      ]
+    },
+    {
+      "topic_id": "29128932-682d-43cb-a99e-d99b2505ab5a",
+      "topic_slug": "mvc-vectors-3d",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7826,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.024093,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "efa02201-f549-4ca5-8d2f-b881139dcc95",
+      "topic_slug": "mvc-dot-product",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8514,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.026157,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "7e405c50-ba01-4aa1-a98b-c650ee4b96c8",
+      "topic_slug": "mvc-cross-product",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8399,
+      "output_tokens": 218,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.028827,
+      "status": "parse_failed",
+      "error": "JSONDecodeError: Extra data: line 13 column 1 (char 429)",
+      "findings": []
+    },
+    {
+      "topic_id": "a7ec6cc1-28f5-4849-b614-f0c49c73df70",
+      "topic_slug": "mvc-lines-planes-3d",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8602,
+      "output_tokens": 515,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.033891,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "5637e600-66b5-4554-ae17-2f6d31e29021",
+          "description": "The distance formula is described as the projection of $\\overrightarrow{QP}$ onto the normal, but the source chunks and standard derivation use $\\overrightarrow{PQ}$ (from P to Q); the sign inside the absolute value is unaffected, but the vector direction stated is reversed.",
+          "suggested_fix": "Change '$\\overrightarrow{QP}$' to '$\\overrightarrow{PQ}$' (or equivalently note it is the projection of the vector from P to any point Q on the plane onto n)."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "ac950221-32fc-42fc-9cc4-3a4ae288d227",
+          "description": "The section introduces a parametric line in 3D space as a geometric object but no plot accompanies it to help the learner visualize a line in 3D.",
+          "suggested_fix": "Add a parametric3d plot block showing a representative line, e.g., r(t) = \u27e81,2,3\u27e9 + t\u27e81,0,-1\u27e9 over t \u2208 [-2, 2]."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "6afef8bd-bbc4-45af-ae09-ba72e082ac10",
+          "description": "The section introduces a plane in 3D as a geometric object but no plot accompanies it to help the learner visualize the plane and its normal vector.",
+          "suggested_fix": "Add a surface3d plot block showing a representative plane, e.g., z = (d - Ax - By)/C over a small domain."
+        }
+      ]
+    },
+    {
+      "topic_id": "38323237-7fdd-4197-99f9-c6a4307e045c",
+      "topic_slug": "mvc-parametric-curves",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8530,
+      "output_tokens": 1052,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.04173,
+      "status": "parse_failed",
+      "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+      "findings": []
+    },
+    {
+      "topic_id": "e64c9eca-198f-4705-b323-9b29b2df774f",
+      "topic_slug": "mvc-vector-calculus-ops",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10484,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.032067,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "045d4841-f798-4f36-8c9a-89e32fbf07af",
+      "topic_slug": "mvc-arc-length",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9701,
+      "output_tokens": 508,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.037083,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "fdb4fa2c-d8e7-41ad-ad91-574d7fa75ff2",
+          "description": "The paragraph describes a specific 3D curve (intersection of cylinder x\u00b2+y\u00b2=4 with plane z=x+y) whose shape is central to the discussion, but no plot block accompanies it.",
+          "suggested_fix": "Add a parametric3d plot of r(t) = [2*cos(t), 2*sin(t), 2*cos(t)+2*sin(t)] over t in [0, 2\u03c0]."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "08a8c96d-c7f6-426b-8550-ebd03232f6f5",
+          "description": "The plot block immediately follows the arc length computation display-math (block 31670b4e) but neither block has a group_id linking them, and the plot directly visualizes the curve used in that computation.",
+          "suggested_fix": "Assign the same group_id to blocks 31670b4e and 08a8c96d so the computation and its curve visualization are coupled."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "medium",
+          "block_id": "205f9acb-2d02-445c-9755-08d213f555df",
+          "description": "The circle example describes a specific geometric curve in 3D space (circle of radius 4 in the plane z=9) but no plot block accompanies it to help the learner visualize the object being reparametrized.",
+          "suggested_fix": "Add a parametric3d plot of R(s) = [1+4*cos(s/4), 4+4*sin(s/4), 9] over s in [0, 8*pi]."
+        }
+      ]
+    },
+    {
+      "topic_id": "02e7317c-c155-4776-8cc4-498b983e529b",
+      "topic_slug": "mvc-motion-3d",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9423,
+      "output_tokens": 335,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.033654,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "9178afc9-436d-49d6-9224-3f124964e1c6",
+          "description": "The plot block is immediately followed by a paragraph (ac92d71b) that explicitly names features of that plot ('The curve is a spiral', 'winds around the z-axis'), but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 9178afc9 and ac92d71b."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "f98bfb84-70b3-4cde-a7de-133f7a325fb5",
+          "description": "The display-math block giving the final result a_T(\u03c0) = 2\u03c0/\u221a(\u03c0\u00b2+4) is immediately followed by a paragraph (a0a11daa) that explicitly interprets that exact result ('Since a_T(\u03c0) > 0, the particle is speeding up'), but they share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks f98bfb84 and a0a11daa."
+        }
+      ]
+    },
+    {
+      "topic_id": "a721981d-1f68-49b5-add1-5919f119bdfa",
+      "topic_slug": "mvc-multivariable-functions",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7378,
+      "output_tokens": 1975,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.052119,
+      "status": "parse_failed",
+      "error": "JSONDecodeError: Extra data: line 48 column 1 (char 3059)",
+      "findings": []
+    },
+    {
+      "topic_id": "25ec70bf-281f-4e51-9076-cf04ad2cb3e7",
+      "topic_slug": "mvc-limits-continuity",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10325,
+      "output_tokens": 872,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.044415,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "fcc40e11-04ba-4347-a781-7f7c11d7ded2",
+          "description": "The prose claims that approaching along different rays y = mx gives a different limit value for f(x,y) = (x\u00b2\u2212y\u00b2)/(x\u00b2+y\u00b2), but along any fixed ray y = mx the limit is (1\u2212m\u00b2)/(1+m\u00b2), which is a single well-defined value per slope \u2014 the non-existence arises because different slopes give different values, not because each ray gives multiple values; the description 'each level curve passes through or near the origin at a different height' is misleading and conflates the level-curve picture with the path-limit argument.",
+          "suggested_fix": "Rewrite to say: along the ray y = mx the limit equals (1\u2212m\u00b2)/(1+m\u00b2), which varies with m, so different paths give different limiting values and the limit does not exist."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "06c0880a-bcbc-4443-8001-50030e48aef8",
+          "description": "The display-math block showing the polar-coordinate simplification of x\u00b2y/(x\u00b2+y\u00b2) is immediately followed by block 872f33e3 which explicitly interprets that exact equation ('Since |cos\u00b2\u03b8 sin\u03b8| \u2264 1\u2026'), but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 06c0880a and 872f33e3."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "b37e3cf9-de18-4d28-a7a2-7ec78b043476",
+          "description": "The continuity definition display-math block is immediately followed by block f5a73adc which begins 'This packages three requirements together' \u2014 a direct interpretation of that exact equation \u2014 but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks b37e3cf9 and f5a73adc."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "1b32270c-553b-449c-b11e-9da6dc242ac7",
+          "description": "The level-curves plot block is immediately preceded by block fcc40e11 which names specific features of that plot ('The plot below shows these level curves'), but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks fcc40e11 and 1b32270c."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "d43e1916-4075-4bfc-b776-ebec53324dcb",
+          "description": "Block d43e1916 says 'along the line (0,0)' which is grammatically incomplete and confusing \u2014 it should say 'as (x,y) \u2192 (0,0)' \u2014 creating a stumble before the straight-line path calculation in the next block.",
+          "suggested_fix": "Change 'along the line (0,0)' to 'as (x,y) \u2192 (0,0)'."
+        }
+      ]
+    },
+    {
+      "topic_id": "72dc0446-578d-4c74-8052-822a9a07792a",
+      "topic_slug": "mvc-partial-derivatives",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9041,
+      "output_tokens": 1215,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.045708,
+      "status": "parse_failed",
+      "error": "JSONDecodeError: Extra data: line 34 column 1 (char 2381)",
+      "findings": []
+    },
+    {
+      "topic_id": "bffebaa7-d467-4954-8abf-858bf1218734",
+      "topic_slug": "mvc-tangent-planes",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9502,
+      "output_tokens": 847,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.041571,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "085cddca-8bd6-4e45-aecf-3b5b14af2d90",
+          "description": "Worked Example 2 uses the specific surface g(x,y) = ln(x)/y\u00b2 whose shape matters for understanding the tangent plane result, but no plot block accompanies it.",
+          "suggested_fix": "Add a surface3d plot of log(x)/y^2 over a domain such as x:[0.1,3], y:[-3,-0.1] or y:[0.1,3] to visualize the surface near (1,2)."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "medium",
+          "block_id": "aaf9b10b-f1a1-4bb4-ac5c-2972e2f185ed",
+          "description": "The linearization worked example uses f(x,y) = x\u00b2+y\u00b2 at (1,1) and discusses the approximation geometrically, but no plot shows the surface and its tangent plane together.",
+          "suggested_fix": "Add a surface3d plot of x^2+y^2 over a small domain around (1,1) to illustrate the approximation visually."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "ab89d04d-4eae-4fa7-b7f1-8b8a12f14441",
+          "description": "The plot block (33b549ec) is immediately followed by a paragraph (ab89d04d) that explicitly names features of that plot ('The paraboloid z = x\u00b2+y\u00b2', 'At the point (1,1,2), the tangent plane touches the surface'), but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 33b549ec and ab89d04d."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "6a648eac-e12c-4ac1-b2b4-2607d453a078",
+          "description": "The display-math block (3a663ca5) for the level-surface tangent plane is immediately followed by a paragraph (6a648eac) that explicitly interprets that exact equation ('This formula unifies the two cases'), but they share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 3a663ca5 and 6a648eac."
+        },
+        {
+          "category": "factual_error",
+          "severity": "low",
+          "block_id": "cfbd821d-1c52-43ee-936b-6bb2a031e60f",
+          "description": "The paragraph states 'the tangent plane turns out to be a vertical slice in that direction', but a plane with zero tilt in the y-direction is horizontal in y (not a vertical slice); it is the plane z = (1/4)(x-1), which is independent of y and thus extends infinitely in the y-direction without being vertical.",
+          "suggested_fix": "Replace 'a vertical slice in that direction' with 'independent of y \u2014 the plane extends horizontally in the y-direction with no tilt'."
+        }
+      ]
+    },
+    {
+      "topic_id": "c4c9f99c-5420-44a7-aea3-bfc06d6fbe35",
+      "topic_slug": "mvc-gradient-directional-derivatives",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10964,
+      "output_tokens": 511,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.040917,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "dd681b90-d0d4-4f47-8165-8f6bb46ef11d",
+          "description": "The paragraph immediately following the level-curves plot explicitly names features of that plot ('The level curves of f(x,y) = x\u00b2+y\u00b2 are circles\u2026confirming the geometric principle') but neither block carries a shared group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 48d8d494 and dd681b90 so the plot and its interpretation are coupled."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "b4577d60-1414-4f01-919f-d4dc317684a1",
+          "description": "The paragraph immediately following the surface3d plot explicitly describes features of that plot ('The surface has a maximum at the origin\u2026') but neither block carries a shared group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 0ec8a424 and b4577d60."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "b4577d60-1414-4f01-919f-d4dc317684a1",
+          "description": "The paragraph refers to 'the direction of steepest descent for f' as \u2207(-f) = \u27e82x, 2y\u27e9, but this is actually -\u2207f, not \u2207(-f) in the sense of a separate function; the notation switch from \u2207f to \u2207(-f) without explanation may confuse learners.",
+          "suggested_fix": "Replace '\u2207(-f) = \u27e82x, 2y\u27e9' with '-\u2207f = \u27e82x, 2y\u27e9' for consistency with the notation used throughout the topic."
+        }
+      ]
+    },
+    {
+      "topic_id": "c335053e-9b32-4cb2-91cf-9722cbe42a54",
+      "topic_slug": "mvc-chain-rule",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10316,
+      "output_tokens": 1222,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.049638,
+      "status": "parse_failed",
+      "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+      "findings": []
+    },
+    {
+      "topic_id": "07ea7e8c-60af-4845-b1f4-e73e5f134f6f",
+      "topic_slug": "mvc-optimization",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9405,
+      "output_tokens": 608,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.037695,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "d3ec80d0-c5f0-4ca5-9c52-8a856c29a7ad",
+          "description": "The paragraph mentions a local maximum surface (e.g., f(x,y) = -x\u00b2-y\u00b2) as a third geometric outcome alongside the minimum and saddle point, but no plot is provided for a local maximum surface, leaving the 'three outcomes' heading incomplete.",
+          "suggested_fix": "Add a surface3d plot of f(x,y) = -x^2 - y^2 to illustrate the local maximum case alongside the existing two plots."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "50001502-5dcd-4063-9d83-65357fc30200",
+          "description": "The paragraph beginning 'This is the determinant of the Hessian matrix\u2026' directly interprets the immediately preceding display-math block (id=14898df3) but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 14898df3 and 50001502."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "61c1c479-94f8-4330-bd99-e655079462c3",
+          "description": "The paragraph beginning 'This quadratic form is positive definite\u2026' directly interprets the immediately preceding Taylor expansion display-math block (id=accd5d98) but they share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks accd5d98 and 61c1c479."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "6cdd5e50-9764-4479-bb62-38bc891a9467",
+          "description": "The paragraph 'Since D > 0 and f_xx = 2 > 0\u2026' directly interprets the preceding discriminant computation display-math block (id=c496bfd0) but they share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks c496bfd0 and 6cdd5e50."
+        }
+      ]
+    },
+    {
+      "topic_id": "3389a641-c253-4cb8-8609-21ea2aa9a1f7",
+      "topic_slug": "mvc-lagrange-multipliers",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9476,
+      "output_tokens": 1131,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.045753,
+      "status": "parse_failed",
+      "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+      "findings": []
+    },
+    {
+      "topic_id": "b213595a-462a-46ba-b5a7-437337ac6129",
+      "topic_slug": "mvc-double-integrals",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9249,
+      "output_tokens": 959,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.042492,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "c46df132-0d53-46cb-8252-59e0b4baa084",
+          "description": "The worked example describes a specific triangular region with vertices (0,0), (1,0), (1,1) that the learner needs to visualize to understand the integration limits, but no plot accompanies it.",
+          "suggested_fix": "Add a plot block (e.g., kind=surface3d or a 2D region sketch) showing the triangular domain D before or alongside the worked example."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "medium",
+          "block_id": "e78c0f49-b9f9-4b60-8371-c19dc5ba47fd",
+          "description": "The paragraph describes the same triangular region (vertices (0,0),(1,0),(1,1)) being re-described as Type I and Type II with different iterated integral limits, a geometric argument that requires a diagram but has no accompanying plot.",
+          "suggested_fix": "Add a 2D region plot showing the triangle with annotations for the two descriptions (Type I vs Type II bounds)."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "28d580a5-651c-43b3-b883-f2de8f1e975c",
+          "description": "The plot block (a1f1445a) is immediately followed by a paragraph (28d580a5) that explicitly names features of that plot ('The surface z = 3x\u00b2\u2212y over the rectangle\u2026', 'it dips below the xy-plane'), but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks a1f1445a and 28d580a5."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "18e81327-c173-48c3-98af-5693d937a939",
+          "description": "The display-math block (f3d2ba2a) showing the Fubini computation is immediately followed by a paragraph (18e81327) that walks through that specific computation step by step, but they share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks f3d2ba2a and 18e81327."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "85b42bbe-c12b-4a29-8f5a-96119267b252",
+          "description": "The display-math block (85b42bbe) for the triangular region worked example is immediately followed by a paragraph (2943b323) that interprets the result ('Notice how the upper limit of the inner integral, x, depends on x'), but they share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 85b42bbe and 2943b323."
+        },
+        {
+          "category": "factual_error",
+          "severity": "low",
+          "block_id": "2943b323-19d0-4d7d-8d37-5ee8e11877ef",
+          "description": "The paragraph says 'the upper limit of the inner integral, x, depends on x' \u2014 the phrasing is tautological and slightly misleading; it should say the upper limit depends on the outer variable x (i.e., it is a function of x, not a constant).",
+          "suggested_fix": "Rephrase to: 'Notice how the upper limit of the inner integral, x, is a function of the outer variable x \u2014 this is what distinguishes a general region from a rectangle.'"
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 37,
+    "cost": 0.706959,
+    "in": 166008,
+    "out": 13221,
+    "cache_create": 1200,
+    "cache_read": 20400,
+    "severity_low": 4,
+    "severity_medium": 21,
+    "severity_high": 12
+  }
+}

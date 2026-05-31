@@ -1,0 +1,576 @@
+{
+  "course_slug": "multivariable-calculus",
+  "judge_version": "judge.v4",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-05-31T20:47:01.289334+00:00",
+  "topics": [
+    {
+      "topic_id": "bed01221-f9ac-424e-b168-b85a1b2b52f6",
+      "topic_slug": "mvc-quadric-surfaces",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10553,
+      "output_tokens": 1507,
+      "cache_creation_tokens": 1334,
+      "cache_read_tokens": 0,
+      "usd_cost": 0.0592665,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "380355e3-c9ae-4d41-869e-63e7bd5a8430",
+          "description": "The plot expression `sqrt(1 + x^2 + y^2)` graphs the upper sheet of the hyperboloid of TWO sheets (z\u00b2 \u2212 x\u00b2 \u2212 y\u00b2 = 1), not a hyperboloid of one sheet; the title label is also contradictory and misleading for the one-sheet section.",
+          "suggested_fix": "Replace the expression with `sqrt(1 - x^2 - y^2 + x^2 + y^2)` is not right either; use `sqrt(1 + x^2/4 + y^2/4)` for a one-sheet hyperboloid upper half, or better plot `sqrt(max(0, 1 + z^2 - x^2))` style; concretely, for x\u00b2+y\u00b2\u2212z\u00b2=1 the surface is not a function of x,y alone \u2014 consider using a level-curve or parametric plot, or show the waist cross-section explicitly."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "4eafd9aa-264a-4245-8c7f-bf759171a9e0",
+          "description": "The paragraph claims the plot shows the one-sheet hyperboloid x\u00b2+y\u00b2\u2212z\u00b2=1 where 'horizontal slices are always ellipses, largest far from the waist at z=0', but the actual plotted surface is z\u00b2\u2212x\u00b2\u2212y\u00b2=1 (two-sheet hyperboloid upper sheet), which has its minimum at z=1 and grows outward \u2014 the waist description is wrong for the plotted surface.",
+          "suggested_fix": "Either fix the plot to actually show a one-sheet hyperboloid, or rewrite the paragraph to correctly describe the two-sheet upper sheet that is actually plotted."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "83c83dc8-9215-49bd-a881-4c590ed60dc3",
+          "description": "The elliptic cylinder section describes a specific geometric surface but has no accompanying plot block.",
+          "suggested_fix": "Add a surface3d plot of the elliptic cylinder, e.g., expression for a slice or use a parametric representation."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "3512fb2b-4920-4eee-a44f-2c4759186e10",
+          "description": "The parabolic cylinder section describes a specific geometric surface but has no accompanying plot block.",
+          "suggested_fix": "Add a surface3d plot of the parabolic cylinder z=x\u00b2."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "4a080912-d59f-4a4e-884e-068506e4f5ca",
+          "description": "The hyperbolic cylinder section describes a specific geometric surface but has no accompanying plot block.",
+          "suggested_fix": "Add a surface3d or appropriate plot of the hyperbolic cylinder."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "4eafd9aa-264a-4245-8c7f-bf759171a9e0",
+          "description": "The paragraph abruptly switches from describing the plotted surface (two-sheet hyperboloid) to discussing the standard one-sheet form x\u00b2+y\u00b2\u2212z\u00b2=1 without warning, creating a confusing jump between two different surfaces.",
+          "suggested_fix": "Separate the description of the plotted surface from the description of the standard one-sheet form, or fix the plot to match the one-sheet hyperboloid being discussed."
+        }
+      ]
+    },
+    {
+      "topic_id": "29128932-682d-43cb-a99e-d99b2505ab5a",
+      "topic_slug": "mvc-vectors-3d",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6947,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1334,
+      "usd_cost": 0.0214362,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "efa02201-f549-4ca5-8d2f-b881139dcc95",
+      "topic_slug": "mvc-dot-product",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8906,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1334,
+      "usd_cost": 0.0273732,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "7e405c50-ba01-4aa1-a98b-c650ee4b96c8",
+      "topic_slug": "mvc-cross-product",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8192,
+      "output_tokens": 447,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1334,
+      "usd_cost": 0.0316812,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "73224ec8-24c3-45f7-9dd2-04b245a6f9fd",
+          "description": "The paragraph describes the geometric interpretation of the cross product magnitude as the area of a parallelogram spanned by two vectors, a spatial relationship that requires visualization, but no plot accompanies it.",
+          "suggested_fix": "Add a 3D plot showing two vectors v and w emanating from the origin with the parallelogram they span shaded, and the cross product vector perpendicular to it."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "caee2c56-782f-40aa-aa24-6fc9f14834f1",
+          "description": "The expanded component formula display-math block is immediately followed by the warning callout (b831026f) that explicitly interprets the sign on the j-component of that exact equation, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks caee2c56 and b831026f."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "401486c9-f30f-49ab-ad18-668938fe7c82",
+          "description": "The display-math block giving the parallelogram and triangle area formulas is immediately followed by paragraph 2a0e37ce that explicitly interprets those formulas with a concrete example, but they share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 401486c9 and 2a0e37ce."
+        }
+      ]
+    },
+    {
+      "topic_id": "a7ec6cc1-28f5-4849-b614-f0c49c73df70",
+      "topic_slug": "mvc-lines-planes-3d",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9658,
+      "output_tokens": 411,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1334,
+      "usd_cost": 0.0355392,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "743d3482-aa5f-4325-b0cb-72a57e8f6fa4",
+          "description": "The block states the distance is the projection of $\\overrightarrow{QP}$ onto $\\mathbf{n}$, but the source and standard formula use the projection of $\\overrightarrow{PQ}$ (from the given point to a point on the plane) onto $\\mathbf{n}$; the direction of the vector matters for the sign before taking absolute value, and naming it $\\overrightarrow{QP}$ (from plane to point) is the reverse of the convention used in the derivation.",
+          "suggested_fix": "Change '$\\overrightarrow{QP}$' to '$\\overrightarrow{PQ}$' (or equivalently note that $Q$ is on the plane and $P$ is the given point, so the vector from $P$ to $Q$ is used)."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": null,
+          "description": "The topic covers geometric objects (lines and planes in 3D space) that learners need to visualize, but no plot block appears anywhere in the sequence to illustrate a representative line or plane in 3D.",
+          "suggested_fix": "Add at least one surface3d or parametric3d plot block showing a representative plane (e.g., the plane from a worked example) and a line passing through it."
+        }
+      ]
+    },
+    {
+      "topic_id": "38323237-7fdd-4197-99f9-c6a4307e045c",
+      "topic_slug": "mvc-parametric-curves",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6774,
+      "output_tokens": 307,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1334,
+      "usd_cost": 0.0253272,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "de5d7b05-f9eb-4444-bb20-9ba13a7de60b",
+          "description": "The helix section introduces a specific 3D space curve whose shape is central to understanding the example, but no plot block accompanies it.",
+          "suggested_fix": "Add a surface3d or parametric3d plot block showing the helix r(t) = <cos t, sin t, t> for t in a suitable range."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "medium",
+          "block_id": "efdb88a0-194c-4f28-b9d7-3376817bb7b6",
+          "description": "The intersection curve r(t) = <t, 1-t, t> is a 3D space curve resulting from the intersection of a plane and a surface, but no plot is provided to visualize the geometry.",
+          "suggested_fix": "Add a 3D plot showing the plane x+y=1, the surface z=x^2+xy, and the intersection line."
+        }
+      ]
+    },
+    {
+      "topic_id": "e64c9eca-198f-4705-b323-9b29b2df774f",
+      "topic_slug": "mvc-vector-calculus-ops",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10127,
+      "output_tokens": 629,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1334,
+      "usd_cost": 0.0402162,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "1eca6a05-e763-4f53-b1e6-1084b6e75e2a",
+          "description": "The worked example describes a specific helix r(t) = \u27e8cos t, sin t, t\u27e9 whose 3D shape is central to understanding the tangent vector and speed, but no plot block accompanies it.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "045d4841-f798-4f36-8c9a-89e32fbf07af",
+      "topic_slug": "mvc-arc-length",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10911,
+      "output_tokens": 470,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1334,
+      "usd_cost": 0.040183199999999995,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "2378a4e9-2401-41ab-97a1-3cd272bf588e",
+          "description": "The worked example uses the specific plane curve r(t) = \u27e8t\u00b2/2, t\u00b3/3\u27e9 whose shape matters for geometric understanding, but no plot accompanies it.",
+          "suggested_fix": "Add a parametric2d plot of x = t^2/2, y = t^3/3 for t in [0, 1] to show the curve's shape."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "a532e3e6-37fc-48d8-b01e-eb36f01ff7c1",
+          "description": "The circle example describes a specific geometric object (circle in the plane z=9 with radius 4 and center \u27e81,4,9\u27e9) but no plot is provided.",
+          "suggested_fix": "Add a parametric3d or parametric2d plot of the circle to accompany this example."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "medium",
+          "block_id": "29a48e88-3e65-479d-a92c-77261c885014",
+          "description": "The intersection curve of the cylinder x\u00b2+y\u00b2=4 with the plane z=x+y is a specific geometric object described in prose but has no accompanying plot.",
+          "suggested_fix": "Add a parametric3d plot of r(t) = \u27e82cos(t), 2sin(t), 2cos(t)+2sin(t)\u27e9 for t in [0, 2\u03c0]."
+        }
+      ]
+    },
+    {
+      "topic_id": "02e7317c-c155-4776-8cc4-498b983e529b",
+      "topic_slug": "mvc-motion-3d",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9841,
+      "output_tokens": 782,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1334,
+      "usd_cost": 0.041653199999999994,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "broken_plot_spec",
+          "severity": "medium",
+          "block_id": "4be8c065-bf9a-4732-a94e-0dbc9cf6b7d7",
+          "description": "The plot renders the paraboloid z = 4 + x\u00b2 + y\u00b2 as a surface3d, but the helix lies on the cylinder x\u00b2 + y\u00b2 = 16 (radius 4), so the paraboloid surface does not pass through or meaningfully illustrate the helix's path; moreover the expression '4 + x^2 + y^2' evaluates to values between 4 and 36 over the domain, producing a surface that has no geometric relationship to the helix r(t) = \u27e84cos t, 4sin t, 4+t\u00b2\u27e9 which lives on a cylinder, not a paraboloid.",
+          "suggested_fix": "Replace with a parametric plot of the helix itself, or remove the misleading paraboloid and use a cylinder x\u00b2+y\u00b2=16 surface to correctly illustrate the geometry."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "bd62fc58-cc90-4360-bbd2-bacdf512bfb3",
+          "description": "The paragraph claims 'the helix traces along the cylinder x\u00b2+y\u00b2=16 and rises above it, reflecting that the upward acceleration produces positive a_T', but then attributes the positive a_T solely to the z-acceleration; in fact a_T > 0 because the dot product v(\u03c0)\u00b7a(\u03c0) = 4\u03c0 > 0, which comes entirely from the z-components (the x and y contributions are zero), so the explanation is misleading but not outright wrong \u2014 however the claim that the paraboloid shown 'illustrates' the helix's upward drift is factually incorrect since the helix does not lie on that paraboloid.",
+          "suggested_fix": "Correct the prose to state that the paraboloid is not the surface the helix lies on; the helix lies on the cylinder x\u00b2+y\u00b2=16, and the z-coordinate follows z=4+t\u00b2, not the paraboloid z=4+x\u00b2+y\u00b2."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "ba5a73e9-ff7d-4537-8a5c-4b2a6ecdf430",
+          "description": "The worked example describes a specific 3D helix r(t)=\u27e84cos t, 4sin t, 4+t\u00b2\u27e9 whose shape is central to understanding the tangential acceleration, but no correct plot of this helix (or the cylinder it lies on) is provided \u2014 the only plot shown is an unrelated paraboloid.",
+          "suggested_fix": "Add a parametric3d plot of the helix r(t)=\u27e84cos t, 4sin t, 4+t\u00b2\u27e9 for t in [0, 4\u03c0] to give the learner a correct visual of the curve being analyzed."
+        }
+      ]
+    },
+    {
+      "topic_id": "a721981d-1f68-49b5-add1-5919f119bdfa",
+      "topic_slug": "mvc-multivariable-functions",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7798,
+      "output_tokens": 1562,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1334,
+      "usd_cost": 0.047224199999999994,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "87fd3212-5b36-41b5-acdc-c3b0d52e61b6",
+          "description": "Worked Example 2 describes the domain as the interior of an ellipse with specific intercepts (\u00b12, 0) and (0, \u00b11), a geometric region that requires visualization, but no plot block accompanies it.",
+          "suggested_fix": "Add a levelcurves or function2d plot block showing the ellipse x^2/4 + y^2 = 1 with a dashed boundary and the interior shaded, grouped with the example."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "ee50ab39-30f9-4861-9dd2-23ca32db989d",
+          "description": "Worked Example 3 describes three specific parabolic level curves (y = x^2, y = x^2 - 1, y = x^2 - 2) in the xy-plane but no plot block is provided to show them.",
+          "suggested_fix": "Add a plot block (e.g., levelcurves kind) for f(x,y) = x^2 - y - 1 showing the three level curves k = -1, 0, 1, grouped with the example."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "medium",
+          "block_id": "3ca4a64b-68f0-4fb9-a4a3-dc7d7aebfb9b",
+          "description": "Worked Example 1 describes the domain as a closed disk of radius 3 with a solid boundary circle, a geometric region that warrants a 2D domain sketch, but no plot block is provided.",
+          "suggested_fix": "Add a 2D plot block showing the filled disk x^2 + y^2 \u2264 9 with a solid boundary, grouped with the example blocks."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "ee50ab39-30f9-4861-9dd2-23ca32db989d",
+          "description": "The block concludes that 'elevation increases in the downward y-direction (for fixed x)' without noting that elevation also increases as x decreases toward 0 for fixed y, which may confuse learners about the general gradient direction.",
+          "suggested_fix": "Clarify that the statement holds for fixed x, or more precisely state that f increases as y decreases (for any fixed x), i.e., the gradient points in the negative y direction."
+        }
+      ]
+    },
+    {
+      "topic_id": "25ec70bf-281f-4e51-9076-cf04ad2cb3e7",
+      "topic_slug": "mvc-limits-continuity",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 11502,
+      "output_tokens": 1324,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1334,
+      "usd_cost": 0.054766199999999994,
+      "status": "parse_failed",
+      "error": "JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+      "findings": []
+    },
+    {
+      "topic_id": "72dc0446-578d-4c74-8052-822a9a07792a",
+      "topic_slug": "mvc-partial-derivatives",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9597,
+      "output_tokens": 775,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1334,
+      "usd_cost": 0.0408162,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "f95e75b1-904b-43fc-9127-8b1bd6b87131",
+          "description": "The Leibniz notation correspondence is stated incorrectly: the block claims $f_{xy}$ (subscript) means differentiate first with respect to $x$ then $y$, but the Leibniz notation $\\partial^2 f/\\partial y\\,\\partial x$ is said to equal $f_{xy}$ \u2014 yet by the stated Leibniz convention (rightmost first), $\\partial^2 f/\\partial y\\,\\partial x$ means differentiate first in $x$ then in $y$, which would correspond to $f_{xy}$ only if subscript order matches Leibniz order; however the display-math block immediately above equates $f_{xy} = \\partial^2 f/\\partial y\\,\\partial x$, which is the standard convention, so the prose explanation that 'subscript notation reads left-to-right: $f_{xy}$ means differentiate first with respect to $x$, then $y$' is consistent \u2014 but the Leibniz pairing $f_{xy} = \\partial^2 f/\\partial y\\,\\partial x$ displayed in the math block pairs the wrong Leibniz expression with $f_{xy}$: standard convention is $f_{xy} = \\partial^2 f/\\partial x\\,\\partial y$ (differentiate $x$ first, then $y$ in both notations), so the display math has the Leibniz symbols for $f_{xy}$ and $f_{yx}$ swapped.",
+          "suggested_fix": "Correct the display math so that $f_{xy} = \\partial^2 f/\\partial x\\,\\partial y$ and $f_{yx} = \\partial^2 f/\\partial y\\,\\partial x$, consistent with the standard convention that both notations apply the same differentiation order."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "3d6d4495-08e5-401a-8de5-f00226f1d058",
+          "description": "The display-math block defining $f_y$ (def-partial-y) is not assigned a group_id, yet it is the symmetric counterpart directly referenced by the preceding grouped paragraph (d1690781), which says 'Symmetrically, the partial derivative with respect to $y$ is' \u2014 the equation and its lead-in prose are coupled but share no group.",
+          "suggested_fix": null
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "7eba7aac-2525-46c7-837d-3334c44ca7b4",
+          "description": "The geometric-meaning callout immediately follows the $f_y$ definition and interprets the slope meaning of $f_x(a,b)$ for the surface, but it shares no group_id with the surrounding definition blocks it interprets.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "bffebaa7-d467-4954-8abf-858bf1218734",
+      "topic_slug": "mvc-tangent-planes",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10504,
+      "output_tokens": 1403,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1334,
+      "usd_cost": 0.052957199999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "eb887aca-8376-42ec-a363-ef88b9b552d8",
+          "description": "The paragraph refers to the point on the level surface F(x,y,z)=c as '(a, b, c_0)' where c_0 is used both as the z-coordinate of the point and implicitly conflated with the level value c, which is confusing and potentially misleading since c is the level value, not the z-coordinate.",
+          "suggested_fix": "Use a distinct notation for the point on the surface, e.g., (a, b, d) where F(a,b,d)=c, to avoid conflating the z-coordinate with the level value."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "fa942d0e-ae4e-4288-952f-0b84ebeb5fdc",
+          "description": "The section on tangent planes to level surfaces describes an implicit surface F(x,y,z)=c geometrically but provides no plot to help the learner visualize what a level surface looks like or how the tangent plane relates to it.",
+          "suggested_fix": "Add a surface3d plot of a simple level surface (e.g., a sphere x^2+y^2+z^2=1) to accompany the level-surface tangent plane discussion."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "b7e7fa06-3f5e-44ae-bb7d-0624da8d3de3",
+          "description": "The display-math block for dw = f_x dx + f_y dy + f_z dz (inside the insight callout) is not grouped with the preceding callout block id=71788af7, leaving the equation without a shared group_id tying it to its explanatory context.",
+          "suggested_fix": "Assign the same group_id to blocks id=71788af7 and id=b7e7fa06 so the equation and its callout context are linked."
+        }
+      ]
+    },
+    {
+      "topic_id": "c4c9f99c-5420-44a7-aea3-bfc06d6fbe35",
+      "topic_slug": "mvc-gradient-directional-derivatives",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10608,
+      "output_tokens": 510,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1334,
+      "usd_cost": 0.0398742,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "620a2ccc-34cb-442d-9db9-16ded482f3fe",
+          "description": "The paragraph describes level curves of f(x,y) = x\u00b2 + y\u00b2 as concentric circles with the gradient pointing radially outward, but there is no level-curve (contour) plot accompanying this geometric claim \u2014 only a 3D surface plot follows, which does not show the level curves and gradient vectors in the xy-plane.",
+          "suggested_fix": "Add a levelcurves plot block for f(x,y) = x^2 + y^2 showing the concentric circles alongside the surface3d block."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "cfdfd2ec-8ffb-4770-b34e-37da845e7547",
+          "description": "The display-math block giving the 3D gradient definition (block cfdfd2ec) is not grouped with the preceding paragraph (block 91fc21b3) that introduces it, even though that paragraph explicitly sets up the formula.",
+          "suggested_fix": "Assign the same group_id to blocks 91fc21b3 and cfdfd2ec."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "f844ae57-409c-4e20-975d-ac1bc4c93cf7",
+          "description": "The paragraph following the surface3d plot (block f844ae57) explicitly names visible features of that plot ('The paraboloid \u2026 rises symmetrically', 'Horizontal slices (level curves) are circles', 'gradient \u2026 points radially outward') but shares no group_id with the plot block (4d465e7a).",
+          "suggested_fix": "Assign the same group_id to blocks 4d465e7a and f844ae57."
+        }
+      ]
+    },
+    {
+      "topic_id": "c335053e-9b32-4cb2-91cf-9722cbe42a54",
+      "topic_slug": "mvc-chain-rule",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9451,
+      "output_tokens": 1015,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1334,
+      "usd_cost": 0.043978199999999995,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "bcc09efb-2c5e-471b-a039-52b48d34d348",
+          "description": "The worked example uses a specific helix path (x=cos t, y=sin t, z=t) whose 3D shape is central to understanding the geometric context, but no plot of the helix or the surface f=x\u00b2+yz is provided.",
+          "suggested_fix": "Add a parametric3d plot block showing the helix (cos(t), sin(t), t) over a suitable t range."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "06d3571b-b682-4bb7-b55f-628f39ecab4b",
+          "description": "Block 06d3571b states the formula is 'a dot product between the gradient of f and the j-th column of the Jacobian', but the Jacobian of the map u\u2192x has its j-th column as \u2202x/\u2202u_j, which is an n-vector \u2014 this is consistent but the transition from the sum formula to the matrix notation \u2207_u f = J^T \u2207_x f is made without defining J or its dimensions, which could confuse learners.",
+          "suggested_fix": "Explicitly define J as the n\u00d7m Jacobian matrix with entries J_{ij} = \u2202x_i/\u2202u_j before writing the matrix equation."
+        }
+      ]
+    },
+    {
+      "topic_id": "07ea7e8c-60af-4845-b1f4-e73e5f134f6f",
+      "topic_slug": "mvc-optimization",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10395,
+      "output_tokens": 899,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1334,
+      "usd_cost": 0.0450702,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "medium",
+          "block_id": "95434628-d2f9-4d8c-8ee5-136c3dd55bb8",
+          "description": "Three distinct surface shapes (x\u2074+y\u2074, -(x\u2074+y\u2074), x\u00b3-y\u00b3) are described as concrete illustrations of the inconclusive case, but no plot accompanies any of them.",
+          "suggested_fix": "Add a surface3d plot for at least one of the three examples (e.g., x^3 - y^3) to visually illustrate the inconclusive D=0 case."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "medium",
+          "block_id": "ef1e1d11-16a9-4bdd-834f-247b79b3e141",
+          "description": "Worked Example 2 uses the specific function f(x,y)=xy(x-2)(y+3) whose shape and five critical points would benefit from a surface plot, but none is provided.",
+          "suggested_fix": "Add a surface3d plot of (x^2 - 2*x)*(y^2 + 3*y) over a domain that shows all five critical points."
+        }
+      ]
+    },
+    {
+      "topic_id": "3389a641-c253-4cb8-8609-21ea2aa9a1f7",
+      "topic_slug": "mvc-lagrange-multipliers",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9794,
+      "output_tokens": 1026,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1334,
+      "usd_cost": 0.045172199999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "317dd6a9-767a-442a-85aa-083d23f77c95",
+          "description": "The paragraph describes the geometric picture of level curves of f and the constraint curve being tangent at the optimum \u2014 a specific geometric object central to understanding the method \u2014 but no plot block accompanies it.",
+          "suggested_fix": "Add a 2D plot showing level curves of a sample f(x,y) alongside a constraint curve g(x,y)=0, with the tangency point marked."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "medium",
+          "block_id": "a9d32687-aa43-419a-b940-1dc1df2794c1",
+          "description": "The multiple-constraint Lagrangian uses a minus sign (L = f \u2212 \u03a3\u03bb\u2096g\u2096) while the single-constraint Lagrangian in block ad8d1536 uses a plus sign (L = f + \u03bbg), with no explanation of the sign change, which will confuse learners comparing the two formulations.",
+          "suggested_fix": "Add a sentence noting that the sign convention for the multipliers is flipped here relative to the single-constraint definition, or use a consistent sign throughout."
+        }
+      ]
+    },
+    {
+      "topic_id": "b213595a-462a-46ba-b5a7-437337ac6129",
+      "topic_slug": "mvc-double-integrals",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9206,
+      "output_tokens": 726,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1334,
+      "usd_cost": 0.0389082,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "7751ae2a-7259-4841-ab60-9e554f7daf26",
+          "description": "The Type I region definition and its iterated integral formula are presented without any plot showing a concrete example of a Type I region with curved upper/lower boundaries.",
+          "suggested_fix": "Add a plot block illustrating a representative Type I region, such as the area between y=0 and y=x over [0,1], to make the boundary curves visually concrete."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "a357fbf5-b34a-4a95-a535-29b4a46dd04f",
+          "description": "The Type II region definition and its iterated integral formula are presented without any plot showing a concrete example of a Type II region with curved left/right boundaries.",
+          "suggested_fix": "Add a plot block illustrating a representative Type II region to complement the algebraic description."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "medium",
+          "block_id": "4ce31e9a-f898-4605-ae6e-17e11f9a5199",
+          "description": "The worked example over the triangular region with vertices (0,0), (1,0), (1,1) describes a specific geometric region but no plot accompanies it to show the triangular domain.",
+          "suggested_fix": "Add a 2D plot or region diagram showing the triangle with vertices (0,0), (1,0), (1,1) and the boundary line y=x."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "d1e56bb7-c778-4880-8138-2a0bd444a2e2",
+          "description": "The Type I iterated integral display-math block (d1e56bb7) is immediately followed by an interpreting paragraph (82f14b25) that explains the meaning of the inner and outer limits, but they share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks d1e56bb7 and 82f14b25."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "4f99a258-e00a-4861-bf1a-10de29d38aa8",
+          "description": "The Type II iterated integral display-math block (4f99a258) is immediately followed by an interpreting paragraph (a3748ddd) that explains the inner and outer limits, but they share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 4f99a258 and a3748ddd."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 44,
+    "cost": 0.7314428999999998,
+    "in": 170764,
+    "out": 13823,
+    "cache_create": 1334,
+    "cache_read": 22678,
+    "severity_low": 3,
+    "severity_medium": 17,
+    "severity_high": 24
+  }
+}

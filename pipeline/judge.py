@@ -30,7 +30,7 @@ from pipeline.block_gen import ExistingBlock, TopicContext, get_topic_context
 from pipeline.llm import DEFAULT_MODEL, PRICING_USD_PER_MTOK
 
 
-PROMPT_VERSION = "judge.v1"
+PROMPT_VERSION = "judge.v4"
 
 CATEGORIES = (
     "factual_error",
@@ -76,7 +76,12 @@ You are a content-quality judge for an AI-generated mathematics learning system.
 CATEGORIES (use exactly these strings; never invent new ones)
 
 factual_error
-  A mathematical claim that is wrong, OR a claim that contradicts the SOURCE CHUNKS. Wrong formula, wrong direction of implication, swapped variables, contradicted definition. Style issues are NOT factual errors.
+  A generated mathematical claim that is actually wrong, OR a generated claim that contradicts the SOURCE CHUNKS. Wrong formula, wrong direction of implication, swapped variables, contradicted definition. Style issues are NOT factual errors.
+  Guardrails:
+  - Evaluate the generated BLOCK SEQUENCE, not the source chunks. If a source chunk contains an error but the generated block does not repeat it, do not flag it.
+  - Do not flag a factual_error because a block is merely less precise than a source chunk unless it becomes false or misleading.
+  - If your own reasoning concludes the generated statement is correct, omit the finding.
+  - A plot showing one explicitly labeled branch, cap, or sheet is not a factual error merely because a fuller implicit surface would have another branch.
 
 prereq_gap
   A concept is used as if known but is not in the listed prerequisites and is not introduced in this topic before use. Only flag if a learner with exactly the listed prereqs would be confused.
@@ -87,6 +92,7 @@ missing_plot
   - A worked example using a specific function whose shape matters and no plot.
   - A region of integration described in words with no plot.
   - A parametric path described without a plot.
+  Renderer guardrail: today only function2d and surface3d render as full visuals. Do NOT flag missing_plot when the honest visualization would require an unsupported kind or diagram, such as parametric2d/3d, vectorfield, shaded regions, 3D vector arrows, implicit surfaces, intersections of multiple objects, or graph/diagram drawings. Flag only when a function2d or surface3d plot can directly and honestly show the object being discussed. A spec-preview-only plot does not satisfy a missing_plot, but a missing unsupported plot is infrastructure debt, not a content finding.
 
 broken_plot_spec
   A plot block whose expression won't evaluate. Common issues:
@@ -95,11 +101,12 @@ broken_plot_spec
   - References a variable not in the domain keys for that kind (e.g., function2d using y).
   - Domain interval has low >= high.
   - Expression is structurally malformed for the kind.
+  Before flagging a square-root or logarithm domain issue, check the declared domain. If the expression is valid over the declared domain, do not flag it. If only part of the rectangular grid is undefined but the renderer can still draw finite points, flag only when the plot would materially misrepresent the surface.
 
 missing_group
   Two adjacent blocks are coupled by meaning but share no group_id. Flag ONLY:
-  - A display math block immediately followed by a paragraph that explicitly interprets that exact equation (begins with "This means", "This says", "Here", or directly references the just-stated formula).
-  - A plot block immediately followed by a paragraph that names features of that plot ("The saddle at the origin", "Notice the ridge along x=0").
+  - A display math block immediately followed by a paragraph that explicitly interprets that exact equation, defines its symbols, or explains the formula's geometric meaning.
+  - A plot block immediately followed by a paragraph that names visible features of that plot ("The saddle at the origin", "Notice the ridge along x=0").
   - A worked-example math block followed by paragraph(s) walking through that specific computation.
   Do NOT flag paragraphs that merely follow an equation in topic order without interpreting it.
 
@@ -144,6 +151,8 @@ PLOT EXPRESSION DIALECT (reference for broken_plot_spec)
 PRINCIPLE
 
 Be specific. Every finding names a concrete block or pair of blocks and says exactly what is wrong. Do not flag style preferences. Do not invent issues to look thorough. An empty findings array is a valid response when the topic is clean.
+
+Before emitting each finding, perform a final sanity check: if your description would say the block is "actually correct", "mathematically correct", "fine", "safe", "not broken", "valid", or "not an issue", omit the finding entirely. Never include a self-contradictory finding.
 """
 
 
@@ -278,7 +287,10 @@ _FENCE_RE = re.compile(r"^```(?:json)?\s*|\s*```$", re.MULTILINE)
 
 def _parse_findings(raw: str) -> list[JudgeFinding]:
     text = _FENCE_RE.sub("", raw).strip()
-    parsed = json.loads(text)
+    try:
+        parsed = json.loads(text)
+    except json.JSONDecodeError:
+        parsed = _parse_first_json_object(text)
     if not isinstance(parsed, dict):
         raise ValueError(f"root must be object, got {type(parsed).__name__}")
     findings_raw = parsed.get("findings")
@@ -294,13 +306,54 @@ def _parse_findings(raw: str) -> list[JudgeFinding]:
             raise ValueError(f"findings[{i}].category={cat!r} not in {CATEGORIES}")
         if sev not in SEVERITIES:
             raise ValueError(f"findings[{i}].severity={sev!r} not in {SEVERITIES}")
-        out.append(JudgeFinding(
+        finding = JudgeFinding(
             category=cat, severity=sev,
             block_id=f.get("block_id"),
             description=str(f.get("description", "")),
             suggested_fix=f.get("suggested_fix"),
-        ))
+        )
+        if _is_self_contradictory_finding(finding):
+            continue
+        out.append(finding)
     return out
+
+
+_SELF_CONTRADICTORY_RE = re.compile(
+    r"\b("
+    r"actually correct|mathematically correct|is correct|are correct|"
+    r"not incorrect|not wrong|not broken|not an issue|no issue|"
+    r"valid as written|safe as written|does not need|no fix needed"
+    r")\b",
+    re.IGNORECASE,
+)
+
+
+def _is_self_contradictory_finding(finding: JudgeFinding) -> bool:
+    text = f"{finding.description} {finding.suggested_fix or ''}"
+    return bool(_SELF_CONTRADICTORY_RE.search(text))
+
+
+def _parse_first_json_object(text: str):
+    """Parse the first JSON object in a response with stray leading/trailing text."""
+    start = text.find("{")
+    if start == -1:
+        raise ValueError("no JSON object found in response")
+    decoder = json.JSONDecoder()
+    candidate = text[start:]
+    try:
+        parsed, _ = decoder.raw_decode(candidate)
+        return parsed
+    except json.JSONDecodeError:
+        repaired = _repair_jsonish(candidate)
+        parsed, _ = decoder.raw_decode(repaired)
+        return parsed
+
+
+def _repair_jsonish(text: str) -> str:
+    """Best-effort repair for nearly-JSON model output with bare keys/trailing commas."""
+    repaired = re.sub(r"(?<=[{,])\s*([A-Za-z_][A-Za-z0-9_]*)\s*:", r'"\1":', text)
+    repaired = re.sub(r",\s*([}\]])", r"\1", repaired)
+    return repaired
 
 
 def judge_topic(

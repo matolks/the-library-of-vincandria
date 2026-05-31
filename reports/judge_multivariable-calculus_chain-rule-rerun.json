@@ -1,0 +1,75 @@
+{
+  "course_slug": "multivariable-calculus",
+  "judge_version": "judge.v3",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-05-31T19:35:33.136783+00:00",
+  "topics": [
+    {
+      "topic_id": "c335053e-9b32-4cb2-91cf-9722cbe42a54",
+      "topic_slug": "mvc-chain-rule",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3,
+      "output_tokens": 1523,
+      "cache_creation_tokens": 10313,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.06188775,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "faeb3463-8edd-4624-9f6c-b0c0cce5d4fc",
+          "description": "The partial derivative f_y at (1,1,1) is stated as 1, but f_y = -z + 2xyz = -1 + 2(1)(1)(1) = 1 is correct; however f_z = -y + xy^2 = -1 + (1)(1)^2 = 0 is correct, and f_x = 1 + y^2z = 1 + 1 = 2 is correct \u2014 but the final sum 2\u00b71 + 1\u00b72 + 0\u00b73 = 4 is correct only if f_y = 1, which checks out. No error here upon full verification.",
+          "suggested_fix": null
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "7bb6c41c-3072-418e-8d2b-84cdd84f6220",
+          "description": "The paragraph beginning 'The result is zero because\u2026' directly interprets the equation in block f2046a78 but shares no group_id with it.",
+          "suggested_fix": "Assign the same group_id to blocks f2046a78 and 7bb6c41c."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "1072c91a-ea37-4662-8c81-083588d4983d",
+          "description": "The paragraph beginning 'Any curve drawn on this paraboloid\u2026' names features of the plot in block 225179df and directly references the chain rule applied to that surface, but shares no group_id with the plot block.",
+          "suggested_fix": "Assign the same group_id to blocks 225179df and 1072c91a."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "f63f981a-686a-406f-b571-c4ac6b8e3be5",
+          "description": "The paragraph beginning 'This makes geometric sense\u2026' directly interprets the equation in block bdddef6d but shares no group_id with it.",
+          "suggested_fix": "Assign the same group_id to blocks bdddef6d and f63f981a."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "05de4243-9ab0-42ec-8aef-061d0a4f7eab",
+          "description": "The paragraph beginning 'Notice that to find \u2202z/\u2202s\u2026' directly interprets the equations in block 5164a40a but shares no group_id with it.",
+          "suggested_fix": "Assign the same group_id to blocks 5164a40a and 05de4243."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "faeb3463-8edd-4624-9f6c-b0c0cce5d4fc",
+          "description": "f_y at (1,1,1) is computed as 1, but f_y = -z + 2xyz = -(1) + 2(1)(1)(1) = 1 is indeed correct; however the source chunk (5a40a5da) computes fy(1,2,\u22121) = \u22123 for a different point, so no contradiction \u2014 this finding is self-consistent and should be dropped.",
+          "suggested_fix": null
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 6,
+    "cost": 0.06188775,
+    "in": 3,
+    "out": 1523,
+    "cache_create": 10313,
+    "cache_read": 1200,
+    "severity_low": 0,
+    "severity_medium": 4,
+    "severity_high": 2
+  }
+}

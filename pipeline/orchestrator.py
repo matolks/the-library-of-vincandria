@@ -175,6 +175,11 @@ def _validate(
     for i, block in enumerate(blocks):
         if block.get("id") in pinned_ids:
             continue
+        if block.get("type") == "image":
+            errs.append(
+                f"blocks[{i}]: Agent 3 must not emit image blocks; "
+                "image is admin/editor-only"
+            )
         for e in validate_block_schema(block):
             errs.append(f"blocks[{i}]: {e}")
         errs.extend(_validate_source_chunk_ids(block, allowed_chunk_ids, i))

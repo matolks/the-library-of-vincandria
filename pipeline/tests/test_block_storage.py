@@ -103,6 +103,37 @@ def test_pinned_anchor_accepts_persisted_object_content_without_normalizing():
     assert validate_anchor_integrity([emitted], [cohort]) == []
 
 
+def test_pinned_image_anchor_survives_reconciler_shape():
+    stored_content = {
+        "type": "image",
+        "content": [],
+        "props": {
+            "src": "https://example.com/surface.png",
+            "alt": "A labeled surface.",
+            "caption": "Uploaded by the editor.",
+        },
+    }
+    blocks = [
+        {
+            "id": "image_anchor",
+            "type": "image",
+            "content": stored_content,
+            "group_id": None,
+        },
+        {
+            "type": "paragraph",
+            "content": [{"type": "text", "text": "Generated text."}],
+            "generation_metadata": {"source_chunk_ids": []},
+        },
+    ]
+
+    pinned_ids, sequence = _to_reconciler_shape(blocks, "test-model")
+
+    assert pinned_ids == ["image_anchor"]
+    assert sequence[0] == {"id": "image_anchor"}
+    assert sequence[1]["type"] == "paragraph"
+
+
 def test_validate_rejects_unknown_source_chunk_ids():
     blocks = [
         {
@@ -116,3 +147,19 @@ def test_validate_rejects_unknown_source_chunk_ids():
 
     assert errors
     assert "chunk_fake" in " ".join(errors)
+
+
+def test_validate_rejects_agent3_generated_image_blocks():
+    blocks = [
+        {
+            "type": "image",
+            "content": [],
+            "props": {"src": "https://example.com/x.png", "alt": "Example"},
+            "generation_metadata": {"source_chunk_ids": []},
+        }
+    ]
+
+    errors = _validate(blocks, [], set())
+
+    assert errors
+    assert "Agent 3 must not emit image blocks" in " ".join(errors)

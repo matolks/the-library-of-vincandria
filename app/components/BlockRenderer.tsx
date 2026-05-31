@@ -108,6 +108,27 @@ function renderSingleBlock(block: Block): React.ReactNode {
     case "plot":
       return <PlotRenderer block={block} />;
 
+    case "image": {
+      const width = block.props.width
+        ? { maxWidth: `${block.props.width}px` }
+        : undefined;
+      return (
+        <figure className="my-8">
+          <img
+            src={block.props.src}
+            alt={block.props.alt}
+            className="h-auto w-full rounded-[4px] border border-[#ffffff18] bg-[#0a0a0b] object-contain"
+            style={width}
+          />
+          {block.props.caption && (
+            <figcaption className="mt-2 font-serif text-[13px] leading-relaxed text-[#d2d2d299]">
+              {block.props.caption}
+            </figcaption>
+          )}
+        </figure>
+      );
+    }
+
     case "bulletListItem":
     case "numberedListItem":
       return null;

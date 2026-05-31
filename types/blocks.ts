@@ -83,6 +83,16 @@ export interface PlotBlock extends BlockBase {
     labels?: Partial<Record<"x" | "y" | "z" | "title", string>>;
   };
 }
+export interface ImageBlock extends BlockBase {
+  type: "image";
+  content: [];
+  props: {
+    src: string;
+    alt: string;
+    caption?: string;
+    width?: number;
+  };
+}
 
 export type Block =
   | ParagraphBlock
@@ -92,4 +102,5 @@ export type Block =
   | CodeBlock
   | CalloutBlock
   | MathBlock
-  | PlotBlock;
+  | PlotBlock
+  | ImageBlock;

@@ -13,7 +13,7 @@ from __future__ import annotations
 
 BLOCK_TYPES: frozenset[str] = frozenset({
     "paragraph", "heading", "bulletListItem", "numberedListItem",
-    "codeBlock", "callout", "math", "plot",
+    "codeBlock", "callout", "math", "plot", "image",
 })
 
 HEADING_LEVELS: frozenset[int] = frozenset({1, 2, 3})
@@ -105,6 +105,11 @@ def validate_block_schema(block: dict) -> list[str]:
         if content != []:
             errs.append(f"plot.content must be an empty array, got {content!r}")
         errs += _validate_plot_props(props)
+
+    elif btype == "image":
+        if content != []:
+            errs.append(f"image.content must be an empty array, got {content!r}")
+        errs += _validate_image_props(props)
 
     if "generation_metadata" in block and block["generation_metadata"] is not None:
         errs += _validate_generation_metadata(block["generation_metadata"])
@@ -241,6 +246,35 @@ def _validate_plot_props(props: dict) -> list[str]:
                 if not isinstance(v, str):
                     errs.append(f"plot.props.labels.{k} must be a string")
 
+    return errs
+
+
+def _validate_image_props(props: dict) -> list[str]:
+    errs: list[str] = []
+    src = props.get("src")
+    alt = props.get("alt")
+    if not isinstance(src, str) or not src.strip():
+        errs.append(f"image.props.src must be a non-empty string; got {src!r}")
+    if not isinstance(alt, str) or not alt.strip():
+        errs.append(f"image.props.alt must be a non-empty string; got {alt!r}")
+    if "caption" in props and not isinstance(props["caption"], str):
+        errs.append(
+            f"image.props.caption, if present, must be a string; "
+            f"got {type(props['caption']).__name__}"
+        )
+    if "width" in props:
+        width = props["width"]
+        if not isinstance(width, (int, float)) or isinstance(width, bool) or width <= 0:
+            errs.append(
+                f"image.props.width, if present, must be a positive number; "
+                f"got {width!r}"
+            )
+    bad = set(props) - {"src", "alt", "caption", "width"}
+    if bad:
+        errs.append(
+            f"image.props has unknown keys {sorted(bad)}; "
+            "allowed: src, alt, caption, width"
+        )
     return errs
 
 

@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from pipeline.block_gen import TopicContext
 
 
-PROMPT_VERSION = "agent3.v2"
+PROMPT_VERSION = "agent3.v4"
 
 
 SYSTEM_PROMPT = """\
@@ -26,7 +26,7 @@ THREE LOCKED CONTRACTS
 
 1. Anchor pinning by relative order. Pinned blocks listed under "PINNED ANCHORS" in the user prompt MUST appear in your output. Their `id` and `content` MUST be byte-identical to what you receive. Their absolute position in the new sequence is your choice. Their relative order with respect to each other MUST be preserved. Grouped anchors (sharing a `group_id`) MUST remain contiguous in the same internal order shown.
 
-2. Atomic group coupling. Blocks that genuinely couple (a display equation and its explanation, a plot and its caption) share a `group_id`. Default is null. Once grouped, blocks in the cohort are never separated.
+2. Atomic group coupling. Blocks that genuinely couple (a display equation and its explanation, a plot and its caption) share a `group_id`. Default is null. Once grouped, blocks in the cohort are never separated. Prefer grouping when the next paragraph interprets, names features of, or walks through the immediately preceding math/plot/example; only leave it ungrouped when it can stand alone without the previous block.
 
 3. No citation text. You never write attributions, footnote markers, or parenthetical source references. When a block draws materially on a source chunk, populate `generation_metadata.source_chunk_ids` with the relevant chunk IDs. Citation rendering happens downstream.
 
@@ -53,7 +53,7 @@ PlotSpec:
     domain: { x?: [number, number], y?: [number, number], t?: [number, number] },
     labels?: { x?: string, y?: string, z?: string, title?: string }
   }
-Domain keys are kind-dependent: function2d requires domain.x; surface3d and levelcurves require domain.x and domain.y; parametric2d and parametric3d require domain.t.
+Domain keys are kind-dependent: function2d requires domain.x; surface3d and levelcurves require domain.x and domain.y; parametric2d and parametric3d require domain.t. Renderer reality: today only `function2d` and `surface3d` render as full visuals. Other kinds are allowed for future compatibility, but they currently render as spec previews; for the public course, prefer `function2d` or `surface3d` whenever those can honestly represent the example.
 
 Plot expression syntax — mathjs dialect, NOT JavaScript:
 - Functions are bare names: sqrt, cbrt, exp, log, log2, log10, sin, cos, tan, asin, acos, atan, atan2, sinh, cosh, tanh, abs, min, max, pow, hypot, floor, ceil, sign.
@@ -62,6 +62,8 @@ Plot expression syntax — mathjs dialect, NOT JavaScript:
 - Do NOT prefix anything with `Math.` — write `sqrt(1 - x^2 - y^2)`, NOT `Math.sqrt(1 - x*x - y*y)`.
 - Variables come from the domain keys: function2d uses `x`; surface3d and levelcurves use `x` and `y`; parametric2d and parametric3d use `t`.
 - Examples: "x^2 + y^2", "sin(x*y)", "sqrt(max(0, 1 - x^2 - y^2))", ["cos(t)", "sin(t)"], "exp(-(x^2 + y^2))".
+- For surface3d plots, `expression` is z = f(x,y). The plotted expression and title must match the displayed equation exactly. Prefer examples whose visible branch can be solved for z over a simple rectangular x/y domain; otherwise use prose instead of forcing an inconsistent plot.
+- For square-root surface branches, keep the domain inside the radicand when possible. Use max(0, ...) only for bounded caps such as ellipsoids; do not use it to hide an invalid branch of a hyperboloid.
 
 OUTPUT FORMAT
 
@@ -86,18 +88,25 @@ AUTHORING RULES
 - Respect the relative order of pinned anchors and the internal order of grouped cohorts.
 
 When to emit a plot block. A plot is warranted when the topic involves a shape, surface, region, or curve whose geometry is the explanation. Concrete cases:
-- A topic enumerating distinct geometric forms (quadric surfaces — one plot per form: ellipsoid, paraboloid, hyperboloid of one sheet, hyperboloid of two sheets, cone, hyperbolic paraboloid). Emit one plot per form.
+- A topic enumerating distinct geometric forms (quadric surfaces — one plot per form: ellipsoid, elliptic paraboloid, hyperbolic paraboloid, hyperboloid of one sheet, hyperboloid of two sheets, cone, elliptic cylinder, parabolic cylinder, hyperbolic cylinder). Emit one plot per form that is named or exemplified.
 - A specific function being graphed to discuss extrema, level sets, or monotonicity.
 - A parametric curve being traced in 2D or 3D.
 - A region of integration in the plane or in space.
 - A vector field or gradient field being visualized at a point or over a region.
-Do NOT emit a plot for: algebraic identities (chain rule, product rule), purely definitional statements, or formula derivations with no concrete domain. When the prose says "consider the surface S" or "the graph of f", a plot is warranted; emit it.
+Do NOT emit a plot for: algebraic identities (chain rule, product rule), purely definitional statements, or formula derivations with no concrete domain. When the prose says "consider the surface S" or "the graph of f", a plot is warranted; emit it. If you emit a plot, the next block should normally be a grouped paragraph that explicitly says what to notice in that plot.
 
-When to use group_id. Set the same group_id on two or more adjacent blocks ONLY when separating them would break meaning. Canonical cases:
-- A display math block followed by a paragraph that explicitly interprets that exact equation ("This says that the gradient is perpendicular to the level curve at every point."). Group them.
-- A plot block followed by a caption paragraph that names features visible in that plot ("The saddle at the origin shows..."). Group them.
-- A worked-example pair: a math block stating an example computation followed by the paragraph that walks through it. Group them.
-A paragraph that merely follows an equation in topic order is NOT grouped — group only when separation would make the second block read as a non-sequitur. Use a fresh `group_id` per cohort; the value is opaque (any short string works).
+Geometry accuracy rules for plotted surfaces:
+- Keep the axis implied by the signs and missing variables consistent across the display math, prose, plot expression, and plot title.
+- For a hyperboloid of one sheet with standard form x^2/a^2 + y^2/b^2 - z^2/c^2 = 1, the axis is along the negative term (z here), the waist is at z=0, and horizontal traces z=k are ellipses. If you choose x^2/a^2 - y^2/b^2 + z^2/c^2 = 1 instead, the axis/waist language must change to y.
+- For a hyperboloid of two sheets with standard form z^2/c^2 - x^2/a^2 - y^2/b^2 = 1, plotting one visible sheet as z = sqrt(c^2*(1 + x^2/a^2 + y^2/b^2)) is consistent. If you want a surface3d plot, choose this z-axis form in the display/prose too.
+- For quadric cylinders, the missing variable is the cylinder axis. Example: z = x^2 is a parabolic cylinder extending in y; slices y=k (parallel to the xz-plane) are identical parabolas, while horizontal slices z=k are lines or empty.
+- For closed surfaces that require two z branches, do not show only one branch as if it were the whole surface. Either plot a clearly labeled cap/hemisphere and say it is one branch, or use prose until the renderer supports implicit surfaces.
+
+When to use group_id. Set the same group_id on adjacent blocks when the later block depends on the earlier block being immediately visible. Use a fresh `group_id` per cohort; the value is opaque (any short string works).
+- Display math + immediate interpretation: group a display equation with the next paragraph when that paragraph begins from the equation, defines its symbols, interprets the equality/inequality, names a geometric meaning, or explains why the formula matters.
+- Plot + feature paragraph: group every plot with the immediately following paragraph when that paragraph names visible features, explains the shape, calls out axes/traces/intercepts/extrema, or says what the learner should notice.
+- Worked example: group the setup math, computation math, and explanatory paragraphs that form one computation. Keep the cohort short, but do not split the actual computation from the prose that explains it.
+- Do not group ordinary topic flow: if the next paragraph introduces a new idea rather than interpreting the previous math/plot/example, leave `group_id` null.
 """
 
 

@@ -17,11 +17,11 @@ This is the first module running on AIStack, a local AI platform designed to sup
 | Chunker (Ollama, Stage 1)          | Done        |
 | Agent 1 — Extractor (topics)       | Done        |
 | Agent 2 — Mapper (dependencies)    | Done        |
-| Agent 3 — Block Generator          | Done        |
+| Agent 3 — Block Generator          | Done, v4 QA |
 | Agent 4 — Web Enricher             | Done, v1    |
 | Course pipeline orchestrator       | Done, CLI   |
 | Eval harness (`pipeline/evals/`)   | Done, v1    |
-| Public website                     | Not started |
+| Public website                     | Done, v1    |
 | Admin dashboard + BlockNote editor | Not started |
 
 ---
@@ -295,6 +295,24 @@ python3 -m pipeline.course_orchestrator --course multivariable-calculus --dry-ru
 python3 -m pipeline.course_orchestrator --course multivariable-calculus --include-thin
 ```
 
+**Content judge** (`pipeline/judge.py`)
+
+Runs after block generation and emits a mechanical QA report under `reports/`. The judge is a pre-filter, not the final editor: use it to find category clusters that should be fixed in prompts, and to identify isolated high-severity factual errors for manual review.
+
+```bash
+# Judge a full course
+python3 -m pipeline.judge --course multivariable-calculus --pause-seconds 1
+
+# Judge one topic
+python3 -m pipeline.judge --course multivariable-calculus --topic mvc-quadric-surfaces
+```
+
+Triage rule:
+
+- High findings: fix before feature work. Factual errors are non-negotiable. Missing plots on geometry topics usually mean the prompt still is not explicit enough.
+- Medium findings: cluster by category. If one category dominates across topics, fix the prompt or renderer contract; if it appears once, defer to manual editing.
+- Low findings: bookmark for the admin editor. Do not rerun the whole pipeline for polish.
+
 ---
 
 ## Topic groups
@@ -356,9 +374,117 @@ Row Level Security is enabled on all pipeline-written tables with public-read po
 - No cycles
 - Transitive ancestor queries validated against manual calc-curriculum intuition (e.g. `mvc-lagrange-multipliers` correctly resolves to 7 ancestors across 2 depth levels)
 - Mapper cost per run: ~$0.13
-- Full Agent 3 dry run: 18/18 topics ok, 980 candidate blocks, ~$2.82
-- Full Agent 3 persisted run: 18/18 topics ok, 1,054 blocks, ~$3.00
+- Current Agent 3 prompt version: `agent3.v4`
+- Current persisted block set: 18/18 topics, 1,058 blocks, all `agent3.v4`
+- Latest full Agent 3 persisted run: one full MVC v4 pass completed topic-by-topic; `mvc-arc-length` failed validation once and then cleared on targeted rerun
+- Latest judge prompt version: `judge.v4`
+- Latest full judge report: `reports/judge_multivariable-calculus_20260531T204802Z.json`
+- Latest judge status: 43 findings in the full report (20 high, 21 medium, 2 low), with all 18 topics parse-clean
+- Dominant judge clusters: `missing_group` is down from 27 to 15; `missing_plot` is now mostly renderer-scope tension around geometry examples; factual findings still need human triage with citation footers visible
+- Image block infrastructure is present (`BlockType.image`, block schema/types, renderer, `block-images` Supabase Storage bucket); Agent 3 validation rejects generated image blocks
+- Topic pages render citation footers from `generation_metadata.source_chunk_ids`, joined to `Chunk`, so judge triage can see grounding sources without inline citation prose
 - Final content-generation eval: all checks passing (`no_sparse_topics`, block schemas, source chunk IDs, pinned anchors, prereq cycles, known-bad edges)
+
+---
+
+## Next phase playbook
+
+The next phase is about making MVC a trustworthy proof-of-concept before scaling to many courses. Do not add several courses yet; add one second course only after one more MVC prompt/judge iteration.
+
+### 1. Tighten Agent 3 and the judge one more time
+
+Create `agent3.v4` and `judge.v4` together. These go hand in hand: Agent 3 needs clearer generation rules, and the judge needs to stop inflating the report with self-contradictory factual findings.
+
+Agent 3 v4 should focus on:
+
+- More aggressive grouping for display math plus immediate interpretation.
+- More aggressive grouping for plot plus the paragraph that names features of that plot.
+- Plotting concrete geometry examples: curves, regions, surfaces, level sets, and integration regions when the example depends on visual shape.
+- Avoiding visually misleading surface branches, especially closed surfaces shown as only one half without saying so.
+- Staying within renderer reality: today only `function2d` and `surface3d` render fully; other plot kinds fall back to spec previews.
+
+Judge v4 should focus on:
+
+- Factual-error discipline: only flag a generated claim that is actually wrong.
+- No source-only errors: if the source chunk has an error but the generated block does not repeat it, do not flag the block.
+- No self-contradictory findings: if the description says "this is correct", omit it.
+- Better parse resilience for model outputs that are nearly JSON but wrapped in stray text.
+
+Run:
+
+```bash
+python3 -m pipeline.block_gen --course multivariable-calculus --pause-seconds 1
+python3 -m pipeline.judge --course multivariable-calculus --pause-seconds 1
+```
+
+Compare category counts against `reports/judge_multivariable-calculus_20260531T192934Z.json`. If high + medium findings are still dominated by `missing_group`, consider a deterministic post-processing pass that groups obvious adjacent equation/explanation and plot/caption pairs instead of asking the model to be perfect.
+
+### 2. Add image blocks after the MVC QA loop stabilizes
+
+Status: done for the minimal infrastructure pass. Image blocks are admin-only and survive regeneration through the existing pinned-anchor path.
+
+Implementation checklist:
+
+- [x] Add `image` to the Prisma `BlockType` enum.
+- [x] Add `image` to `pipeline/block_schema.py`.
+- [x] Add `ImageBlock` to `types/blocks.ts`.
+- [x] Shape: `props: { src: string, alt: string, caption?: string, width?: number }`, `content: []`.
+- [x] Add a Supabase Storage bucket for uploaded images (`block-images`).
+- [x] Add renderer support using `<figure>`, `<img>`, and optional `<figcaption>`.
+- [x] Keep the model contract explicit: Agent 3 validation rejects generated `image`; only the admin/editor should create it.
+- [x] Verify pinned image anchors through the reconciler-shape test; admin API should set `manually_edited=true` once it exists.
+
+### 3. Add citation footers next
+
+Status: done for topic pages. Citation footers pair naturally with judge triage because they expose which chunks grounded each generated topic.
+
+Implementation checklist:
+
+- [x] On topic pages, read `generation_metadata.source_chunk_ids` from rendered blocks.
+- [x] Join those IDs against `Chunk`.
+- [x] Deduplicate by `(sourcePath, pageNumber, sectionPath)` while preserving first block-order occurrence.
+- [x] Render a compact footer at the bottom of the topic page.
+- [x] Keep inline content citation-free; Agent 3 still never writes attribution prose.
+
+This makes factual-error review faster: when the judge flags a block, the footer shows the source chunks the page was grounded in.
+
+### 4. Add exactly one second course
+
+Add a second course after MVC has one more clean prompt/judge pass and after image/citation infrastructure is at least minimally stable. The goal is not content volume; the goal is to expose course-shape assumptions.
+
+Recommended order:
+
+1. **Discrete Math** if available. It is close enough to MVC to reuse math rendering, but different enough to stress proof structure, definitions, examples, graphs, relations, and fewer geometry plots.
+2. **Operating Systems** after that. It stresses code blocks, systems diagrams, architecture explanations, scheduling/memory examples, and non-math source material.
+
+Second-course shakedown:
+
+```bash
+# 1. Put files under the course folder.
+mkdir -p /Volumes/AIStack/modules/knowledge/docs/discrete-math/{lectures,exams,homework,reference}
+
+# 2. Run the full pipeline.
+python3 -m pipeline.course_orchestrator --course discrete-math --include-thin
+
+# 3. Inspect topic extraction and graph shape before judging content.
+python3 -m scripts.query_prereqs <one-important-topic-slug>
+
+# 4. Run mechanical evals.
+python3 -m pipeline.evals.content_generation --course discrete-math
+
+# 5. Judge the generated content.
+python3 -m pipeline.judge --course discrete-math --pause-seconds 1
+```
+
+What to look for:
+
+- Topic count: wildly too many or too few topics means extractor prompt/course chunking needs work.
+- Group assignment: a course should land in broad groups, not create a course-shaped group by accident.
+- Prereq graph: no cycles, no obvious future topic as prerequisite of an earlier one.
+- Sparse topics: enrich before generating if coverage is weak.
+- Judge clusters: repeated categories across courses are prompt or renderer issues; isolated findings are future admin edits.
+
+Move on from MVC when the remaining high/medium findings are either clearly false positives or below roughly five real issues across the course. If another regen barely improves the category counts, stop iterating and let the future admin editor handle isolated content edits.
 
 ---
 
@@ -439,6 +565,9 @@ python3 -m pipeline.enricher --course <course-name> --include-thin
 # Generate teaching blocks
 python3 -m pipeline.block_gen --course <course-name> --dry-run --json
 python3 -m pipeline.block_gen --course <course-name> --json --pause-seconds 75
+
+# Judge generated content
+python3 -m pipeline.judge --course <course-name> --pause-seconds 1
 
 # Run the full course pipeline
 python3 -m pipeline.course_orchestrator --course <course-name> --dry-run --include-thin

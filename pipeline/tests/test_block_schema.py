@@ -64,6 +64,16 @@ GOOD_BLOCKS = [
         },
     },
     {
+        "type": "image",
+        "content": [],
+        "props": {
+            "src": "https://example.com/image.png",
+            "alt": "A labeled surface plot.",
+            "caption": "Reference image for the surface.",
+            "width": 640,
+        },
+    },
+    {
         "type": "paragraph",
         "content": [{"type": "text", "text": "."}],
         "generation_metadata": {"source_chunk_ids": ["chunk_a", "chunk_b"]},
@@ -139,6 +149,12 @@ BAD_CASES: list[tuple[str, dict, str]] = [
         {"type": "paragraph", "content": [{"type": "text", "text": "x"}],
          "generation_metadata": {"source_chunk_ids": [123]}},
         "must contain only strings"),
+    ("image_missing_alt",
+        {"type": "image", "content": [], "props": {"src": "https://example.com/x.png"}},
+        "image.props.alt"),
+    ("image_bad_width",
+        {"type": "image", "content": [], "props": {"src": "x.png", "alt": "x", "width": 0}},
+        "image.props.width"),
 ]
 
 

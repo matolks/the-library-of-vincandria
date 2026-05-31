@@ -1,0 +1,32 @@
+{
+  "course_slug": "multivariable-calculus",
+  "judge_version": "judge.v3",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-05-31T19:35:03.648443+00:00",
+  "topics": [
+    {
+      "topic_id": "38323237-7fdd-4197-99f9-c6a4307e045c",
+      "topic_slug": "mvc-parametric-curves",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3,
+      "output_tokens": 887,
+      "cache_creation_tokens": 8527,
+      "cache_read_tokens": 1200,
+      "usd_cost": 0.04565025,
+      "status": "parse_failed",
+      "error": "JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+      "findings": []
+    }
+  ],
+  "totals": {
+    "findings": 0,
+    "cost": 0.04565025,
+    "in": 3,
+    "out": 887,
+    "cache_create": 8527,
+    "cache_read": 1200,
+    "severity_low": 0,
+    "severity_medium": 0,
+    "severity_high": 0
+  }
+}
