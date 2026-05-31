@@ -257,3 +257,127 @@ def get_topic_group_id(slug: str) -> str | None:
         cur.execute('SELECT id FROM "TopicGroup" WHERE slug = %s', (slug,))
         row = cur.fetchone()
     return row[0] if row else None
+
+
+def set_topic_embedding(topic_id: str, vec: list[float]) -> None:
+    conn = get_conn()
+    with conn.cursor() as cur:
+        cur.execute(
+            'UPDATE "Topic" SET embedding = %s::vector WHERE id = %s',
+            (vec, topic_id),
+        )
+    conn.commit()
+
+def set_topic_embeddings(pairs: list[tuple[str, list[float]]]) -> None:
+    """
+    Batch update embeddings for many topics in one round-trip.
+    pairs: list of (topic_id, vector) tuples.
+    """
+    if not pairs:
+        return
+    from psycopg2.extras import execute_batch
+    conn = get_conn()
+    with conn.cursor() as cur:
+        execute_batch(
+            cur,
+            'UPDATE "Topic" SET embedding = %s::vector WHERE id = %s',
+            [(vec, tid) for tid, vec in pairs],
+        )
+    conn.commit()
+
+def delete_orphan_topics(course_id: str, keep_slugs: list[str]) -> int:
+    """
+    Delete topics in a course whose slugs are not in keep_slugs.
+    Cascades to TopicEdge and _TopicGroups.
+    Returns count deleted.
+    """
+    conn = get_conn()
+    with conn.cursor() as cur:
+        cur.execute(
+            'DELETE FROM "Topic" WHERE "courseId" = %s AND slug != ALL(%s)',
+            (course_id, keep_slugs),
+        )
+        deleted = cur.rowcount
+    conn.commit()
+    return deleted
+
+def get_existing_topics_for_course(course_slug: str) -> list[dict]:
+    """
+    Return existing topics for a course as [{slug, title, summary}, ...].
+    Used to anchor slug stability across re-runs.
+    """
+    conn = get_conn()
+    with conn.cursor() as cur:
+        cur.execute(
+            '''
+            SELECT t.slug, t.title, t.summary
+            FROM "Topic" t
+            JOIN "Course" c ON c.id = t."courseId"
+            WHERE c.slug = %s
+            ORDER BY t."order"
+            ''',
+            (course_slug,),
+        )
+        rows = cur.fetchall()
+    return [{"slug": r[0], "title": r[1], "summary": r[2]} for r in rows]
+
+def nearest_topic_candidates(
+    topic_id: str,
+    k: int = 30,
+    course_id: str | None = None,
+) -> list[dict]:
+    """
+    Top-K nearest topics to `topic_id` by cosine distance on Topic.embedding.
+    Excludes the target. Skips topics with NULL embeddings.
+    If course_id is given, restricts to that course; else searches globally.
+    Uses the HNSW index via the `<=>` (cosine) operator.
+    """
+    with get_conn() as conn, conn.cursor() as cur:
+        cur.execute('SELECT embedding FROM "Topic" WHERE id = %s', (topic_id,))
+        row = cur.fetchone()
+        if row is None:
+            raise ValueError(f"Topic {topic_id} not found")
+        if row[0] is None:
+            raise ValueError(f"Topic {topic_id} has no embedding")
+        target_emb = row[0]  # psycopg2 returns pgvector as string; round-trips fine
+
+        cur.execute(
+            """
+            SELECT
+                id,
+                slug,
+                title,
+                summary,
+                embedding <=> %s::vector AS distance
+            FROM "Topic"
+            WHERE id <> %s
+              AND embedding IS NOT NULL
+              AND (%s::text IS NULL OR "courseId" = %s)
+            ORDER BY embedding <=> %s::vector
+            LIMIT %s
+            """,
+            (target_emb, topic_id, course_id, course_id, target_emb, k),
+        )
+        cols = [d[0] for d in cur.description]
+        return [dict(zip(cols, r)) for r in cur.fetchall()]
+    
+if __name__ == "__main__":
+    import sys
+    slug = sys.argv[1] if len(sys.argv) > 1 else "mvc-partial-derivatives"
+    k = int(sys.argv[2]) if len(sys.argv) > 2 else 10
+
+    with get_conn() as conn, conn.cursor() as cur:
+        cur.execute('SELECT id, "courseId" FROM "Topic" WHERE slug = %s', (slug,))
+        row = cur.fetchone()
+        if not row:
+            print(f"no topic with slug={slug}")
+            sys.exit(1)
+        topic_id, course_id = row
+
+    print(f"\nNearest {k} to '{slug}' (course-scoped):\n")
+    for r in nearest_topic_candidates(topic_id, k=k, course_id=course_id):
+        print(f"  {r['distance']:.4f}  {r['slug']:<40} {r['title']}")
+
+    print(f"\nNearest {k} to '{slug}' (global):\n")
+    for r in nearest_topic_candidates(topic_id, k=k, course_id=None):
+        print(f"  {r['distance']:.4f}  {r['slug']:<40} {r['title']}")

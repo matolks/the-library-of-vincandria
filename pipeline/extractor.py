@@ -13,10 +13,11 @@ create new groups if nothing fits. Existing groups are passed as context.
 
 import os
 import json
-from urllib import response
 import anthropic
 from dotenv import load_dotenv
 from pipeline import db
+from pipeline.embeddings import embed_documents
+from pipeline.db import set_topic_embeddings
 
 load_dotenv()
 
@@ -97,44 +98,52 @@ order_in_course is the integer position this topic appears in the course, starti
 """
 
 
-def _build_user_prompt(course: str, chunks: list[dict]) -> str:
+def _build_user_prompt(course: str, chunks: list[dict], existing: list[dict]) -> str:
     group_list = json.dumps(TOPIC_GROUPS, indent=2)
 
-    # Concatenate chunk texts, labelled by file and page for context
     passages = []
     for c in chunks:
         label = f"[{c['file']} p.{c['page']} chunk {c['chunk_index']}]"
         passages.append(f"{label}\n{c['text']}")
-
     combined = "\n\n---\n\n".join(passages)
 
-    # Truncate if absurdly long -- Claude's context is large but be defensive
     max_chars = 180_000
     if len(combined) > max_chars:
         combined = combined[:max_chars] + "\n\n[truncated]"
+
+    existing_block = ""
+    if existing:
+        existing_json = json.dumps(existing, indent=2)
+        existing_block = f"""
+Existing topics for this course (from previous runs):
+{existing_json}
+
+IMPORTANT: If a topic you are extracting matches one of the existing topics above (same concept, even if the title is slightly reworded), reuse the existing slug exactly. Only generate a new slug for genuinely new topics. This keeps URLs stable across re-runs.
+"""
 
     return f"""Course: {course}
 
 Suggested topic groups:
 {group_list}
-
+{existing_block}
 Course text (chunked):
 {combined}
 
 Extract all topics from this course and assign them to groups."""
 
 
-def extract_topics(course_slug: str, chunks: list[dict]) -> dict:
+def extract_topics(course_slug: str, chunks: list[dict], existing: list[dict] | None = None) -> dict:
     """
     Call Claude to extract topics from chunks.
     Returns the parsed JSON response dict.
     """
     course_name = course_slug.replace("-", " ").title()
-    prompt = _build_user_prompt(course_name, chunks)
+    prompt = _build_user_prompt(course_name, chunks, existing or [])
 
     response = client.messages.create(
         model=MODEL,
         max_tokens=4096,
+        temperature=0,
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": prompt}],
     )
@@ -194,6 +203,23 @@ def write_topics(course_slug: str, extraction: dict) -> dict[str, str]:
         )
         topic_id_map[t["slug"]] = topic_id
         print(f"  Topic: {t['title']} -> groups: {t.get('groups', [])}")
+    # Delete orphans from previous runs
+    keep = list(topic_id_map.keys())
+    orphans = db.delete_orphan_topics(course_id, keep)
+    if orphans:
+        print(f"  Removed {orphans} orphan topic(s) from previous runs")
+    # Embed topics and write vectors
+    topics = extraction.get("topics", [])
+    if topics:
+        texts = [
+            f"{t['title']}\n{t.get('summary', '')}\n"
+            f"Key concepts: {', '.join(t.get('key_concepts', []))}"
+            for t in topics
+        ]
+        vectors = embed_documents(texts)
+        pairs = [(topic_id_map[t["slug"]], vec) for t, vec in zip(topics, vectors)]
+        set_topic_embeddings(pairs)
+        print(f"  Embedded {len(vectors)} topics")
 
     return topic_id_map
 
@@ -204,7 +230,10 @@ def run(course_slug: str, chunks: list[dict]) -> dict[str, str]:
     Returns topic slug -> topic_id map for use by mapper and block_gen.
     """
     print(f"\n[Agent 1] Extracting topics for: {course_slug}")
-    extraction = extract_topics(course_slug, chunks)
+    existing = db.get_existing_topics_for_course(course_slug)
+    if existing:
+        print(f"  Found {len(existing)} existing topics; passing as slug anchors")
+    extraction = extract_topics(course_slug, chunks, existing=existing)
     print(f"  Found {len(extraction.get('topics', []))} topics")
     topic_id_map = write_topics(course_slug, extraction)
     print(f"  Written to database")
@@ -231,8 +260,8 @@ if __name__ == "__main__":
         chunks = json.load(f)
 
     if args.dry_run:
-        course_name = args.course.replace("-", " ").title()
-        result = extract_topics(args.course, chunks)
+        existing = db.get_existing_topics_for_course(args.course)
+        result = extract_topics(args.course, chunks, existing=existing)
         print(json.dumps(result, indent=2))
     else:
         topic_id_map = run(args.course, chunks)

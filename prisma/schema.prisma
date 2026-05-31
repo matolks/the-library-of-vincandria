@@ -39,6 +39,27 @@ model Topic {
   blocks      Block[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  embedding   Unsupported("vector(1024)")?
+  edgesFrom   TopicEdge[] @relation("EdgeFrom")
+  edgesTo     TopicEdge[] @relation("EdgeTo")
+}
+
+enum EdgeKind {
+  PREREQUISITE_OF
+}
+
+model TopicEdge {
+  fromId     String
+  toId       String
+  kind       EdgeKind @default(PREREQUISITE_OF)
+  confidence Float
+  createdAt  DateTime @default(now())
+  from       Topic    @relation("EdgeFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  to         Topic    @relation("EdgeTo",   fields: [toId],   references: [id], onDelete: Cascade)
+
+  @@id([fromId, toId, kind])
+  @@index([toId])
+  @@index([fromId])
 }
 
 model Block {
