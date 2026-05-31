@@ -93,6 +93,8 @@ missing_plot
   - A region of integration described in words with no plot.
   - A parametric path described without a plot.
   Renderer guardrail: today only function2d and surface3d render as full visuals. Do NOT flag missing_plot when the honest visualization would require an unsupported kind or diagram, such as parametric2d/3d, vectorfield, shaded regions, 3D vector arrows, implicit surfaces, intersections of multiple objects, or graph/diagram drawings. Flag only when a function2d or surface3d plot can directly and honestly show the object being discussed. A spec-preview-only plot does not satisfy a missing_plot, but a missing unsupported plot is infrastructure debt, not a content finding.
+  Quadric guardrail: do NOT flag a missing_plot for a hyperboloid of one sheet in standard form x^2/a^2 + y^2/b^2 - z^2/c^2 = 1. A surface3d block is z=f(x,y), so any honest plot is double-valued or has a hole in the middle; the common z=sqrt(c^2*(1 + x^2/a^2 + y^2/b^2)) formula is a hyperboloid of two sheets, not one sheet.
+  Duplication guardrail: do NOT flag a worked example merely because it names a specific surface if the same surface family was already plotted in the topic and the example is about algebraic classification or traces rather than a new visual feature.
 
 broken_plot_spec
   A plot block whose expression won't evaluate. Common issues:
@@ -322,7 +324,8 @@ _SELF_CONTRADICTORY_RE = re.compile(
     r"\b("
     r"actually correct|mathematically correct|is correct|are correct|"
     r"not incorrect|not wrong|not broken|not an issue|no issue|"
-    r"valid as written|safe as written|does not need|no fix needed"
+    r"valid as written|safe as written|does not need|no fix needed|"
+    r"this is fine|is fine"
     r")\b",
     re.IGNORECASE,
 )

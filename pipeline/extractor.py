@@ -29,6 +29,7 @@ if not ANTHROPIC_API_KEY:
 client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
 MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
+MAX_TOKENS = int(os.getenv("CLAUDE_EXTRACTOR_MAX_TOKENS", "12000"))
 
 # Pricing per million tokens (USD). Update if Anthropic changes pricing.
 # Sonnet 4.x: $3 input / $15 output (verify at anthropic.com/pricing).
@@ -156,7 +157,7 @@ def extract_topics_with_usage(
 
     response = client.messages.create(
         model=MODEL,
-        max_tokens=4096,
+        max_tokens=MAX_TOKENS,
         temperature=0,
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": prompt}],

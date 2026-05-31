@@ -22,6 +22,7 @@ from pipeline.db import (
 
 MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-5-20250929")
 K_CANDIDATES = 30
+REQUEST_TIMEOUT_SECONDS = float(os.environ.get("CLAUDE_MAPPER_TIMEOUT", "90"))
 
 # Claude Sonnet pricing per million tokens. Update if model changes.
 PRICE_IN = 3.00
@@ -174,7 +175,7 @@ def extract_dependencies(
     topics: list[dict],
 ) -> tuple[list[Edge], int, int]:
     """For each topic, retrieve candidates and ask LLM for prereqs."""
-    client = anthropic.Anthropic()
+    client = anthropic.Anthropic(timeout=REQUEST_TIMEOUT_SECONDS)
     slug_to_id = {t["slug"]: t["id"] for t in topics}
     edges: list[Edge] = []
     total_in = 0
@@ -194,13 +195,17 @@ def extract_dependencies(
             continue
 
         user_prompt = build_user_prompt(target, candidates)
-        resp = client.messages.create(
-            model=MODEL,
-            max_tokens=2000,
-            temperature=0,
-            system=SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": user_prompt}],
-        )
+        try:
+            resp = client.messages.create(
+                model=MODEL,
+                max_tokens=2000,
+                temperature=0,
+                system=SYSTEM_PROMPT,
+                messages=[{"role": "user", "content": user_prompt}],
+            )
+        except anthropic.APIError as e:
+            print(f"API FAIL: {type(e).__name__}: {e}")
+            continue
         total_in += resp.usage.input_tokens
         total_out += resp.usage.output_tokens
 
