@@ -16,7 +16,7 @@ const sections = [
   {
     index: "03",
     title: "Programming and Software",
-    href: "/programming-and-software",
+    href: "/programming-software",
     tags: ["Systems Programming", "Data Structures & Algorithms"],
   },
   {
@@ -28,13 +28,13 @@ const sections = [
   {
     index: "05",
     title: "Hardware and Circuits",
-    href: "/hardware-and-circuits",
+    href: "/hardware-circuits",
     tags: ["Circuit Design", "FPGA", "Digital ICs"],
   },
   {
     index: "06",
     title: "Signals and Networks",
-    href: "/signals-and-networks",
+    href: "/signals-networks",
     tags: ["Signals & Systems", "Communication Networks"],
   },
   {

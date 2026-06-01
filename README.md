@@ -387,37 +387,100 @@ Row Level Security is enabled on all pipeline-written tables with public-read po
 
 ---
 
+## Numerical computation readout
+
+Latest real run: 2026-06-01, using the `.env` Anthropic key by running commands with `env -u ANTHROPIC_API_KEY`.
+
+Important operational note: the inherited shell environment had a stale Anthropic key that overrode `.env`. Use `env -u ANTHROPIC_API_KEY ...` for pipeline runs from this environment, or remove the stale parent env var.
+
+Current status: content generated for all topics and content-generation evals pass.
+
+- Source set: 22 homework PDFs plus `topics/Course Content.docx`
+- 135 local chunks written
+- 26 topics extracted; the structure still looks coherent: floating point, finite differences, interpolation/splines, quadrature, nonlinear solves, linear systems, least squares, ODEs, BVPs, and PDE finite differences
+- Four thin-but-dense topics remain under `strong>=0.75`, `strong_min=3`: `number-base-conversion-floating-point`, `floating-point-error-propagation`, `loss-of-significance`, `fixed-point-iteration`
+- Agent 4 found no curated URLs for those thin topics, but block generation succeeded; thinness is not currently the blocker
+- 1,424 generated `agent3.v4` blocks persisted across all 26 topics
+- 93 unique source chunk IDs referenced by generated block provenance; all resolve
+- 63 prerequisite edges persisted, with no cycles
+- Mapper needed manual false-positive exclusions for a floating-point peer edge and Matlab-tooling reverse edges; those are now in `pipeline.mapper.MANUAL_EXCLUDED_EDGES`
+- Final eval log: `logs/numcomp-evals-20260531-final-with-coverage.log`
+- Final judge report: `reports/judge_numerical-computation_20260601T014240Z.json`
+- Judge status: 46 findings across 26 topics, with 19 `ok` topics and 7 `parse_failed` judge topics
+- Judge clusters: 22 `missing_group`, 18 `factual_error`, 2 `generic_prose`, 2 `confusing_transition`, 1 `missing_plot`, 1 `broken_plot_spec`
+- Factual judge quality is mixed: at least two high-severity factual findings explicitly self-refute by saying the generated content is correct
+
+Readout decision:
+
+1. Build `judge.v5` first. Reasons: 7 judge parse failures and recurring self-contradictory factual-error false positives make the report too noisy to drive content edits confidently.
+2. Then tighten Agent 3 compliance. Reasons: `missing_group` is still the dominant real mechanical cluster, and both numerical computation and DSA exposed transient invalid `source_chunk_ids` during generation.
+3. Defer admin-editor tooling for this course until judge.v5 separates real isolated content bugs from false positives.
+
+---
+
+## Data structures and algorithms readout
+
+Latest run: 2026-06-01, started after the numerical-computation readout as the first algorithmic/code-adjacent contrast course.
+
+Current status: generated for all topics and content-generation evals pass.
+
+- Source set: 20 exam PDFs, 25 homework/recitation PDFs, 28 lecture PDFs, and `topics/Course Goals and Objectives.docx`
+- 1,730 local chunks written
+- 36 topics extracted, spanning asymptotics, divide-and-conquer, heaps/sorting/select, graphs, shortest paths, max flow, dynamic programming, greedy algorithms, MSTs, union-find, linear programming, and modeling
+- Four thin-but-dense topics remain: `dsa-huffman-encoding`, `dsa-horn-formulas`, `dsa-set-cover`, `dsa-linear-programming`
+- Agent 4 found no curated URLs for those thin topics; generated thin topics succeeded where attempted
+- 74 prerequisite edges persisted, with no cycles
+- Mapper needed manual exclusions for reverse/example edges around divide-and-conquer, max-flow/graph-modeling, and MST theory; those are now in `pipeline.mapper.MANUAL_EXCLUDED_EDGES`
+- 1,691 generated `agent3.v4` blocks persisted across all 36 topics
+- 181 unique source chunk IDs referenced by generated block provenance; all resolve
+- Final eval log: `logs/dsa-evals-20260601-final.log`
+- Final judge report: `reports/judge_data-structures-and-algorithms_20260601T035631Z.json`
+- Judge status: 53 findings across 36 topics, with 35 `ok` topics and 1 `parse_failed` judge topic (`dsa-set-cover`)
+- Judge clusters: 20 `missing_group`, 19 `factual_error`, 7 `confusing_transition`, 5 `generic_prose`, 2 `missing_plot`
+
+DSA exposed repeated Agent 3 issues outside math-heavy courses:
+
+- Malformed JSON on graph/DP topics before targeted retry (`dsa-scc`, `dsa-rna-secondary-structure`)
+- Invalid `source_chunk_ids` before provenance filtering (`dsa-floyd-warshall`)
+- Successful generation for pseudocode/complexity topics including MoMSelect, Strassen, graph basics, DFS/BFS, Dijkstra, Bellman-Ford, Floyd-Warshall, max flow, DP fundamentals, LIS/LCS, RNA folding, knapsack, Huffman, MSTs, union-find, LP, and graph modeling
+
+Readout decision: DSA is healthy at the structural/eval layer, but not clean enough to justify broadening to operating systems or systems programming yet. Its judge profile matches numerical computation: judge parse/noise issues plus repeated Agent 3 grouping and content-precision findings. Do `judge.v5`, then an Agent 3 compliance pass, then rejudge numerical computation and DSA before adding the systems course.
+
+---
+
 ## Next phase playbook
 
-The next phase is about making MVC a trustworthy proof-of-concept before scaling to many courses. Do not add several courses yet; add one second course only after one more MVC prompt/judge iteration.
+The next phase is about proving generalization one course at a time. Numerical computation and DSA are both healthy at the structural/eval layer, but both show judge/Agent 3 quality work before the next broadening step.
 
-### 1. Tighten Agent 3 and the judge one more time
+### 1. Tighten the judge, then Agent 3
 
-Create `agent3.v4` and `judge.v4` together. These go hand in hand: Agent 3 needs clearer generation rules, and the judge needs to stop inflating the report with self-contradictory factual findings.
+Create `judge.v5` before making another broad content-editing pass. Numerical computation produced a useful full-course report, but 7/26 judge topics failed parse and several high-severity factual findings self-refuted. A noisy judge makes it too easy to spend effort on the wrong content fixes.
 
-Agent 3 v4 should focus on:
-
-- More aggressive grouping for display math plus immediate interpretation.
-- More aggressive grouping for plot plus the paragraph that names features of that plot.
-- Plotting concrete geometry examples: curves, regions, surfaces, level sets, and integration regions when the example depends on visual shape.
-- Avoiding visually misleading surface branches, especially closed surfaces shown as only one half without saying so.
-- Staying within renderer reality: today only `function2d` and `surface3d` render fully; other plot kinds fall back to spec previews.
-
-Judge v4 should focus on:
+Judge v5 should focus on:
 
 - Factual-error discipline: only flag a generated claim that is actually wrong.
 - No source-only errors: if the source chunk has an error but the generated block does not repeat it, do not flag the block.
 - No self-contradictory findings: if the description says "this is correct", omit it.
 - Better parse resilience for model outputs that are nearly JSON but wrapped in stray text.
 
-Run:
+Then create the next Agent 3 prompt/compliance pass. It should focus on:
+
+- More aggressive grouping for display math plus immediate interpretation.
+- More aggressive grouping for plot plus the paragraph that names features of that plot.
+- Stronger source-ID discipline: use only IDs shown in `SOURCE CHUNKS`, and omit provenance rather than inventing or mutating IDs.
+- Stronger JSON discipline for long code/pseudocode-heavy topics, especially graph algorithms and dynamic programming examples.
+- Plotting concrete geometry examples when relevant, while staying within renderer reality.
+
+Run after the next judge/Agent 3 pass:
 
 ```bash
-python3 -m pipeline.block_gen --course multivariable-calculus --pause-seconds 1
-python3 -m pipeline.judge --course multivariable-calculus --pause-seconds 1
+env -u ANTHROPIC_API_KEY .venv/bin/python -m pipeline.evals.content_generation --course data-structures-and-algorithms
+env -u ANTHROPIC_API_KEY CLAUDE_JUDGE_TIMEOUT=300 .venv/bin/python -m pipeline.judge --course data-structures-and-algorithms --pause-seconds 1
+env -u ANTHROPIC_API_KEY .venv/bin/python -m pipeline.evals.content_generation --course numerical-computation
+env -u ANTHROPIC_API_KEY CLAUDE_JUDGE_TIMEOUT=300 .venv/bin/python -m pipeline.judge --course numerical-computation --pause-seconds 1
 ```
 
-Compare category counts against `reports/judge_multivariable-calculus_20260531T192934Z.json`. If high + medium findings are still dominated by `missing_group`, consider a deterministic post-processing pass that groups obvious adjacent equation/explanation and plot/caption pairs instead of asking the model to be perfect.
+Compare category counts across MVC, numerical computation, and DSA. Repeated categories across courses are prompt or renderer issues; isolated factual findings can wait for admin-editor fixes after judge.v5 is trustworthy.
 
 ### 2. Add image blocks after the MVC QA loop stabilizes
 
@@ -448,32 +511,33 @@ Implementation checklist:
 
 This makes factual-error review faster: when the judge flags a block, the footer shows the source chunks the page was grounded in.
 
-### 4. Add exactly one second course
+### 4. Add the next contrast course
 
-Add a second course after MVC has one more clean prompt/judge pass and after image/citation infrastructure is at least minimally stable. The goal is not content volume; the goal is to expose course-shape assumptions.
+After numerical computation completes cleanly, add `data-structures-and-algorithms` next. It is the best contrast without jumping straight into capstone or technical-writing material: algorithmic, code-adjacent, conceptually structured, and likely to expose whether Agent 3 handles examples, pseudocode, complexity, and prerequisite mapping outside math-heavy courses.
 
 Recommended order:
 
-1. **Discrete Math** if available. It is close enough to MVC to reuse math rendering, but different enough to stress proof structure, definitions, examples, graphs, relations, and fewer geometry plots.
-2. **Operating Systems** after that. It stresses code blocks, systems diagrams, architecture explanations, scheduling/memory examples, and non-math source material.
+1. **Numerical Computation**: finish the blocked end-to-end run and treat it as the real generalization readout.
+2. **Data Structures and Algorithms**: next contrast course after numerical computation is healthy.
+3. **Operating Systems** or **Systems Programming**: broadening step if both numerical computation and DSA look healthy, to test lower-level systems content.
 
-Second-course shakedown:
+Course shakedown:
 
 ```bash
 # 1. Put files under the course folder.
-mkdir -p /Volumes/AIStack/modules/knowledge/docs/discrete-math/{lectures,exams,homework,reference}
+mkdir -p /Volumes/AIStack/modules/knowledge/docs/<course-name>/{lectures,exams,homework,reference}
 
 # 2. Run the full pipeline.
-python3 -m pipeline.course_orchestrator --course discrete-math --include-thin
+python3 -m pipeline.course_orchestrator --course <course-name> --include-thin
 
 # 3. Inspect topic extraction and graph shape before judging content.
 python3 -m scripts.query_prereqs <one-important-topic-slug>
 
 # 4. Run mechanical evals.
-python3 -m pipeline.evals.content_generation --course discrete-math
+python3 -m pipeline.evals.content_generation --course <course-name>
 
 # 5. Judge the generated content.
-python3 -m pipeline.judge --course discrete-math --pause-seconds 1
+python3 -m pipeline.judge --course <course-name> --pause-seconds 1
 ```
 
 What to look for:

@@ -1,0 +1,61 @@
+{
+  "course_slug": "multivariable-calculus",
+  "judge_version": "judge.v4",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-05-31T22:52:55.231906+00:00",
+  "topics": [
+    {
+      "topic_id": "bed01221-f9ac-424e-b168-b85a1b2b52f6",
+      "topic_slug": "mvc-quadric-surfaces",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10137,
+      "output_tokens": 2453,
+      "cache_creation_tokens": 1468,
+      "cache_read_tokens": 0,
+      "usd_cost": 0.072711,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "381c5574-bc61-4c40-8fdf-d5063610ec3a",
+          "description": "The paragraph states 'Setting $x = 0$ in the above gives $-y^2/b^2 - 0 = 1$, which has no real solutions' but the correct substitution of $x = 0$ into $z^2/c^2 - x^2/a^2 - y^2/b^2 = 1$ gives $z^2/c^2 - y^2/b^2 = 1$, not $-y^2/b^2 = 1$; the intended argument should set $z = 0$ (the middle plane) to show no real solutions.",
+          "suggested_fix": "Replace 'Setting $x = 0$' with 'Setting $z = 0$' so the substitution correctly yields $-x^2/a^2 - y^2/b^2 = 1$, which has no real solutions."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "c4e146b8-0ac1-4382-9d75-90a696306c16",
+          "description": "The paragraph claims the ellipsoid plot shows 'axis intercepts at $x = \\pm 2$, $y = \\pm 3$, $z = \\pm 1$' but the plot only shows the upper half ($z \\geq 0$), so the intercept $z = -1$ is not visible in the plot.",
+          "suggested_fix": "Change the description to note that the upper half shows intercepts at $x = \\pm 2$, $y = \\pm 3$, and $z = 1$ (the lower intercept $z = -1$ is on the hidden lower half)."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "d280c92c-7da3-4708-bad9-02ac54a588d5",
+          "description": "The hyperboloid of one sheet is described with its standard equation and geometric properties but no surface3d plot is provided, while all other major quadric surfaces in the topic have accompanying plots.",
+          "suggested_fix": "Add a surface3d plot of the upper portion of the hyperboloid of one sheet, e.g., expression='sqrt(1 + x^2/4 + y^2/9)' with an appropriate domain, labeled as one sheet of the hyperboloid."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "463d830c-75aa-4a7a-98d4-c27c7a89b04e",
+          "description": "The worked example on the ellipsoid $6x^2 + 4y^2 + 9z^2 = 1$ describes a specific surface whose shape matters for understanding the classification, but no surface3d plot accompanies it.",
+          "suggested_fix": "Add a surface3d plot showing the upper half of the ellipsoid, e.g., expression='sqrt(max(0,(1 - 6*x^2 - 4*y^2)/9))' over an appropriate domain."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 4,
+    "cost": 0.072711,
+    "in": 10137,
+    "out": 2453,
+    "cache_create": 1468,
+    "cache_read": 0,
+    "severity_low": 0,
+    "severity_medium": 1,
+    "severity_high": 3
+  }
+}

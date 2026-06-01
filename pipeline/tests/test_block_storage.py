@@ -9,7 +9,12 @@ from dataclasses import dataclass
 from typing import Optional
 
 from pipeline.anchor_integrity import validate_anchor_integrity
-from pipeline.orchestrator import _to_reconciler_shape, _to_storage_content, _validate
+from pipeline.orchestrator import (
+    _filter_source_chunk_ids,
+    _to_reconciler_shape,
+    _to_storage_content,
+    _validate,
+)
 
 
 @dataclass(frozen=True)
@@ -147,6 +152,26 @@ def test_validate_rejects_unknown_source_chunk_ids():
 
     assert errors
     assert "chunk_fake" in " ".join(errors)
+
+
+def test_filter_source_chunk_ids_drops_unknown_ids_before_validation():
+    blocks = [
+        {
+            "type": "paragraph",
+            "content": [{"type": "text", "text": "Grounded sentence."}],
+            "generation_metadata": {
+                "source_chunk_ids": ["chunk_real", "chunk_fake", "chunk_other"]
+            },
+        }
+    ]
+
+    _filter_source_chunk_ids(blocks, {"chunk_real", "chunk_other"})
+
+    assert blocks[0]["generation_metadata"]["source_chunk_ids"] == [
+        "chunk_real",
+        "chunk_other",
+    ]
+    assert _validate(blocks, [], {"chunk_real", "chunk_other"}) == []
 
 
 def test_validate_rejects_agent3_generated_image_blocks():

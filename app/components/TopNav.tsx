@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 const sections = [
   { title: "Math Foundations",        href: "/math-foundations",          iconName: "math"        },
   { title: "Engineering Foundations", href: "/engineering-foundations",   iconName: "engineering" },
-  { title: "Programming and Software",href: "/programming-and-software",  iconName: "programming" },
+  { title: "Programming and Software",href: "/programming-software",  iconName: "programming" },
   { title: "Computer Systems",        href: "/computer-systems",          iconName: "computer"    },
-  { title: "Hardware and Circuits",   href: "/hardware-and-circuits",     iconName: "circuits"    },
-  { title: "Signals and Networks",    href: "/signals-and-networks",      iconName: "signals"     },
+  { title: "Hardware and Circuits",   href: "/hardware-circuits",     iconName: "circuits"    },
+  { title: "Signals and Networks",    href: "/signals-networks",      iconName: "signals"     },
   { title: "Engineering Communication",href: "/engineering-communication",iconName: "writing"     },
 ];
 

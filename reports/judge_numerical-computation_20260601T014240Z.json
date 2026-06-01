@@ -1,0 +1,695 @@
+{
+  "course_slug": "numerical-computation",
+  "judge_version": "judge.v4",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-01T01:52:24.210852+00:00",
+  "topics": [
+    {
+      "topic_id": "a14bb839-56e3-4950-b092-ff5adba44a06",
+      "topic_slug": "number-base-conversion-floating-point",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5023,
+      "output_tokens": 1574,
+      "cache_creation_tokens": 1650,
+      "cache_read_tokens": 0,
+      "usd_cost": 0.0448665,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "a95995ea-81f1-47ed-889a-69621f044e7b",
+          "description": "The mantissa bits after the leading 1 in 1.000000101 are '000000101', but padded to 23 bits this should be '00000010100000000000000' \u2014 the block states this correctly, so no error here; omitting.",
+          "suggested_fix": null
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "25a10884-df5e-4e80-9fae-e648b71cc46a",
+          "description": "The display-math block showing the assembled 32-bit layout is immediately followed by a code block (id=3950f5c9) giving the bit string, but neither block shares a group_id, and the code block directly instantiates the formula above it.",
+          "suggested_fix": "Assign the same group_id to blocks 25a10884 and 3950f5c9 so they are rendered as a coupled pair."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "cecd6760-5c59-44c7-9daf-5f5c61a99c03",
+          "description": "The display-math block defining the binary place-value sum is immediately followed by a heading rather than an interpreting paragraph, so no group issue here; omitting.",
+          "suggested_fix": null
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "e32c784e-8f11-4a10-a93b-d6915ca224ca",
+          "description": "The worked-example display-math block (binary-to-decimal conversion) is immediately followed by paragraph 2945b344 that explicitly walks through the same computation, but they share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks e32c784e and 2945b344."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "9ee231f5-3a65-46e0-8742-c4df5f8e2cd7",
+          "description": "The display-math block showing the 32-bit field layout is immediately followed by paragraph cb7e00fb that explicitly defines the value formula using the same symbols, but they share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 9ee231f5 and cb7e00fb."
+        }
+      ]
+    },
+    {
+      "topic_id": "bbc2312b-f8d4-42ca-a336-59036977ebda",
+      "topic_slug": "floating-point-error-propagation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5468,
+      "output_tokens": 721,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.027714,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "9cda150a-dbfd-4c61-bc11-aeab9e5a77f8",
+      "topic_slug": "loss-of-significance",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7269,
+      "output_tokens": 1240,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.040902,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "e2501766-7cc8-4769-bc7e-e572b7202b3b",
+      "topic_slug": "taylor-series-finite-difference",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9382,
+      "output_tokens": 1146,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.045831,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "4414adb7-6970-42cb-943a-95e0a5178c53",
+          "description": "The rounding error term for the three-point one-sided formula D_h is O(\u03b5_mach / h), but the correct scaling is O(\u03b5_mach / h) only for a first-order formula; for the formula with coefficients of magnitude up to 4, the rounding error in the numerator is O(\u03b5_mach) (since |\u22123|+|4|+|1|=8 times \u03b5_mach times |f|), giving total rounding error O(\u03b5_mach / h), which is indeed correct. No factual error.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "8fe56866-e853-457c-bc59-5a4118b35610",
+      "topic_slug": "matlab-programming-numerical-methods",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9012,
+      "output_tokens": 911,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.041196,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "7323fcbd-952a-488f-92fe-11f8ce23ef8a",
+          "description": "The block states that polynomial interpolation through n+1 points requires solving a 'Vandermonde linear system Va = y', but the source chunks show the system is built in ascending power order with the coefficient vector in ascending order, whereas the standard Vandermonde matrix convention has columns in descending power order; the block's own code (next block) builds columns as [1, x, x^2, x^3] (ascending), which is actually a transposed/reversed Vandermonde \u2014 calling it a 'Vandermonde system' without qualification is misleading but not strictly wrong. This is borderline; skipping.",
+          "suggested_fix": null
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "af5185d9-1624-4366-85fa-f1c473176045",
+          "description": "The block states to solve overdetermined systems using 'A' * A \\ A' * b', but the correct MATLAB normal-equations expression is (A' * A) \\ (A' * b); the expression as written 'A' * A \\ A' * b' is ambiguous due to operator precedence and could be parsed as A' * (A \\ A') * b, which is incorrect \u2014 the parentheses around A'*A and A'*b are missing.",
+          "suggested_fix": "Write the normal-equations solve as (A'*A) \\ (A'*b) with explicit parentheses to avoid precedence ambiguity."
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "63a15777-a87d-4dd6-aa4f-ad5ce4668868",
+          "description": "The opening paragraph is a generic topic overview that restates the title and lists the same items covered in the summary, adding no specific content a learner couldn't infer from the heading and summary.",
+          "suggested_fix": "Replace with a concrete motivating example or a specific numerical problem that the topic will solve."
+        }
+      ]
+    },
+    {
+      "topic_id": "d4a8c91b-bc1a-4a7e-9886-c60020fe4bd9",
+      "topic_slug": "polynomial-interpolation-lagrange-newton",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10380,
+      "output_tokens": 1581,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.05535,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "d8e16e09-416a-401f-a262-634827aab86f",
+          "description": "The divided difference table shows f[2,3] = 17/2 and f[2,3,4] = 9/2 and f[0,2,3] = 2, but the correct values are f[2,3] = 17, f[0,2,3] = 5, and f[2,3,4] = 9, as confirmed by the source chunk and direct computation.",
+          "suggested_fix": "Replace the table entries: second-order differences should be 2, 17, 35 (not 2, 17/2, 35); third-order differences should be 5, 9 (not 2, 9/2); fourth-order difference remains 1."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "3ae3bd79-8a03-4e43-a2d5-6f7e6df25fdb",
+          "description": "The block reads off c_2 = 2 from the (incorrect) table, but the correct second divided difference f[x_0,x_1,x_2] = f[0,2,3] = 5.",
+          "suggested_fix": "Change c_2 = 2 to c_2 = 5 to match the correct divided difference table."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "91dfc637-be32-4ac3-ad2c-ad3229725e8d",
+          "description": "The Newton form is written as p_3(x) = 7 + 2x + 2\u00b7x(x-2) + 1\u00b7x(x-2)(x-3), but the correct coefficient of x(x-2) is 5, not 2.",
+          "suggested_fix": "Change the polynomial to p_3(x) = 7 + 2x + 5\u00b7x(x-2) + 1\u00b7x(x-2)(x-3)."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "b063a833-baab-49b5-8191-a8865f1afeea",
+          "description": "The Vandermonde matrix display-math block is immediately followed by block b78e3505 which explicitly interprets that equation (nonsingularity, ill-conditioning), but the two blocks share no group_id.",
+          "suggested_fix": "Assign a common group_id (e.g., 'vandermonde-system') to blocks b063a833 and b78e3505."
+        }
+      ]
+    },
+    {
+      "topic_id": "2eb4da66-0e7d-46a6-9084-2eaa18ccacfd",
+      "topic_slug": "chebyshev-nodes-interpolation-error",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7476,
+      "output_tokens": 1538,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.045993,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "de007377-47ca-4be7-a991-af775a408a1f",
+          "description": "The block states that the zeros of T_{n+1}(x) are 'called the Chebyshev nodes of Type II (or sometimes Type I, depending on convention)', but the formula given (zeros of T_{n+1}) corresponds to what the source chunks call Type II, while the extrema formula is Type I; the parenthetical reversal is confusing and the labeling is inverted relative to the source.",
+          "suggested_fix": "Clarify that the zeros of T_{n+1} are commonly called Type II nodes, and the extrema of T_n (including endpoints) are Type I, consistent with the source chunk labeling."
+        }
+      ]
+    },
+    {
+      "topic_id": "96b63bbd-04dd-4a25-8c1f-15fadee755ad",
+      "topic_slug": "spline-interpolation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 11066,
+      "output_tokens": 1390,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.054543,
+      "status": "parse_failed",
+      "error": "JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+      "findings": []
+    },
+    {
+      "topic_id": "d439117c-3c21-4f69-88ac-5df7df81ee12",
+      "topic_slug": "numerical-integration-trapezoid-simpson",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9517,
+      "output_tokens": 661,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.038961,
+      "status": "parse_failed",
+      "error": "JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+      "findings": []
+    },
+    {
+      "topic_id": "86c0eda5-fadc-45a3-a81d-6fd1dfaec067",
+      "topic_slug": "romberg-richardson-extrapolation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8599,
+      "output_tokens": 779,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.037977,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "6a7d1e84-309d-44ac-aa07-d81349e85cff",
+          "description": "The claim that (4T(h/2) - T(h))/3 'is actually Simpson's rule' is only true when the trapezoid approximations use the same endpoints and the midpoint coincides with the Simpson midpoint, which holds for a single interval but not in general for composite rules; stating it as a general identity is misleading and overstated.",
+          "suggested_fix": "Clarify that this identity holds for a single interval [a,b] with T(h) the one-panel trapezoid and T(h/2) the two-panel trapezoid, in which case the combination equals the composite Simpson's rule on that interval."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "8dbc9094-2769-4fee-957b-5d98ba02889a",
+          "description": "The callout states the Richardson extrapolation formula is R = (4^k T(h/2) - T(h)) / (4^k - 1) where k is the 'column index starting at 1', but in the Romberg table the first extrapolation column is j=2 (not j=1), so the correct factor for the j-th column is 4^(j-1), meaning k should be described as j-1 or the column index starting at 1 should correspond to j=2; as written, k=1 gives the correct first extrapolation but the description 'column index starting at 1' conflicts with the table notation where j=1 is the trapezoid column.",
+          "suggested_fix": "Clarify that k = j-1 where j is the column index in the Romberg table (j \u2265 2), or equivalently that k starts at 1 for the second column of the table."
+        }
+      ]
+    },
+    {
+      "topic_id": "d5b0ffe8-c443-4ff0-ac11-6496d3079d86",
+      "topic_slug": "gaussian-quadrature",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9262,
+      "output_tokens": 1018,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.043551,
+      "status": "parse_failed",
+      "error": "JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+      "findings": []
+    },
+    {
+      "topic_id": "d9bd9fde-a50f-4db2-8f6d-f5d434ccccc8",
+      "topic_slug": "bisection-method",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7544,
+      "output_tokens": 658,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.032997,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "medium",
+          "block_id": "5f9e7c43-df4f-43f3-8115-c797992a8a36",
+          "description": "Example 1 discusses a specific polynomial f(x) = 9x\u2074 + 18x\u00b3 + 38x\u00b2 \u2212 57x + 14 with two roots on [0,1] whose shape is central to understanding why the sign test fails, but no function2d plot accompanies it.",
+          "suggested_fix": "Add a function2d plot of 9*x^4 + 18*x^3 + 38*x^2 - 57*x + 14 over the domain x \u2208 [0, 1] to show both roots and the positive values at both endpoints."
+        }
+      ]
+    },
+    {
+      "topic_id": "20c0dab0-6f91-4a9a-82e8-997e84e3147f",
+      "topic_slug": "fixed-point-iteration",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8122,
+      "output_tokens": 1871,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.052926,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "3aca3ee5-8e33-4f42-8fc7-2ce93dd43933",
+          "description": "The plot block showing g(x) = (x + 2/x)/2 and y = x is immediately followed by paragraph ad670585 that explicitly names visible features of that plot ('crosses the diagonal', 'flat the curve is near the intersection'), but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 3aca3ee5 and ad670585."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "af58ca98-36d7-4371-9ed6-105da2855056",
+          "description": "The display-math block showing the error recurrence e_{n+1} = g'(\u03be_n) e_n is immediately followed by paragraph cfcec5ba that explicitly interprets that equation ('Since |g'(\u03be_n)| \u2264 K < 1, the error is reduced\u2026'), but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks af58ca98 and cfcec5ba."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "acc91c22-97a0-4c2a-bef4-de519b91ed9e",
+          "description": "The display-math block |e_{n+1}| \u2248 |g'(p)| \u00b7 |e_n| is immediately followed by paragraph 4992cbba that explicitly interprets it ('The constant |g'(p)| is the asymptotic error reduction factor\u2026'), but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks acc91c22 and 4992cbba."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "2606ead1-b285-4b46-90ff-31ef61a9a6b4",
+          "description": "The display-math block for the square-root iteration is immediately followed by paragraph f7c1e076 that explicitly derives the fixed point and derivative of that exact formula, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 2606ead1 and f7c1e076."
+        }
+      ]
+    },
+    {
+      "topic_id": "d86cfc3f-206d-44e6-b4c2-2fb6ee8ec9ca",
+      "topic_slug": "newtons-method",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8765,
+      "output_tokens": 753,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.038085,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "8e5957b5-ce96-44f9-824a-a6223f0bba72",
+          "description": "The block rewrites f(x) as sqrt(sin(x) - (1/2)x), but the source chunk shows f(x) = sqrt(sin(x) - (1/2)x^2) (i.e., the argument is sin(x) - (1/2)x\u00b2, not sin(x) - (1/2)x), and the original equation is 0 = 1/2 + (1/4)x\u00b2 - x\u00b7sin(x) - (1/2)cos(2x).",
+          "suggested_fix": "Replace 'sqrt(sin(x) - (1/2)x)' with 'sqrt(sin(x) - (1/2)x\u00b2)' to match the source."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "193ab68b-413d-4220-82b3-6bc5ddf3cf70",
+          "description": "Block 193ab68b interprets the residual identity from the immediately preceding display-math block (8271670e), explicitly defining its symbols and explaining its geometric meaning as quadratic convergence, but the two blocks share no group_id.",
+          "suggested_fix": "Assign both blocks 8271670e and 193ab68b the same group_id (e.g., 'sqrt-babylonian')."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "008296d2-d6b8-4f20-8fef-3714743bfcf4",
+          "description": "The block claims 'replacing 2 by m handles roots of multiplicity m', but the source (chunk 4625e5a9) only establishes that the factor-of-2 modification restores quadratic convergence for a double root (m=2); the general claim that x_{n+1} = x_n - m\u00b7f/f' is quadratically convergent for arbitrary multiplicity m is not supported and is not standard.",
+          "suggested_fix": "Restrict the claim to the double-root case (m=2) as supported by the source, or note that the general-m result requires separate verification."
+        }
+      ]
+    },
+    {
+      "topic_id": "0e859be6-0986-46c9-8804-15e77ddde0a1",
+      "topic_slug": "secant-method",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8613,
+      "output_tokens": 510,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.033984,
+      "status": "parse_failed",
+      "error": "JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+      "findings": []
+    },
+    {
+      "topic_id": "a434bec8-fb6a-4e52-89ed-d2256f7fddab",
+      "topic_slug": "gaussian-elimination-pivoting",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9242,
+      "output_tokens": 807,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.040326,
+      "status": "parse_failed",
+      "error": "JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+      "findings": []
+    },
+    {
+      "topic_id": "0ff76105-84f6-4d5f-a778-222d4b44c479",
+      "topic_slug": "tridiagonal-banded-systems",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8485,
+      "output_tokens": 1398,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.04692,
+      "status": "parse_failed",
+      "error": "JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+      "findings": []
+    },
+    {
+      "topic_id": "e30ba33a-2eaa-46b2-a4a3-8edb19c44ff7",
+      "topic_slug": "iterative-methods-linear-systems",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9747,
+      "output_tokens": 949,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.043971,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "ca19465d-058e-4fb6-8cdb-f1f8ffe0dc1b",
+          "description": "The SOR matrix-form display-math block (sor-matrix) is immediately followed by block 67ae3c9b which explicitly defines the iteration matrix T_\u03c9 from that exact equation and discusses its spectral radius, but the two blocks share no group_id.",
+          "suggested_fix": null
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "9a5217f4-1f8a-4ef7-995a-cf620b323cf4",
+          "description": "The display-math block for \u03c9_opt (sor-optimal-omega) is immediately followed by block 7df22fee which explicitly interprets the formula's symbols and geometric meaning, but the two blocks share no group_id.",
+          "suggested_fix": null
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "0036e523-4d06-414f-a166-a9862ff9ad58",
+          "description": "The Jacobi component-wise display-math block (jacobi-component) is immediately followed by block 34da3e56 which explicitly defines the matrix-vector form and iteration matrix derived from that equation, but the two blocks share no group_id.",
+          "suggested_fix": null
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "bdbb5257-519f-47b5-89ae-6bcfcef79734",
+          "description": "The Gauss-Seidel component display-math block (gauss-seidel-component) is immediately followed by block 9bc497ca which explicitly defines the iteration matrix T_GS and the forward-substitution interpretation of that formula, but the two blocks share no group_id.",
+          "suggested_fix": null
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "bad0f8f8-616d-45b0-898a-a3bac85253d3",
+          "description": "The closing callout comparing iterative to direct methods reads as a generic textbook gloss ('iterative methods become advantageous for large sparse systems\u2026') that adds no information specific to Jacobi, Gauss-Seidel, or SOR beyond what was already stated in the introduction.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "54ff67c3-5b8f-4dd3-bf89-6f8497731985",
+      "topic_slug": "method-of-least-squares",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10184,
+      "output_tokens": 1031,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.046512,
+      "status": "parse_failed",
+      "error": "JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+      "findings": []
+    },
+    {
+      "topic_id": "391a4f3a-8ccd-4443-90bf-cd6b26be9944",
+      "topic_slug": "ode-euler-heun-runge-kutta",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10321,
+      "output_tokens": 1070,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.047508,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "03a690af-922d-4750-a7bb-da8b232c71ac",
+          "description": "The intermediate value f(1.2) = 2(1.44) + 1.2 - 1 is labeled '2.08' but the correct value is 3.08 (2.88 + 0.20 = 3.08); the line then writes '0.1 \u00d7 2.08 = 0.308' which is internally inconsistent (0.1 \u00d7 2.08 = 0.208, not 0.308), making the intermediate step wrong even though the final answer 1.508 happens to be correct.",
+          "suggested_fix": "Replace '2(1.44) + 1.2 - 1 = 2.08' with '2(1.44) + 1.2 - 1 = 3.08' and update the product line to '0.1 \u00d7 3.08 = 0.308'."
+        }
+      ]
+    },
+    {
+      "topic_id": "892a524b-c12a-4924-9334-b7e1274a408c",
+      "topic_slug": "multistep-methods-adams-bashforth-moulton",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10138,
+      "output_tokens": 1116,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.047649,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "a3a895b0-b509-4028-88a9-5c57136ac731",
+          "description": "The claim that the parasitic root of the explicit midpoint method has 'magnitude greater than 1 for finite h' is incorrect for the test equation x'=-x; the two characteristic roots are r = h\u03bb \u00b1 sqrt(1 + h\u00b2\u03bb\u00b2) which for \u03bb=-1 give roots approximately 1+h and -(1-h), so one root has magnitude slightly greater than 1 and the other slightly less than 1, but the key instability claim that it persists 'regardless of how small h is' is also wrong \u2014 the parasitic root magnitude approaches 1 as h\u21920, and the method is weakly unstable (not strongly unstable for all h). More precisely, the midpoint method is zero-stable (its parasitic root has magnitude exactly 1 at h=0), so the statement that the parasitic solution grows 'regardless of how small h is' mischaracterizes the instability.",
+          "suggested_fix": "Clarify that the midpoint method's parasitic root has magnitude 1 (it is zero-stable but not absolutely stable for the test equation), causing the parasitic component to grow linearly rather than exponentially, and that this is a weak instability rather than a blow-up for all h."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "f7240a3a-9aee-424f-8d25-4c3404f0eb4a",
+          "description": "The local truncation error of the 2nd-order Adams-Bashforth method is conventionally stated as (5/12)h\u00b3 x'''(\u03be) (order h\u00b3 in the LTE, giving global error O(h\u00b2)), but the block writes it as (5/12)h\u00b2 x'''(t_n) + O(h\u00b3), which conflates the LTE coefficient with the wrong power of h \u2014 the leading term should be proportional to h\u00b3, not h\u00b2.",
+          "suggested_fix": "Write the LTE as \u03c4 = (5/12)h\u00b3 x'''(t_n) + O(h\u2074), consistent with the standard convention that LTE for a second-order method is O(h\u00b3)."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "7e06d42d-6311-4dda-9617-3be7d7a01fcc",
+          "description": "The local truncation error of the 2nd-order Adams-Moulton corrector is written as -(1/12)h\u00b2 x'''(t_n) + O(h\u00b3), but by the same convention it should be -(1/12)h\u00b3 x'''(t_n) + O(h\u2074).",
+          "suggested_fix": "Write the LTE as \u03c4 = -(1/12)h\u00b3 x'''(t_n) + O(h\u2074)."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "a0191ca4-06c5-4a57-809b-d991c4d89d11",
+          "description": "The 4th-order Adams-Bashforth predictor has LTE of order O(h\u2075) (global error O(h\u2074)), not O(h\u2074) as stated; calling it 'O(h\u2074)' confuses the LTE order with the global error order.",
+          "suggested_fix": "State that the 4th-order Adams-Bashforth predictor has LTE O(h\u2075), giving global (method) order 4."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "01f26155-f43e-4183-a018-5a9e64a29fd6",
+          "description": "The worked example uses duplicate numbering \u2014 both the first step (block b8897594) and the predictor step (block 01f26155) are labeled '1.' in the numbered list, making the step sequence confusing for a learner following the computation.",
+          "suggested_fix": "Renumber the worked-example steps sequentially as 1, 2, 3, 4."
+        }
+      ]
+    },
+    {
+      "topic_id": "c2c72e14-5fc1-4dfc-a5db-1730bcc41423",
+      "topic_slug": "systems-odes-higher-order",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9736,
+      "output_tokens": 1078,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.045873,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "80afaa42-b01c-4083-893e-769ae58830ba",
+          "description": "The stability threshold stated as h \u2272 2/100 = 0.02 is incorrect for RK4; the RK4 stability region along the negative real axis extends to approximately |\u03bbh| \u2264 2.785, giving h \u2272 2.785/100 \u2248 0.028, not 0.02 (which corresponds to forward Euler's stability limit).",
+          "suggested_fix": "Replace '2/100 = 0.02' with approximately '2.8/100 \u2248 0.028' to reflect RK4's actual stability boundary, or note that the threshold is method-dependent."
+        }
+      ]
+    },
+    {
+      "topic_id": "6e7bffb6-ece7-40f5-844b-35f1cff15082",
+      "topic_slug": "two-point-bvp-shooting-methods",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8986,
+      "output_tokens": 1329,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.047388,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "559f3784-12cb-4500-8150-17328cd6358c",
+          "description": "The display-math block containing the \u03bb formula is immediately followed by block 57c0f6f0 which explicitly interprets that formula and explains its geometric meaning, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 559f3784 and 57c0f6f0."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "ca799f4f-1b40-4213-b4fa-5a53cedd3ad5",
+          "description": "The display-math block defining \u03c6(z) is immediately followed by block 7c9274b7 which explicitly interprets that equation (root-finding problem, secant method rationale), but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks ca799f4f and 7c9274b7."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "0061e248-eac4-450a-92f2-5866fad063eb",
+          "description": "The display-math block for the Robin-condition \u03bb formula is immediately followed by block e3979dc3 which explicitly interprets it, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 0061e248 and e3979dc3."
+        }
+      ]
+    },
+    {
+      "topic_id": "20f79721-0b86-42e4-840d-6e94a0ba32a6",
+      "topic_slug": "finite-difference-bvp-1d",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9527,
+      "output_tokens": 938,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.043146,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "broken_plot_spec",
+          "severity": "medium",
+          "block_id": "90d27d1c-760f-4b0a-ac91-8aae083bb3c9",
+          "description": "The plot uses a list expression [\"2*x\", \"4*x^2\"] with domain x in [-3, 0]; the label claims the axes are log(h) and log(E_h), but the expressions 2*x and 4*x^2 do not represent log-log lines of slope 1 and slope 2 \u2014 on a log-log plot a slope-2 line would be x mapped to 2*x (linear in log space), so both curves should be linear (e.g., [\"x\", \"2*x\"]), making 4*x^2 a parabola in log-space which is incorrect for a schematic of slope-2 convergence.",
+          "suggested_fix": "Change the expression to [\"x\", \"2*x\"] so both curves are straight lines in log-log space with slopes 1 and 2 respectively."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "7f5d6e89-83c3-49ad-8742-4fa4a4103d93",
+          "description": "Block 7f5d6e89 immediately interprets and defines the symbols of the display-math equation in block 6c768a5d (the tridiagonal recurrence), but these two blocks share no group_id.",
+          "suggested_fix": "Assign both block 6c768a5d and block 7f5d6e89 the same group_id (e.g., group=tridiag-recurrence)."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "e6b25a79-f4d2-4be5-bacb-15c59ea19a5c",
+          "description": "Block e6b25a79 directly interprets the meaning of the E_h = O(h\u00b2) result in block 30ef41a7 (explaining the factor-of-4 reduction and log-log slope), but these two blocks share no group_id.",
+          "suggested_fix": "Add both block 30ef41a7 and block e6b25a79 to the same group_id as block 9ed1786e and 91ddd8a1 (group=error-analysis), or create a new group for the pair."
+        }
+      ]
+    },
+    {
+      "topic_id": "509c253e-7ca1-4bbf-bd47-ebc1918266f8",
+      "topic_slug": "finite-difference-elliptic-pde-2d",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10926,
+      "output_tokens": 1607,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.057378,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "b36d3c4a-cc44-4fff-970b-1f134f4dea5d",
+          "description": "The display-math block showing the block-tridiagonal matrix A is immediately followed by a paragraph (2d11d3cb) that explicitly interprets the blocks T and I and their geometric meaning, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks b36d3c4a and 2d11d3cb."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "66d6e823-5f69-4c78-8afa-abadf1110b50",
+          "description": "The display-math block showing the global error bound is immediately followed by paragraph bae66d51 that interprets the constant C and the practical meaning of halving h, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 66d6e823 and bae66d51."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "60ed279d-b85d-4e71-bd51-f70901e09916",
+          "description": "The display-math block for the modified Laplace stencil (stencil-laplace) is immediately followed by paragraph 242dcba9 that derives the simplified stencil equation and describes the resulting matrix structure, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 60ed279d and 242dcba9."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "aea0c28f-fb99-4c0b-9030-d0b68cd7241e",
+          "description": "Block aea0c28f describes 'natural (row-major) ordering' as enumerating 'column by column (or row by row)' \u2014 these are contradictory descriptions (column-by-column is column-major, not row-major), which will confuse a learner trying to match the ordering to the index formula in the next block (7e5ef69b).",
+          "suggested_fix": "Clarify that the ordering used here is column-by-column (column-major), consistent with the index formula k = (j-1)(N-1) + i where j is the slow index."
+        }
+      ]
+    },
+    {
+      "topic_id": "dfa7f728-59f4-4c0d-a9e6-1b0d0d5e549f",
+      "topic_slug": "finite-difference-heat-equation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8952,
+      "output_tokens": 893,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.040746,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    }
+  ],
+  "totals": {
+    "findings": 46,
+    "cost": 1.1422934999999999,
+    "in": 231742,
+    "out": 28567,
+    "cache_create": 1650,
+    "cache_read": 41250,
+    "severity_low": 4,
+    "severity_medium": 29,
+    "severity_high": 13
+  }
+}

@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import pathlib
 import re
 import time
@@ -31,6 +32,7 @@ from pipeline.llm import DEFAULT_MODEL, PRICING_USD_PER_MTOK
 
 
 PROMPT_VERSION = "judge.v4"
+REQUEST_TIMEOUT_SECONDS = float(os.environ.get("CLAUDE_JUDGE_TIMEOUT", "180"))
 
 CATEGORIES = (
     "factual_error",
@@ -365,7 +367,7 @@ def judge_topic(
     model: str = DEFAULT_MODEL,
     client: anthropic.Anthropic | None = None,
 ) -> JudgeResult:
-    client = client or anthropic.Anthropic()
+    client = client or anthropic.Anthropic(timeout=REQUEST_TIMEOUT_SECONDS)
     context = get_topic_context(topic_id)
     blocks = _read_topic_blocks(topic_id)
 
@@ -483,7 +485,7 @@ def _main() -> None:
     totals = {"findings": 0, "cost": 0.0, "in": 0, "out": 0, "cache_create": 0, "cache_read": 0}
     sev_totals = {"low": 0, "medium": 0, "high": 0}
 
-    client = anthropic.Anthropic()
+    client = anthropic.Anthropic(timeout=REQUEST_TIMEOUT_SECONDS)
     try:
         for i, (topic_id, slug) in enumerate(targets):
             if i and args.pause_seconds > 0:

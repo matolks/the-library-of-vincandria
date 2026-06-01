@@ -87,6 +87,7 @@ def generate_blocks_for_topic(
         last_model = result.model
 
         allowed_chunk_ids = {chunk.id for chunk in context.chunks}
+        _filter_source_chunk_ids(result.blocks, allowed_chunk_ids)
         errors = _validate(result.blocks, pinned_cohorts, allowed_chunk_ids)
         if not errors:
             pinned_ids, sequence = _to_reconciler_shape(result.blocks, result.model)
@@ -203,6 +204,20 @@ def _validate_source_chunk_ids(
         f"blocks[{index}]: generation_metadata.source_chunk_ids contains "
         f"unknown chunk id(s) {unknown}; use only chunk IDs from SOURCE CHUNKS"
     ]
+
+
+def _filter_source_chunk_ids(blocks: list[dict], allowed_chunk_ids: set[str]) -> None:
+    """Drop hallucinated provenance IDs while preserving valid model citations."""
+    for block in blocks:
+        meta = block.get("generation_metadata")
+        if not isinstance(meta, dict):
+            continue
+        ids = meta.get("source_chunk_ids")
+        if not isinstance(ids, list):
+            continue
+        meta["source_chunk_ids"] = [
+            chunk_id for chunk_id in ids if chunk_id in allowed_chunk_ids
+        ]
 
 
 def _build_retry_prompt(original_user: str, errors: list[str], raw_text: str) -> str:

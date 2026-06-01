@@ -1,0 +1,881 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v4",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-01T04:05:48.100047+00:00",
+  "topics": [
+    {
+      "topic_id": "a6cd1242-3507-4600-ab54-0e2131482ae5",
+      "topic_slug": "dsa-asymptotic-notation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4145,
+      "output_tokens": 1525,
+      "cache_creation_tokens": 1650,
+      "cache_read_tokens": 0,
+      "usd_cost": 0.0414975,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "ab284219-0ccd-4de4-81ac-8e94cf900d37",
+          "description": "The paragraph immediately following the plot block explicitly names visible features of that plot ('Notice how log\u2082n (blue) and n (green) stay nearly flat compared to n\u00b2 and 2^n') but the plot block and this paragraph share no group_id.",
+          "suggested_fix": "Assign the same group_id to block 761e90cd and block ab284219."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "c4596d34-4e73-4dca-97a8-8472e3529236",
+          "description": "The paragraph immediately following the Big-O definition display-math block explicitly interprets that equation and its parameters (c and n\u2080), but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to block bdae05c2 and block c4596d34."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "83f1a9b5-09ae-4efa-9100-4a2fa822b393",
+          "description": "The paragraph immediately following the Big-Omega definition display-math block explicitly interprets that equation, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to block 9eb7a8ae and block 83f1a9b5."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "36d4dd5a-2d62-476f-ace8-0bc174a50c92",
+          "description": "The paragraph immediately following the Big-Theta definition display-math block explicitly interprets that equation with a concrete example, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to block bb904861 and block 36d4dd5a."
+        }
+      ]
+    },
+    {
+      "topic_id": "85bb0c7a-5b19-4a7c-8aaf-dab983a68305",
+      "topic_slug": "dsa-divide-and-conquer-recurrences",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7671,
+      "output_tokens": 689,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.033843,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "aaf83459-3c1d-4a5c-8553-0243c6ba2de3",
+          "description": "The callout states the Master Theorem gives a tight bound 'only when the non-recursive term is a polynomial,' but the theorem as stated in the block sequence uses O(n^d) which is already a polynomial \u2014 the real issue is that n log n is not of the form n^d for any constant d, so the theorem simply does not apply (not that it gives a wrong bound when it does apply); the phrasing 'gives a tight bound only when' is misleading because the theorem either applies or doesn't.",
+          "suggested_fix": "Rephrase to: 'Warning: the Master Theorem applies only when the non-recursive term is of the form O(n^d) for a constant d. If you encounter f(n) = n log n or other non-polynomial functions, the theorem does not apply \u2014 use the recursion tree or unrolling instead.'"
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "f0f8844b-dec7-4c4c-9cf2-86e6eb89f675",
+          "description": "The paragraph starts an incorrect calculation ('= \u0398(n log n) \u2014 wait, more carefully') mid-sentence, which reads as a self-correction artifact from drafting and would confuse a learner following the derivation.",
+          "suggested_fix": "Remove the false start and present only the correct derivation: 'At depth i there are 2^i subproblems each of size n/2^i, contributing \u0398((n/2^i)\u00b7log(n/2^i)) each, for a total of \u0398(n log(n/2^i)) at depth i.'"
+        }
+      ]
+    },
+    {
+      "topic_id": "7f90b5c2-3f69-4a2a-8c2a-4ef1a960089a",
+      "topic_slug": "dsa-heaps",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5014,
+      "output_tokens": 1412,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.036717,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "c716460c-d96b-4b8e-acba-5b62f3f17a78",
+      "topic_slug": "dsa-heapsort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3906,
+      "output_tokens": 608,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.021333,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "9072f571-3714-44ef-ab1a-0c3695daef9c",
+      "topic_slug": "dsa-quicksort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3352,
+      "output_tokens": 325,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.015426,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "c6e45aa2-e9fb-46c8-921b-d852d16634a9",
+          "description": "The display-math block for the worst-case recurrence is immediately followed by a paragraph (36a7ebe8) that explicitly interprets that equation and explains the unrolling, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks c6e45aa2 and 36a7ebe8 to couple the equation with its interpretation."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "bd449880-39ae-42a2-a72a-695ce4f7b47b",
+          "description": "The display-math block for the 10%\u201390% unbalanced-split recurrence is immediately followed by a paragraph (180e791d) that explicitly interprets the recursion tree depth and cost, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks bd449880 and 180e791d to couple the equation with its interpretation."
+        }
+      ]
+    },
+    {
+      "topic_id": "96b25d94-c33b-4274-91d8-3e8ff7cb0677",
+      "topic_slug": "dsa-mom-select",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5229,
+      "output_tokens": 804,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.028242,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "28450f95-d067-4de1-b9c3-1f25b1520885",
+      "topic_slug": "dsa-strassen",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5053,
+      "output_tokens": 765,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.027129,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "e0069a95-8dae-40e8-9f40-ae0d4dc67b8e",
+      "topic_slug": "dsa-sorting-lower-bounds",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4468,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.014154,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "61691b1e-2002-4317-b6b0-3d79bd04cb0e",
+      "topic_slug": "dsa-graph-basics",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3327,
+      "output_tokens": 274,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.014586,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "0a3f5fc7-ae23-47a3-8545-c91cbb6e8edf",
+          "description": "The callout states that for a simple graph $|E| \\leq |V|^2$, but for a simple undirected graph the correct bound is $|E| \\leq \\binom{|V|}{2} = |V|(|V|-1)/2$, and for a simple directed graph $|E| \\leq |V|(|V|-1)$; neither equals $|V|^2$ because self-loops are excluded.",
+          "suggested_fix": "Replace $|E| \\leq |V|^2$ with $|E| \\leq |V|(|V|-1)/2$ for undirected simple graphs (or $|E| \\leq |V|(|V|-1)$ for directed), noting that self-loops are disallowed."
+        }
+      ]
+    },
+    {
+      "topic_id": "26cbda85-9d77-4941-a6fb-1a9bdf26e500",
+      "topic_slug": "dsa-dfs",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4802,
+      "output_tokens": 648,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.024621,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "86ada1b5-5cda-45e7-901b-70a6f39509c9",
+          "description": "The display-math uses a biconditional (\u27fa) to state that the interval nesting condition is equivalent to w being an ancestor of v, but the source chunks state this as a one-directional fact ('If vertex w is an ancestor of vertex v \u2026 then pre[w] < pre[v] < post[v] < post[w]'); the converse is not stated in the source and is not generally true for all graph edges (a non-ancestor w could satisfy the inequality if it is a forward-edge endpoint, not an ancestor in the strict parent-chain sense).",
+          "suggested_fix": "Replace the biconditional \u27fa with a one-directional implication \u27f9, matching the source chunk's stated fact."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "d552396a-714b-4cf5-806a-5477fdfd8c6f",
+          "description": "The paragraph states 'There are exactly three cases' for edge classification in a directed graph, but tree edges and forward edges are grouped together as one case, so there are actually four distinct edge types (tree, forward, back, cross); saying 'exactly three cases' is misleading even though the interval condition for tree and forward edges is the same.",
+          "suggested_fix": "Change 'exactly three cases' to 'exactly three interval patterns (covering four edge types: tree, forward, back, and cross)' to avoid implying there are only three edge types."
+        }
+      ]
+    },
+    {
+      "topic_id": "11ad0046-1a8a-4be3-a06d-54f31229af97",
+      "topic_slug": "dsa-topological-sort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3627,
+      "output_tokens": 738,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.022446,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "81c2880a-3179-4b7b-8586-2ed62f3a9b53",
+          "description": "The paragraph states 'Vertices with higher post numbers have no incoming edges from vertices with lower post numbers' \u2014 this is not a general property; a vertex with a high post number can have incoming edges from other high-post-number vertices. The correct statement is simply that higher post number implies earlier position in topological order, as guaranteed by the post-number fact.",
+          "suggested_fix": "Replace the sentence with: 'Because every edge u\u2192v satisfies post(u) > post(v), sorting vertices by decreasing post number places u before v for every edge, yielding a valid topological order.'"
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "41d927e6-8492-4154-ac5b-74c1549d6d63",
+          "description": "The parenthetical 'no vertex points to it' is used to explain why A has the highest post number, but the correct reason is that A has no incoming edges (it is a source), not that no vertex points to it \u2014 which is the same thing stated ambiguously; however the real issue is that the explanation conflates 'no incoming edges' with 'last to finish', which is not a guaranteed property (a source can finish before other sources in multi-source DFS). More critically, the comment should say 'no incoming edges' rather than 'no vertex points to it', which is accurate but the reasoning given (that this causes it to finish last) is not generally valid.",
+          "suggested_fix": "Change the parenthetical to 'first visited and last to finish in this DFS traversal' and remove the misleading causal claim about no vertex pointing to it."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "72e49dfe-0a23-47fd-9744-d3b2f69aea98",
+          "description": "The display-math block showing the complexity equation is immediately followed by block f1a6a8aa which explicitly interprets and extends that equation, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 72e49dfe and f1a6a8aa."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "300818a5-ba8f-447d-a091-ad3559b630ed",
+          "description": "The callout stating the post-number fact is immediately followed by block 5db73ac3 which explicitly proves that exact fact, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 300818a5 and 5db73ac3."
+        }
+      ]
+    },
+    {
+      "topic_id": "fca2ea25-8c15-4652-af09-73907c63baf8",
+      "topic_slug": "dsa-scc",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5671,
+      "output_tokens": 1184,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.035268,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "60b6f21e-449e-4458-9157-b8934dcda197",
+          "description": "Block 60b6f21e presents specific post-number values (e.g., post(v6)=20) without any context about the specific graph G being used, making it impossible for a learner to verify or follow the trace; the graph's edges are never defined in the worked example.",
+          "suggested_fix": "Either define the edges of the example graph G explicitly before the trace, or label the post-number values as 'one possible outcome for a particular graph' and reference the source problem."
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "ab24b322-c09a-47eb-9675-ddeb47490c47",
+          "description": "The sentence 'We apply Kosaraju's algorithm as follows' adds no information beyond what the heading already conveys and could be deleted without loss.",
+          "suggested_fix": "Remove the block or replace it with a concrete description of the example graph's edges."
+        }
+      ]
+    },
+    {
+      "topic_id": "8581a60e-301f-404d-a21c-75ed65f44724",
+      "topic_slug": "dsa-bfs",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3567,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.011391,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "87c40aac-1c34-4222-aaf2-270be803f6fa",
+      "topic_slug": "dsa-2-colorability",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6702,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.020796,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "b66e1a60-ee11-41d5-a27f-c1a7f4feed9b",
+      "topic_slug": "dsa-dijkstra",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4296,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.013638,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "614955fd-93a6-40a5-8749-9caa9cdf81ae",
+      "topic_slug": "dsa-bellman-ford",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5233,
+      "output_tokens": 894,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.029604,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "9234cb53-1b5f-46e4-bdcb-c5249e21d90d",
+          "description": "The inductive step claims 'dist[u] \u2264 d(u, k-1) before round k runs', but the correct inductive hypothesis is dist[u] = d(u, k-1) (equality, not just upper bound) for the argument to work; more critically, the conclusion states dist[v] is set to at most d(u,k-1)+w(u,v) = d(v,k), but d(u,k-1)+w(u,v) equals d(v,k) only when u\u2192v is the last edge of the optimal k-edge path, which is not stated \u2014 the equality sign is unjustified as written and conflates an upper bound with the true value.",
+          "suggested_fix": "Clarify that the inductive hypothesis gives dist[u] \u2264 d(u, k-1) and that d(u,k-1)+w(u,v) \u2265 d(v,k) by definition of d(v,k), so dist[v] \u2264 d(u,k-1)+w(u,v) \u2264 d(v,k) only when u is the optimal predecessor; rewrite to show dist[v] \u2264 d(v,k) rather than equality."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "ce7536af-9f67-4045-9a0d-6e7122d6fcd8",
+          "description": "The worked example (block ce7536af) states edge (S,G) has weight 8 and updates dist[G]=8, but the source chunks show the graph has edge weights including 10 for (S,G) and 1 for (S,A); the prose asserts weight 8 for (S,G) without establishing the full edge-weight table, leaving the learner unable to verify the claim.",
+          "suggested_fix": "Provide the complete edge-weight list for the example graph before tracing the rounds, or explicitly state the weight of each edge as it is first used."
+        }
+      ]
+    },
+    {
+      "topic_id": "a55c0e8f-6fd9-484b-8e27-11cf9d885dd8",
+      "topic_slug": "dsa-floyd-warshall",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5101,
+      "output_tokens": 229,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.019233,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "6a30b76d-f15c-4fb6-aaab-51f65135063c",
+          "description": "The misconception correction states the path 'may pass through k zero times or once', but this conflates the recurrence's case analysis with the actual invariant: after iteration k, the shortest path may use vertex k as an intermediate any number of times (including more than once in principle), but the invariant is about the allowed set {1,...,k}, not a frequency cap; saying 'zero times or once' is itself misleading and partially wrong.",
+          "suggested_fix": "Correct the bullet to say: the constraint is that all intermediate vertices must belong to {1,...,k}; vertex k may appear as an intermediate zero or more times on the optimal path."
+        }
+      ]
+    },
+    {
+      "topic_id": "62f74876-b1c5-4edc-9b93-f20c93f6b90b",
+      "topic_slug": "dsa-max-flow",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10882,
+      "output_tokens": 1094,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.049551,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "4feee065-5786-4a5f-8cd2-852dc2cb6f04",
+          "description": "The worked example section promises a specific network with source $s$, sink $t$, and vertices $a, b, c$ with stated edge capacities and flow values, but no diagram or plot of this network is provided, leaving the reader unable to follow the augmentation steps.",
+          "suggested_fix": "Add a diagram (or at minimum a table) showing the network edges, their capacities, and the initial flow values before the augmentation step is described."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "medium",
+          "block_id": "da1ec928-ef73-43e3-9e1d-38ab961cb54c",
+          "description": "Block 4feee065 says 'The edge capacities (and a valid initial flow assignment) are:' but then provides no table, list, or figure \u2014 the sentence ends with a colon and the next block (da1ec928) jumps directly into describing the augmentation, leaving the actual capacity/flow values completely unstated.",
+          "suggested_fix": "Insert a table or bullet list between blocks 4feee065 and da1ec928 that explicitly lists each edge, its capacity, and its current flow value."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "8ac2c24a-b535-4b17-bf53-929a2a37060f",
+          "description": "The display-math block (8ac2c24a) presenting $|f^*| = c(S^*, T^*)$ is immediately followed by paragraph 611f898c which explicitly interprets that equation and draws the conclusion about correctness, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 8ac2c24a and 611f898c."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "064eb6fb-300b-4400-ac64-8fdf17c6d3be",
+          "description": "The display-math block (064eb6fb) defining the bottleneck capacity $x(p)$ is immediately followed by paragraph b4f0abb1 that explains how to use $x(p)$ to augment, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 064eb6fb and b4f0abb1."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "eda4c4da-3f0d-4d17-a785-006c1f6948fa",
+          "description": "The display-math block (eda4c4da) giving the Ford-Fulkerson runtime formula is immediately followed by paragraph 67874539 that interprets it as a pseudo-polynomial bound, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks eda4c4da and 67874539."
+        }
+      ]
+    },
+    {
+      "topic_id": "3f5f3f5a-0787-4c93-8d6e-4456fe3f0c46",
+      "topic_slug": "dsa-dp-fundamentals",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8258,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.025524,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "116726c1-021d-45ee-97c8-a4e957a98db5",
+      "topic_slug": "dsa-lis",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8724,
+      "output_tokens": 567,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.035172,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "288a2118-7486-4309-9109-d83b2edc4a95",
+          "description": "The block claims that defining P_k as the LIS of the prefix A[1\u2026k] 'does not satisfy the optimal substructure property,' but the source chunks show this is actually a valid first definition that the lecture uses \u2014 the issue is only that it lacks a clean extension rule, not that optimal substructure fails; the source explicitly uses P_k defined as the LIS of A[1\u2026k] ending at A[k] as the corrected definition, not as a replacement for a broken one.",
+          "suggested_fix": "Clarify that the prefix-only definition is suboptimal because it lacks a clean recurrence (the LIS of a prefix need not end at A[k]), not that it violates optimal substructure per se."
+        }
+      ]
+    },
+    {
+      "topic_id": "4b12e2e5-c31e-4004-834b-8e05513c7ca7",
+      "topic_slug": "dsa-edit-distance",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7765,
+      "output_tokens": 922,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.03762,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "b732cce5-3de3-4ac8-9985-83a65a7ff6df",
+          "description": "The verification sequence is wrong: deleting the first 'A' from AACG gives AACG\u2192ACG, and substituting the second 'A' (which no longer exists in ACG) with 'G' does not yield AGC; the claimed two-operation path is incorrect.",
+          "suggested_fix": "Replace with a correct sequence, e.g., delete 'C' (AACG\u2192AAG) and substitute one 'A' with nothing \u2014 or more accurately: substitute X[2]='A' with 'G' giving AGCG, then delete 'G' giving AGC \u2014 and state the operations precisely."
+        }
+      ]
+    },
+    {
+      "topic_id": "4eba4701-fe9e-4a75-b776-7addf23751c6",
+      "topic_slug": "dsa-lcs",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8839,
+      "output_tokens": 1210,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.045162,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "0e8bb047-b9c9-41b8-b1c8-06d60c62011d",
+          "description": "The claim that matching last characters 'must both appear in any optimal LCS' is incorrect; the correct statement is that there exists an optimal LCS that includes both, not that every optimal LCS must include them.",
+          "suggested_fix": "Change to 'we can always include them without loss of optimality, so L(i,j) = 1 + L(i-1, j-1)' to avoid implying uniqueness of the optimal structure."
+        }
+      ]
+    },
+    {
+      "topic_id": "dfea5034-f406-4d90-8488-dac9bf8d04ca",
+      "topic_slug": "dsa-rna-secondary-structure",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8796,
+      "output_tokens": 520,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.034683,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "dfbc638c-decf-41f5-bd4e-da90fcdc4c45",
+      "topic_slug": "dsa-knapsack",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7569,
+      "output_tokens": 350,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.028452,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "confusing_transition",
+          "severity": "medium",
+          "block_id": "b0d64fee-1328-4acd-990c-d207482c1f00",
+          "description": "The worked example jumps directly from stating the instance to announcing the final answer in the next paragraph (block 34a688c9) without showing any intermediate DP table rows, making the 'tracing' heading misleading and leaving a large logical gap for the learner.",
+          "suggested_fix": "Either show at least a few representative rows of the DP table between the problem statement and the final answer, or rename the section to 'Worked Example: Result' to match what is actually presented."
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "31b9fe5a-8e47-4c73-8810-21518a3a4951",
+          "description": "The sentence 'This seemingly small restriction prevents greedy strategies from working reliably and demands a more principled approach' is a generic textbook gloss that adds no specific information not already conveyed by the problem statement and the subsequent sections.",
+          "suggested_fix": "Delete this sentence or replace it with a concrete statement about why the 0/1 constraint breaks greedy (e.g., referencing the specific counter-example that follows)."
+        }
+      ]
+    },
+    {
+      "topic_id": "1d085190-854d-4bbf-b023-8b9b9137a5f0",
+      "topic_slug": "dsa-greedy-interval-scheduling",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6994,
+      "output_tokens": 340,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.026577,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "d6b04c7c-86c8-4ba6-921e-bd4a625be534",
+          "description": "The display-math block showing f(x_i) \u2264 f(y_i) \u2264 s(y_{i+1}) is immediately followed by a paragraph (17fc6491) that explicitly interprets that exact inequality and explains its geometric meaning, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks d6b04c7c and 17fc6491 to couple the equation with its interpretation."
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "37923d6d-e12f-48c1-af3f-72f1b2c4632b",
+          "description": "This paragraph ('A disciplined way to find a correct greedy rule is to brainstorm natural candidates and then try to break each one with a counterexample\u2026') is a generic methodological gloss that adds no information specific to interval scheduling and could be deleted without loss.",
+          "suggested_fix": "Remove the paragraph or merge its content into the introduction of the specific strategies that follow."
+        }
+      ]
+    },
+    {
+      "topic_id": "c76b03e7-5212-4742-8e80-949666a76ccf",
+      "topic_slug": "dsa-huffman-encoding",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6821,
+      "output_tokens": 801,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.032973,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "90d07fdf-9f59-49a1-8eae-250bde4a88df",
+          "description": "The block marks as False the claim 'If Huffman gives a code of length n, there will never be a symbol with a code of length n+2 unless there is also one of length n+1,' but the source chunks (b5791d32, cccb60eb) mark this statement as True, and it is indeed a known property of Huffman trees that codeword lengths differ by at most 1 between siblings, making non-consecutive depth gaps impossible in a valid Huffman tree.",
+          "suggested_fix": "Change the bullet to mark this statement as True and update the explanation to note that Huffman trees cannot have leaves at non-consecutive depths (i.e., if a code of length n+2 exists, one of length n+1 must also exist)."
+        }
+      ]
+    },
+    {
+      "topic_id": "c27fd329-6deb-42b2-98c3-13716aefbe1f",
+      "topic_slug": "dsa-horn-formulas",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7430,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.02304,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "9065365a-eeca-4e43-951e-b8cd443a8ec4",
+      "topic_slug": "dsa-set-cover",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6564,
+      "output_tokens": 885,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.033462,
+      "status": "parse_failed",
+      "error": "JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+      "findings": []
+    },
+    {
+      "topic_id": "18b4269d-841f-400d-bc3a-b8ee402aeefd",
+      "topic_slug": "dsa-kruskal",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7111,
+      "output_tokens": 730,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.032778,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "995d121f-a808-4a5b-873b-81de2ee08934",
+          "description": "The callout says MSTs 'have widespread practical applications' and gives a generic cable/road example without adding any content specific to Kruskal's algorithm that isn't already covered elsewhere in the topic.",
+          "suggested_fix": "Either delete the callout or replace it with a concrete statement about why MST minimizes total connection cost (e.g., referencing the formal objective already stated in the display-math block above)."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "e40b80e1-70f7-4875-a175-ac9f20216b13",
+          "description": "The worked example references a specific 7-vertex graph with named vertices {a, b, c, d, e, f, g} and specific edge weights (matching Figure 2 from the source), but no plot or diagram accompanies it, leaving the learner with no way to visualize the graph being discussed.",
+          "suggested_fix": "Add a diagram or table listing all edges and their weights for the example graph, or note that a diagram is not renderable and provide the full edge list in a structured text block."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "medium",
+          "block_id": "4629681e-5289-451f-8037-91901f79f2d9",
+          "description": "The paragraph at 4629681e describes the algorithm's execution ('picks edges in increasing weight order\u2026 after 6 accepted edges') but no actual edge-by-edge trace or table was provided in the preceding bullet blocks (17e4591b, c3f3d7ad, 9e71186e), so the learner has no concrete trace to follow.",
+          "suggested_fix": "Add a step-by-step table showing each edge considered, whether it was accepted or rejected, and the resulting union-find state for the example graph."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "82a7c7a7-acf8-4a71-a0c6-cb5dfdd39adb",
+          "description": "The correctness argument states that e* is 'the smallest-weight edge not yet in E1 and not yet within any single component,' but Kruskal's considers edges in global sorted order \u2014 e* is simply the current smallest unprocessed edge that crosses a component boundary, not necessarily the globally smallest edge not within any component.",
+          "suggested_fix": "Rephrase to: 'e* is the smallest-weight edge crossing the cut (S, V\\S) among all edges not yet added, because all lighter edges were either already added or were rejected for being intra-component edges.'"
+        }
+      ]
+    },
+    {
+      "topic_id": "841c8fe2-b8b5-42e7-8577-ed6af58fca2a",
+      "topic_slug": "dsa-prim",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7884,
+      "output_tokens": 683,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.034392,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "012164d1-34dd-45f1-b530-48892d9b213d",
+          "description": "The claim that 'E1 contains no edge crossing this cut before the current step (all edges added so far have both endpoints inside S once extracted)' is misleading/wrong as stated: edges in E1 connect a vertex that was in S at the time of addition to a vertex that was then outside S \u2014 they are not edges with both endpoints inside S at the time of addition. The correct condition for the Cut Property is that no edge of E1 currently crosses the cut (S, V\\S), which holds because every previously added edge has its newly-added endpoint now inside S.",
+          "suggested_fix": "Clarify that edges in E1 no longer cross the cut (S, V\\S) because both endpoints of each previously added edge are now in S (the new vertex was absorbed into S when the edge was selected)."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "8b5f4c28-835a-4237-8c3e-b31b9d1a51b5",
+          "description": "The display-math block defining key[v] is immediately followed by block bee986ef which explicitly interprets that exact formula and explains its geometric meaning, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 8b5f4c28 and bee986ef."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "de9f79dd-efc6-4e0f-95c6-0f2b9ce92f3a",
+          "description": "The display-math block defining e* is immediately followed by block 430be320 which explicitly interprets that formula and explains its meaning via the cut property, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks de9f79dd and 430be320."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "1fff3a8b-016a-4ad0-8dd0-f40ab33b91b9",
+          "description": "The display-math block showing T_total is immediately followed by block 3eda30d7 which explicitly interprets the dominant terms of that formula, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 1fff3a8b and 3eda30d7."
+        }
+      ]
+    },
+    {
+      "topic_id": "3524dd16-d4e4-488d-b6a5-87ae63c4108b",
+      "topic_slug": "dsa-mst-theory",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8397,
+      "output_tokens": 892,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.039066,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "f4b67523-21ce-48db-ab7d-ccd7f7382c92",
+          "description": "The counterexample says the cycle a\u2013b\u2013c\u2013a has minimum edge (b,c) with weight 3, but the edges given are w(a,b)=5, w(b,c)=3, w(c,a)=4, so the minimum edge in that cycle is indeed (b,c)=3; however the source chunks show the minimum cycle edge in the counterexample is (a,b) with weight 1 in a different graph layout \u2014 the weights assigned here produce a different graph than the source, and the claim that the MST 'avoids (a,b)' is inconsistent with the stated MST {(a,d),(d,b),(b,c)} which does avoid (a,b) but the minimum cycle edge (b,c)=3 is IN the MST, making the example fail to demonstrate that the minimum cycle edge is excluded.",
+          "suggested_fix": "Align the counterexample with the source: use w(a,b)=5, w(b,c)=3, w(c,a)=4, w(a,d)=1, w(d,b)=2; the cycle a\u2013b\u2013c\u2013a has minimum edge (b,c)=3 which IS in the MST, so the example correctly shows the minimum cycle edge can appear in the MST \u2014 revise the prose to say 'the minimum cycle edge (b,c) IS in the MST, showing it is not excluded' rather than implying it is avoided."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "57043b1c-0d31-4f3d-9e4c-ee067535a5c4",
+          "description": "The block states 'the minimum-weight edge of a cycle is not guaranteed to be in every MST \u2014 it could be on a detour that the MST avoids', implying the minimum cycle edge might not be in any MST, but the source chunks explicitly show via counterexample that the minimum cycle edge CAN be in the MST (it is not excluded); the phrasing 'the MST avoids' is misleading because the minimum cycle edge may or may not be in the MST \u2014 it is simply not guaranteed to be included, not guaranteed to be excluded.",
+          "suggested_fix": "Revise to: 'the minimum-weight edge of a cycle is not guaranteed to be in the MST \u2014 it may or may not appear \u2014 whereas the maximum-weight cycle edge is always excluded.'"
+        }
+      ]
+    },
+    {
+      "topic_id": "67884828-61f9-466a-a87a-fd132d523a71",
+      "topic_slug": "dsa-union-find",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6335,
+      "output_tokens": 843,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.032145,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "b929ebba-20ab-467c-bfaa-947c6b10dbc4",
+          "description": "The display-math derivation writes '2h(T) = 2 + h(T1) + h(T2)' but the source chunk shows this as an inequality step in a chain leading to '2(1 + log n)', and the final step '\u2264 2(1 + log n)' is presented without the intermediate step '4 + 2log(n/2) = 2(1 + log n)' that makes the inequality valid, making the jump from '4 + log(n1 n2)' to '2(1 + log n)' appear unjustified.",
+          "suggested_fix": "Add the intermediate step: 4 + log(n1\u00b7n2) \u2264 4 + log((n/2)\u00b2) = 4 + 2\u00b7log(n/2) = 2(1 + log n)."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "b929ebba-20ab-467c-bfaa-947c6b10dbc4",
+          "description": "The display-math block for the height-bound derivation is immediately followed by paragraph 156a6cc5 that explicitly interprets that exact equation and completes the proof, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks b929ebba and 156a6cc5."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "03320c3e-8836-4c89-a6ff-f561fe3d3d70",
+          "description": "The display-math block showing T_Kruskal = \u0398(|E| log |V|) is immediately followed by paragraph e2c4b393 that explicitly interprets that formula, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 03320c3e and e2c4b393."
+        }
+      ]
+    },
+    {
+      "topic_id": "88363650-a77c-4a05-99fd-cac7667b2052",
+      "topic_slug": "dsa-linear-programming",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8183,
+      "output_tokens": 1175,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.042669,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "23db094e-bee9-4eb6-8118-8b118a5c420e",
+          "description": "The opening paragraph is a generic boilerplate description of linear programming that could appear in any LP textbook without adding content specific to this topic's worked example or simplex focus.",
+          "suggested_fix": "Replace with a sentence that previews the concrete example and simplex walkthrough that follows."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "06d3bda1-f03d-4c42-9d1d-ffdf6cc0cd1d",
+          "description": "The display-math block for the standard-form LP (id=06d3bda1) is immediately followed by a paragraph (id=e295e4f5) that explicitly defines every symbol in that equation (A, b, c, m, n) and explains the geometric meaning of the feasible region, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 06d3bda1 and e295e4f5."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "ceead940-c399-446b-9015-a4b9120fff7b",
+          "description": "The tableau codeBlock for Iteration 1 (id=ceead940) is immediately followed by a paragraph (id=ef0ef51d) that names the specific values visible in that tableau and explains the next step, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks ceead940 and ef0ef51d."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "7f0bf9b7-a07f-4ff4-8768-164a94f920a6",
+          "description": "The final tableau codeBlock for Iteration 2 (id=7f0bf9b7) is immediately followed by a paragraph (id=d62a028b) that interprets the termination condition visible in that tableau, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 7f0bf9b7 and d62a028b."
+        }
+      ]
+    },
+    {
+      "topic_id": "c84f39c7-9a5d-45b5-bada-360241a39f38",
+      "topic_slug": "dsa-binary-search",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7949,
+      "output_tokens": 1010,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.039492,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "2ce9d6ea-62ff-460d-92f1-f1d6c2784cd6",
+          "description": "The Master Theorem case cited is incorrect: the recurrence T(n) = T(n/2) + O(1) has a=1, b=2, and f(n)=O(1)=O(n^0), so it falls under case 1 (f(n) = O(n^(log_b a)) = O(n^0) = O(1)), not 'case 2 with d=0' as stated \u2014 though the final answer O(log n) is also wrong for case 1, which gives T(n)=O(1); the correct case is case 2 where f(n)=\u0398(n^(log_b a)), giving T(n)=O(log n).",
+          "suggested_fix": "State the Master Theorem case correctly: a=1, b=2, f(n)=\u0398(n^(log_2 1))=\u0398(1), so case 2 applies and T(n)=O(log n); remove the erroneous 'd=0' framing which conflates a different form of the theorem."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "241c9b51-e5ba-4e91-bd2d-7fc1d5802aac",
+          "description": "The block states k=7 because the first sorted block has 7 elements, but the source chunk shows the example array [8,14,17,19,25,26,29,2,3,7] was rotated for 7 steps with k=7 meaning the rotation amount, and the minimum is at index k+1=8; however the source explicitly says the array 'has been rotated for 7 steps' with A[1..7] and A[8..10], so k=7 is the rotation count and the minimum is at index 8=k+1, which is consistent \u2014 but the explanation 'k=7 because the first sorted block has 7 elements' conflates the rotation count k with the block size, which only coincidentally agree here and is not the general definition (k is the number of rotation steps, not the block length).",
+          "suggested_fix": "Clarify that k=7 is the number of right-rotation steps, and note that in this example the first block A[1..k] happens to have k elements, making the minimum sit at index k+1=8."
+        }
+      ]
+    },
+    {
+      "topic_id": "db8fb73c-a0d9-4117-8ed4-70d0aa083b86",
+      "topic_slug": "dsa-graph-modeling",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5721,
+      "output_tokens": 822,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.029988,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "6b46d551-cd89-441d-b38b-762b422ff2af",
+          "description": "The bullet on maximizing reliability says 'take \u2212log(p_e) as the weight' without noting that this requires all probabilities to be in (0,1] and that the resulting weights are non-negative, which is a non-obvious prerequisite for applying Dijkstra correctly; a learner might not see why this transformation is valid.",
+          "suggested_fix": "Add a brief note that p_e \u2208 (0,1] ensures \u2212log(p_e) \u2265 0, satisfying Dijkstra's non-negative weight requirement."
+        }
+      ]
+    },
+    {
+      "topic_id": "28a68be0-0ba5-4ef4-a297-05b8804b049f",
+      "topic_slug": "dsa-non-adjacent-dp",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8759,
+      "output_tokens": 519,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.034557,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    }
+  ],
+  "totals": {
+    "findings": 53,
+    "cost": 1.0672274999999998,
+    "in": 230145,
+    "out": 23552,
+    "cache_create": 1650,
+    "cache_read": 57750,
+    "severity_low": 9,
+    "severity_medium": 26,
+    "severity_high": 18
+  }
+}

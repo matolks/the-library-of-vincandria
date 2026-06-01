@@ -28,6 +28,31 @@ REQUEST_TIMEOUT_SECONDS = float(os.environ.get("CLAUDE_MAPPER_TIMEOUT", "90"))
 PRICE_IN = 3.00
 PRICE_OUT = 15.00
 
+MANUAL_EXCLUDED_EDGES = {
+    # MVC eval-grade false positives.
+    ("mvc-chain-rule", "mvc-vector-calculus-ops"),
+    ("mvc-quadric-surfaces", "mvc-parametric-curves"),
+    ("mvc-dot-product", "mvc-parametric-curves"),
+    ("mvc-lines-planes-3d", "mvc-multivariable-functions"),
+    # Numerical computation: peer direction and "implemented in Matlab"
+    # false positives that create cycles or reverse the tooling dependency.
+    ("loss-of-significance", "floating-point-error-propagation"),
+    ("ode-euler-heun-runge-kutta", "matlab-programming-numerical-methods"),
+    ("bisection-method", "matlab-programming-numerical-methods"),
+    ("newtons-method", "matlab-programming-numerical-methods"),
+    ("numerical-integration-trapezoid-simpson", "matlab-programming-numerical-methods"),
+    ("fixed-point-iteration", "matlab-programming-numerical-methods"),
+    ("polynomial-interpolation-lagrange-newton", "matlab-programming-numerical-methods"),
+    ("method-of-least-squares", "matlab-programming-numerical-methods"),
+    # Data structures and algorithms: examples/applications mistaken for
+    # prerequisites of the general theory topic, or reverse modeling links.
+    ("dsa-binary-search", "dsa-divide-and-conquer-recurrences"),
+    ("dsa-quicksort", "dsa-divide-and-conquer-recurrences"),
+    ("dsa-graph-modeling", "dsa-max-flow"),
+    ("dsa-kruskal", "dsa-mst-theory"),
+    ("dsa-prim", "dsa-mst-theory"),
+}
+
 
 SYSTEM_PROMPT = """You identify prerequisite relationships between learning topics.
 
@@ -228,6 +253,8 @@ def extract_dependencies(
                 continue  # self-edge
             if conf < 0.6:
                 continue  # low confidence
+            if (from_slug, target["slug"]) in MANUAL_EXCLUDED_EDGES:
+                continue  # known false positive promoted from eval triage
 
             edges.append(
                 Edge(

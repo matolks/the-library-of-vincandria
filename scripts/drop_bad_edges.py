@@ -1,12 +1,8 @@
 # scripts/drop_bad_edges.py
 from pipeline.db import get_conn
+from pipeline.mapper import MANUAL_EXCLUDED_EDGES
 
-BAD_EDGES = [
-    ("mvc-chain-rule", "mvc-vector-calculus-ops"),
-    ("mvc-quadric-surfaces", "mvc-parametric-curves"),
-    ("mvc-dot-product", "mvc-parametric-curves"),
-    ("mvc-lines-planes-3d", "mvc-multivariable-functions"),
-]
+BAD_EDGES = sorted(MANUAL_EXCLUDED_EDGES)
 
 def main() -> None:
     with get_conn() as conn, conn.cursor() as cur:

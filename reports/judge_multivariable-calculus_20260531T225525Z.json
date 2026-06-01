@@ -1,0 +1,54 @@
+{
+  "course_slug": "multivariable-calculus",
+  "judge_version": "judge.v4",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-05-31T22:55:50.548803+00:00",
+  "topics": [
+    {
+      "topic_id": "bed01221-f9ac-424e-b168-b85a1b2b52f6",
+      "topic_slug": "mvc-quadric-surfaces",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10161,
+      "output_tokens": 1312,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1650,
+      "usd_cost": 0.050658,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "6066c601-afc3-4a22-bf14-fb1b0577f156",
+          "description": "The callout describes the hyperboloid of one sheet as 'like an hourglass that stays connected', but an hourglass shape describes a hyperboloid of two sheets or a cone; the hyperboloid of one sheet looks like a cooling tower (waisted but connected), not an hourglass \u2014 the analogy is misleading and contradicts the correct cooling-tower comparison given in the same sentence.",
+          "suggested_fix": "Remove the hourglass analogy and keep only the cooling-tower description, e.g., 'Think of the shape as a cooling tower at a power plant: connected, with a narrowed waist at z=0.'"
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "779fd174-c5a7-445f-90ef-859e5346b2c4",
+          "description": "The display-math block showing the standard-form ellipsoid equation is immediately followed by a paragraph (a0ef2bb0) that explicitly interprets its symbols and geometric meaning, but these two blocks do not share a group_id.",
+          "suggested_fix": "Assign both block 779fd174 and block a0ef2bb0 the same group_id, e.g., group=g-ellipsoid-example (which a0ef2bb0 already has but 779fd174 does not)."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "3237f3db-0eb7-4114-9173-1dc8f65d67b2",
+          "description": "The general-form display-math equation is immediately followed by paragraph b46279d1 that introduces it and paragraph 1a83fddb that interprets it, but none of these three blocks share a group_id.",
+          "suggested_fix": "Assign a shared group_id to blocks b46279d1, 3237f3db, and 1a83fddb so the equation and its interpretation are grouped."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 3,
+    "cost": 0.050658,
+    "in": 10161,
+    "out": 1312,
+    "cache_create": 0,
+    "cache_read": 1650,
+    "severity_low": 0,
+    "severity_medium": 3,
+    "severity_high": 0
+  }
+}

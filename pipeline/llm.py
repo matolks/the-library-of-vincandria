@@ -22,6 +22,7 @@ import anthropic
 # Override via env or call kwarg. Align with the mapper if it pins a model.
 DEFAULT_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-6")
 DEFAULT_MAX_TOKENS = 20000
+REQUEST_TIMEOUT_SECONDS = float(os.environ.get("CLAUDE_AGENT3_TIMEOUT", "180"))
 
 # USD per million tokens. Verified May 2026. Update when Anthropic does.
 # Cache write = 1.25x input; cache read = 0.10x input.
@@ -72,7 +73,7 @@ def call_llm(
         LLMResponseError: response wasn't valid JSON or lacked `blocks`.
         anthropic.APIError: any transport/API failure; propagates unchanged.
     """
-    client = client or anthropic.Anthropic()
+    client = client or anthropic.Anthropic(timeout=REQUEST_TIMEOUT_SECONDS)
 
     response = client.messages.create(
         model=model,

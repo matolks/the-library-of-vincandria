@@ -47,6 +47,7 @@ def run_content_generation_evals(
 ) -> EvalReport:
     checks = [
         _check_no_sparse_topics(course_slug, weak_floor, strong_floor, strong_min, k),
+        _check_all_topics_have_blocks(course_slug),
         _check_block_schemas(course_slug),
         _check_source_chunk_ids_resolve(course_slug),
         _check_pinned_anchor_integrity(course_slug),
@@ -118,6 +119,31 @@ def _check_no_sparse_topics(
             "strong_min": strong_min,
             "thin_topics": thin,
         },
+    )
+
+
+def _check_all_topics_have_blocks(course_slug: str) -> EvalCheck:
+    conn = db.get_conn()
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            SELECT t.slug, count(b.id) AS block_count
+            FROM "Topic" t
+            JOIN "Course" c ON c.id = t."courseId"
+            LEFT JOIN "Block" b ON b."topicId" = t.id
+            WHERE c.slug = %s
+            GROUP BY t.id
+            ORDER BY t."order"
+            """,
+            (course_slug,),
+        )
+        rows = cur.fetchall()
+    failures = [slug for slug, block_count in rows if block_count == 0]
+    return EvalCheck(
+        "all_topics_have_blocks",
+        not failures,
+        failures,
+        {"topics": len(rows), "missing_blocks": len(failures)},
     )
 
 
