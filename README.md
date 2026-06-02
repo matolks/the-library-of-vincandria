@@ -1,6 +1,6 @@
 # The Library of Vincandria
 
-A personal knowledge graph that transforms raw university course materials into a structured, publicly browsable website. A local Ollama model parses and chunks your files. Claude API agents extract concepts, map relationships, and generate teaching content. You refine everything through an admin block editor.
+A personal knowledge graph that transforms raw university course materials into a structured, publicly browsable website. A local Ollama model parses and chunks your files. Claude API agents extract concepts, map relationships, and generate teaching content. You refine course data locally through scripts, Prisma Studio, or direct repo changes when needed.
 
 This is the first module running on AIStack, a local AI platform designed to support multiple independent projects. Future modules plug into the same platform without touching this codebase.
 
@@ -22,7 +22,7 @@ This is the first module running on AIStack, a local AI platform designed to sup
 | Course pipeline orchestrator       | Done, CLI   |
 | Eval harness (`pipeline/evals/`)   | Done, v1    |
 | Public website                     | Done, v1    |
-| Admin dashboard + BlockNote editor | Not started |
+| Admin dashboard + BlockNote editor | Deferred / out of scope |
 
 ---
 
@@ -40,7 +40,7 @@ You drop files onto the drive and run the course pipeline. The pipeline has one 
 
 **Stage 2, Claude API + Voyage.** Agents run in sequence on the chunked text: extract topics and assign them to broad groups, map dependencies between topics, enrich sparse/thin topics with allow-listed web chunks, then generate teaching blocks for each topic. Results write to Supabase. Both topics and the prerequisite graph live in Postgres (the graph as a `TopicEdge` table queried via recursive CTEs). The website reflects changes immediately.
 
-When you add new material, drop the files in and run the command again. The pipeline is idempotent. It upserts existing records rather than duplicating them. Blocks you have manually edited in the admin are flagged and skipped on re-ingestion.
+When you add new material, drop the files in and run the command again. The pipeline is idempotent. It upserts existing records rather than duplicating them. Blocks marked `manually_edited` are treated as pinned anchors and skipped on re-ingestion; if you need to patch content, do it locally through a small script, SQL/Prisma Studio, or a targeted repo-side helper rather than building a browser admin layer.
 
 ---
 
@@ -361,6 +361,15 @@ Row Level Security is enabled on all pipeline-written tables with public-read po
 
 ## Verified state (multivariable-calculus)
 
+Production rerun rollout note, 2026-06-02: Agent 3 context-fingerprint
+backfill was applied, then MVC was reconciled to the post-extractor 19-topic
+state after the no-op rehearsal surfaced `mvc-level-curves`. The mapper state
+was synced explicitly, stale Agent 3 topics were regenerated under the final
+mapper context, and the classifier now reports all 19 topics as
+`already_current`. The saved no-op orchestrator report is
+`scratch/rerun_rollout/mvc_noop_report.json`; `pipeline.rerun_canary noop
+--require-enricher-skipped` passes against it.
+
 - 16 local source files, 94 original local chunks
 - 18 topics extracted, all linked to `math-foundations`
 - Slugs stable across re-runs (anchored via prior-extraction lookup)
@@ -414,7 +423,7 @@ Readout decision:
 
 1. Build `judge.v5` first. Reasons: 7 judge parse failures and recurring self-contradictory factual-error false positives make the report too noisy to drive content edits confidently.
 2. Then tighten Agent 3 compliance. Reasons: `missing_group` is still the dominant real mechanical cluster, and both numerical computation and DSA exposed transient invalid `source_chunk_ids` during generation.
-3. Defer admin-editor tooling for this course until judge.v5 separates real isolated content bugs from false positives.
+3. Defer local one-off content patches for this course until judge.v5 separates real isolated content bugs from false positives.
 
 ---
 
@@ -452,6 +461,20 @@ Readout decision: DSA is healthy at the structural/eval layer, but not clean eno
 
 The next phase is about proving generalization one course at a time. Numerical computation and DSA are both healthy at the structural/eval layer, but both show judge/Agent 3 quality work before the next broadening step.
 
+### 0. Rerun rollout checkpoint
+
+Status: complete for the first three production courses.
+
+- MVC: 19/19 topics are `already_current` after stale regeneration under the
+  final mapper context. The no-op report at
+  `scratch/rerun_rollout/mvc_noop_report.json` has chunker, extractor, mapper,
+  and enricher skipped for `fingerprint_match`, with `block_gen.blocks_written`
+  equal to `0`; the no-op canary passes with `--require-enricher-skipped`.
+- Numerical computation: dry classification was clean, backfill was applied,
+  and post-apply classification is 26/26 `already_current`.
+- Data structures and algorithms: dry classification was clean, backfill was
+  applied, and post-apply classification is 36/36 `already_current`.
+
 ### 1. Tighten the judge, then Agent 3
 
 Create `judge.v5` before making another broad content-editing pass. Numerical computation produced a useful full-course report, but 7/26 judge topics failed parse and several high-severity factual findings self-refuted. A noisy judge makes it too easy to spend effort on the wrong content fixes.
@@ -480,11 +503,11 @@ env -u ANTHROPIC_API_KEY .venv/bin/python -m pipeline.evals.content_generation -
 env -u ANTHROPIC_API_KEY CLAUDE_JUDGE_TIMEOUT=300 .venv/bin/python -m pipeline.judge --course numerical-computation --pause-seconds 1
 ```
 
-Compare category counts across MVC, numerical computation, and DSA. Repeated categories across courses are prompt or renderer issues; isolated factual findings can wait for admin-editor fixes after judge.v5 is trustworthy.
+Compare category counts across MVC, numerical computation, and DSA. Repeated categories across courses are prompt or renderer issues; isolated factual findings can wait for local patch scripts after judge.v5 is trustworthy.
 
 ### 2. Add image blocks after the MVC QA loop stabilizes
 
-Status: done for the minimal infrastructure pass. Image blocks are admin-only and survive regeneration through the existing pinned-anchor path.
+Status: done for the minimal infrastructure pass. Image blocks are manual/local-only and survive regeneration through the existing pinned-anchor path.
 
 Implementation checklist:
 
@@ -494,8 +517,8 @@ Implementation checklist:
 - [x] Shape: `props: { src: string, alt: string, caption?: string, width?: number }`, `content: []`.
 - [x] Add a Supabase Storage bucket for uploaded images (`block-images`).
 - [x] Add renderer support using `<figure>`, `<img>`, and optional `<figcaption>`.
-- [x] Keep the model contract explicit: Agent 3 validation rejects generated `image`; only the admin/editor should create it.
-- [x] Verify pinned image anchors through the reconciler-shape test; admin API should set `manually_edited=true` once it exists.
+- [x] Keep the model contract explicit: Agent 3 validation rejects generated `image`; only local/manual edits should create it.
+- [x] Verify pinned image anchors through the reconciler-shape test; local/manual insert helpers should set `manually_edited=true`.
 
 ### 3. Add citation footers next
 
@@ -546,9 +569,9 @@ What to look for:
 - Group assignment: a course should land in broad groups, not create a course-shaped group by accident.
 - Prereq graph: no cycles, no obvious future topic as prerequisite of an earlier one.
 - Sparse topics: enrich before generating if coverage is weak.
-- Judge clusters: repeated categories across courses are prompt or renderer issues; isolated findings are future admin edits.
+- Judge clusters: repeated categories across courses are prompt or renderer issues; isolated findings are future local patches.
 
-Move on from MVC when the remaining high/medium findings are either clearly false positives or below roughly five real issues across the course. If another regen barely improves the category counts, stop iterating and let the future admin editor handle isolated content edits.
+Move on from MVC when the remaining high/medium findings are either clearly false positives or below roughly five real issues across the course. If another regen barely improves the category counts, stop iterating and handle isolated content edits with targeted local patches only when they are worth it.
 
 ---
 
@@ -563,15 +586,13 @@ Move on from MVC when the remaining high/medium findings are either clearly fals
 | `/[group]/[course]`         | All topics in a course                       |
 | `/[group]/[course]/[topic]` | Topic page, renders blocks in learning order |
 
-### Admin routes (login required)
+### Admin routes
 
-| Route                     | Description                            |
-| ------------------------- | -------------------------------------- |
-| `/admin`                  | Dashboard                              |
-| `/admin/editor/[topicId]` | BlockNote editor for a topic's blocks  |
-| `/admin/upload`           | Phase 2: trigger pipeline from browser |
-
-Admin routes are protected by Next.js middleware. Unauthenticated requests redirect to `/login`.
+Browser admin/editor/upload workflows are intentionally out of scope for now.
+Use the CLI pipeline plus local scripts, Prisma Studio, or direct database
+patches for occasional manual corrections. If a local patch edits generated
+content that should survive regeneration, set `Block.manually_edited=true` so
+the reconciler treats it as a pinned anchor.
 
 Block types: `paragraph`, `heading`, `bulletListItem`, `numberedListItem`, `codeBlock`, `callout`, `math`, `plot`
 
@@ -738,5 +759,5 @@ NEXTAUTH_URL=http://localhost:3000
 7. ~~`pipeline/course_orchestrator.py`~~ done, aggregates status/token/cost across agents
 8. ~~`pipeline/evals/`~~ done, seeded with the 4 forbidden edges from `drop_bad_edges.py`
 9. Public website render from populated database
-10. Admin dashboard BlockNote editor wired to blocks table with `manually_edited` flag
-11. Phase 2 upload UI trigger pipeline from browser
+10. Local patch helpers for rare manual edits, setting `manually_edited=true`
+11. Browser admin/editor/upload UI intentionally deferred unless local editing becomes painful
