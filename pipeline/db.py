@@ -14,11 +14,13 @@ Idempotency rules:
 Connection is established once and reused. Call db.close() when done.
 """
 
+import hashlib
 import os
 import psycopg2
 import json
 from dotenv import load_dotenv
 from dataclasses import dataclass
+from pipeline.db_guard import ensure_writable
 
 @dataclass
 class ChunkRecord:
@@ -31,6 +33,27 @@ class ChunkRecord:
     section_path: str | None = None
     token_count: int | None = None
     embedding: list[float] | None = None
+
+
+def stable_chunk_id(course_id: str, chunk: ChunkRecord) -> str:
+    """
+    Deterministic chunk id for rerun-stable source_chunk_ids.
+
+    The identity includes course, source location, and content hash. Rechunking
+    the same artifact into the same content at the same slot yields the same id
+    even after deleting/reseeding rows; changed content yields a new id.
+    """
+    payload = json.dumps(
+        {
+            "course_id": course_id,
+            "source_path": chunk.source_path,
+            "chunk_index": chunk.chunk_index,
+            "content_hash": chunk.content_hash,
+        },
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return "chunk_" + hashlib.sha256(payload.encode("utf-8")).hexdigest()[:32]
 
 load_dotenv()
 
@@ -69,6 +92,7 @@ def upsert_topic_group(slug: str, name: str, description: str | None = None) -> 
     """
     Upsert a TopicGroup by slug. Returns the id.
     """
+    ensure_writable()
     conn = get_conn()
     with conn.cursor() as cur:
         cur.execute(
@@ -96,6 +120,7 @@ def upsert_course(slug: str, name: str) -> str:
     """
     Upsert a Course by slug. Returns the id.
     """
+    ensure_writable()
     conn = get_conn()
     with conn.cursor() as cur:
         cur.execute(
@@ -130,6 +155,7 @@ def upsert_topic(
     Upsert a Topic by slug. Replaces all group connections.
     Returns the topic id.
     """
+    ensure_writable()
     conn = get_conn()
     with conn.cursor() as cur:
         # Upsert topic row
@@ -177,6 +203,7 @@ def reset_course(course_id: str) -> None:
     Delete all non-manually-edited blocks for every topic in a course.
     Topics and their group connections are preserved.
     """
+    ensure_writable()
     conn = get_conn()
     with conn.cursor() as cur:
         cur.execute(
@@ -207,6 +234,97 @@ def get_course_id(slug: str) -> str | None:
     return row[0] if row else None
 
 
+def get_course_id_or_raise(slug: str) -> str:
+    course_id = get_course_id(slug)
+    if course_id is None:
+        raise ValueError(f"Course not found: {slug}")
+    return course_id
+
+
+def get_pipeline_state(
+    course_id: str,
+    stage: str,
+    subject_key: str = "course",
+) -> dict | None:
+    conn = get_conn()
+    with conn.cursor() as cur:
+        cur.execute(
+            '''
+            SELECT fingerprint, status, metadata, "updatedAt"
+            FROM "PipelineState"
+            WHERE "courseId" = %s AND stage = %s AND "subjectKey" = %s
+            ''',
+            (course_id, stage, subject_key),
+        )
+        row = cur.fetchone()
+    if row is None:
+        return None
+    metadata = row[2] if isinstance(row[2], dict) else (json.loads(row[2]) if row[2] else None)
+    return {
+        "fingerprint": row[0],
+        "status": row[1],
+        "metadata": metadata,
+        "updatedAt": row[3],
+    }
+
+
+def pipeline_state_matches(
+    course_id: str,
+    stage: str,
+    subject_key: str,
+    fingerprint: str,
+    *,
+    ok_statuses: set[str] | None = None,
+) -> bool:
+    state = get_pipeline_state(course_id, stage, subject_key)
+    if state is None:
+        return False
+    ok_statuses = ok_statuses or {"ok"}
+    return (
+        state["fingerprint"] == fingerprint
+        and state["status"] in ok_statuses
+    )
+
+
+def upsert_pipeline_state(
+    course_id: str,
+    stage: str,
+    subject_key: str,
+    fingerprint: str,
+    status: str,
+    metadata: dict | None = None,
+) -> None:
+    ensure_writable()
+    conn = get_conn()
+    with conn.cursor() as cur:
+        cur.execute(
+            '''
+            INSERT INTO "PipelineState" (
+                id, "courseId", stage, "subjectKey", fingerprint, status,
+                metadata, "createdAt", "updatedAt"
+            )
+            VALUES (
+                gen_random_uuid()::text, %s, %s, %s, %s, %s, %s::jsonb,
+                now(), now()
+            )
+            ON CONFLICT ("courseId", stage, "subjectKey") DO UPDATE SET
+                fingerprint = EXCLUDED.fingerprint,
+                status = EXCLUDED.status,
+                metadata = EXCLUDED.metadata,
+                "updatedAt" = now()
+            ''',
+            (
+                course_id,
+                stage,
+                subject_key,
+                fingerprint,
+                status,
+                json.dumps(metadata) if metadata is not None else None,
+            ),
+        )
+    conn.commit()
+
+
 def get_topic_group_id(slug: str) -> str | None:
     conn = get_conn()
     with conn.cursor() as cur:
@@ -216,6 +334,7 @@ def get_topic_group_id(slug: str) -> str | None:
 
 
 def set_topic_embedding(topic_id: str, vec: list[float]) -> None:
+    ensure_writable()
     conn = get_conn()
     with conn.cursor() as cur:
         cur.execute(
@@ -231,6 +350,7 @@ def set_topic_embeddings(pairs: list[tuple[str, list[float]]]) -> None:
     """
     if not pairs:
         return
+    ensure_writable()
     from psycopg2.extras import execute_batch
     conn = get_conn()
     with conn.cursor() as cur:
@@ -247,6 +367,7 @@ def delete_orphan_topics(course_id: str, keep_slugs: list[str]) -> int:
     Cascades to TopicEdge and _TopicGroups.
     Returns count deleted.
     """
+    ensure_writable()
     conn = get_conn()
     with conn.cursor() as cur:
         cur.execute(
@@ -321,15 +442,23 @@ def nearest_topic_candidates(
 def upsert_chunks(course_id: str, chunks: list[ChunkRecord]) -> int:
     """
     Bulk upsert chunks by (courseId, sourcePath, chunkIndex).
+
+    Chunk ids are deterministic and content-addressed enough for Agent 3
+    provenance stability: same course/source/index/contentHash produces the
+    same id across clean reseeds, while changed content at the same slot updates
+    the row to a new id.
+
     Returns count written.
     """
     if not chunks:
         return 0
 
+    ensure_writable()
     from psycopg2.extras import execute_values
 
     rows = [
         (
+            stable_chunk_id(course_id, c),
             c.content,
             c.content_hash,
             c.source_path,
@@ -356,6 +485,7 @@ def upsert_chunks(course_id: str, chunks: list[ChunkRecord]) -> int:
             )
             VALUES %s
             ON CONFLICT ("courseId", "sourcePath", "chunkIndex") DO UPDATE SET
+                id            = EXCLUDED.id,
                 content       = EXCLUDED.content,
                 "contentHash" = EXCLUDED."contentHash",
                 "sourceType"  = EXCLUDED."sourceType",
@@ -366,7 +496,7 @@ def upsert_chunks(course_id: str, chunks: list[ChunkRecord]) -> int:
                 "updatedAt"   = now()
             ''',
             rows,
-            template='(gen_random_uuid()::text, %s, %s, %s, %s, %s, %s, %s, %s, %s::vector, %s, now(), now())',
+            template='(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s::vector, %s, now(), now())',
         )
     conn.commit()
     return len(chunks)
@@ -377,6 +507,7 @@ def delete_orphan_chunks(course_id: str, touched_keys: set[tuple[str, int]]) -> 
     Delete chunks for this course whose (sourcePath, chunkIndex) is not in touched_keys.
     Returns count deleted.
     """
+    ensure_writable()
     conn = get_conn()
     with conn.cursor() as cur:
         if not touched_keys:
@@ -423,6 +554,7 @@ def top_chunks_for_topic(topic_id: str, k: int = 8) -> list[dict]:
             SELECT
                 id,
                 content,
+                "contentHash",
                 "sourcePath",
                 "sourceType",
                 "pageNumber",
@@ -474,6 +606,7 @@ def replace_topic_blocks(
         ValueError on any anchor/pinned mismatch or unknown anchor id.
         psycopg2 errors propagate after the transaction is rolled back.
     """
+    ensure_writable()
     pinned_set = set(pinned_ids)
     anchor_refs = [item["id"] for item in sequence if "id" in item]
     anchor_set = set(anchor_refs)
@@ -608,4 +741,3 @@ if __name__ == "__main__":
     print(f"\nNearest {k} to '{slug}' (global):\n")
     for r in nearest_topic_candidates(topic_id, k=k, course_id=None):
         print(f"  {r['distance']:.4f}  {r['slug']:<40} {r['title']}")
-

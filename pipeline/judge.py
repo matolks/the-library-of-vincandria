@@ -28,6 +28,7 @@ import anthropic
 
 from pipeline import db
 from pipeline.block_gen import ExistingBlock, TopicContext, get_topic_context
+from pipeline.fingerprints import fingerprint_payload
 from pipeline.llm import DEFAULT_MODEL, PRICING_USD_PER_MTOK
 
 
@@ -240,6 +241,23 @@ def _read_topic_blocks(topic_id: str) -> list[ExistingBlock]:
     return out
 
 
+def compute_judge_fingerprint(blocks: list[ExistingBlock]) -> str:
+    return fingerprint_payload(
+        {
+            "judge_version": PROMPT_VERSION,
+            "blocks": [
+                {
+                    "order": b.order,
+                    "type": b.type,
+                    "content": b.content,
+                    "group_id": b.group_id,
+                }
+                for b in blocks
+            ],
+        }
+    )
+
+
 def _build_user_prompt(context: TopicContext, blocks: list[ExistingBlock]) -> str:
     parts: list[str] = []
     t = context.topic
@@ -424,6 +442,39 @@ def judge_topic(
     )
 
 
+def topic_judge_is_unchanged(topic_id: str) -> bool:
+    context = get_topic_context(topic_id)
+    blocks = _read_topic_blocks(topic_id)
+    if not blocks:
+        return False
+    course_id = db.get_course_id_or_raise(context.topic.course_slug)
+    fingerprint = compute_judge_fingerprint(blocks)
+    return db.pipeline_state_matches(
+        course_id,
+        "judge",
+        context.topic.slug,
+        fingerprint,
+        ok_statuses={"ok", "no_blocks"},
+    )
+
+
+def record_judge_state(result: JudgeResult, fingerprint: str) -> None:
+    context = get_topic_context(result.topic_id)
+    course_id = db.get_course_id_or_raise(context.topic.course_slug)
+    db.upsert_pipeline_state(
+        course_id,
+        "judge",
+        result.topic_slug,
+        fingerprint,
+        result.status,
+        {
+            "judge_version": PROMPT_VERSION,
+            "model": result.model,
+            "findings": len(result.findings),
+        },
+    )
+
+
 # ---- CLI ------------------------------------------------------------------
 
 def _resolve_targets(course_slug: str, topic_slug: str | None) -> list[tuple[str, str]]:
@@ -470,6 +521,8 @@ def _main() -> None:
     p.add_argument("--output", help="output JSON path (default: reports/judge_<course>_<ts>.json)")
     p.add_argument("--pause-seconds", type=float, default=0.0)
     p.add_argument("--model", default=DEFAULT_MODEL)
+    p.add_argument("--changed-only", action="store_true",
+                   help="judge only topics whose block content changed")
     args = p.parse_args()
 
     targets = _resolve_targets(args.course, args.topic)
@@ -482,7 +535,15 @@ def _main() -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     results: list[JudgeResult] = []
-    totals = {"findings": 0, "cost": 0.0, "in": 0, "out": 0, "cache_create": 0, "cache_read": 0}
+    totals = {
+        "findings": 0,
+        "cost": 0.0,
+        "in": 0,
+        "out": 0,
+        "cache_create": 0,
+        "cache_read": 0,
+        "skipped": 0,
+    }
     sev_totals = {"low": 0, "medium": 0, "high": 0}
 
     client = anthropic.Anthropic(timeout=REQUEST_TIMEOUT_SECONDS)
@@ -491,11 +552,27 @@ def _main() -> None:
             if i and args.pause_seconds > 0:
                 time.sleep(args.pause_seconds)
             try:
+                blocks = _read_topic_blocks(topic_id)
+                fingerprint = compute_judge_fingerprint(blocks)
+                if args.changed_only:
+                    context = get_topic_context(topic_id)
+                    course_id = db.get_course_id_or_raise(context.topic.course_slug)
+                    if blocks and db.pipeline_state_matches(
+                        course_id,
+                        "judge",
+                        slug,
+                        fingerprint,
+                        ok_statuses={"ok", "no_blocks"},
+                    ):
+                        totals["skipped"] += 1
+                        print(f"{slug}: skipped unchanged blocks")
+                        continue
                 result = judge_topic(topic_id, model=args.model, client=client)
             except Exception as e:
                 print(f"{slug}: ERROR {type(e).__name__}: {e}")
                 continue
             results.append(result)
+            record_judge_state(result, fingerprint)
             print(_summarize(result))
             totals["findings"] += len(result.findings)
             totals["cost"] += result.usd_cost
@@ -526,6 +603,7 @@ def _main() -> None:
     print()
     print(
         f"TOTAL: topics={len(results)} findings={totals['findings']} "
+        f"skipped={totals['skipped']} "
         f"(high={sev_totals['high']} medium={sev_totals['medium']} low={sev_totals['low']}) "
         f"cost=${totals['cost']:.4f}"
     )

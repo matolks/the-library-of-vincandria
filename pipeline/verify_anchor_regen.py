@@ -30,6 +30,7 @@ import uuid
 from typing import Any
 
 from pipeline import db
+from pipeline.db_guard import ensure_writable
 
 
 def _snapshot_path(topic_slug: str, override: str | None) -> pathlib.Path:
@@ -96,6 +97,7 @@ def _pick_grouped_cohort(blocks: list[dict]) -> list[dict]:
 
 
 def _update_block(block_id: str, content: dict, manually_edited: bool) -> None:
+    ensure_writable()
     conn = db.get_conn()
     with conn.cursor() as cur:
         cur.execute(

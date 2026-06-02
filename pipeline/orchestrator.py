@@ -17,7 +17,12 @@ from datetime import datetime, timezone
 
 from pipeline import db
 from pipeline.anchor_integrity import validate_anchor_integrity
-from pipeline.block_gen import get_topic_context
+from pipeline.block_gen import (
+    agent3_generation_config,
+    compute_context_fingerprint,
+    get_topic_context,
+)
+from pipeline import llm
 from pipeline.block_schema import validate_block_schema
 from pipeline.llm import LLMResponseError, LLMResult, call_llm
 from pipeline.prompt import PROMPT_VERSION, build_prompt
@@ -45,10 +50,20 @@ class GenerationResult:
 
 
 def generate_blocks_for_topic(
-    topic_id: str, *, dry_run: bool = False
+    topic_id: str,
+    *,
+    dry_run: bool = False,
+    model: str | None = None,
+    max_tokens: int = llm.DEFAULT_MAX_TOKENS,
+    temperature: float = llm.DEFAULT_TEMPERATURE,
 ) -> GenerationResult:
     """Generate blocks for one topic. Persists unless dry_run=True."""
     context = get_topic_context(topic_id)
+    generation_config = agent3_generation_config(
+        model=model,
+        max_tokens=max_tokens,
+        temperature=temperature,
+    )
 
     if context.coverage == "sparse":
         return GenerationResult(
@@ -62,6 +77,10 @@ def generate_blocks_for_topic(
             dry_run=dry_run,
         )
 
+    context_fingerprint = compute_context_fingerprint(
+        context,
+        generation_config=generation_config,
+    )
     system, user = build_prompt(context)
     pinned_cohorts = [c for c in context.cohorts if c.pinned]
 
@@ -71,7 +90,13 @@ def generate_blocks_for_topic(
 
     for attempt in range(1, MAX_ATTEMPTS + 1):
         try:
-            result = call_llm(system, current_user)
+            result = call_llm(
+                system,
+                current_user,
+                model=model,
+                max_tokens=max_tokens,
+                temperature=temperature,
+            )
         except LLMResponseError as e:
             if attempt == MAX_ATTEMPTS:
                 return _failure(
@@ -90,7 +115,12 @@ def generate_blocks_for_topic(
         _filter_source_chunk_ids(result.blocks, allowed_chunk_ids)
         errors = _validate(result.blocks, pinned_cohorts, allowed_chunk_ids)
         if not errors:
-            pinned_ids, sequence = _to_reconciler_shape(result.blocks, result.model)
+            pinned_ids, sequence = _to_reconciler_shape(
+                result.blocks,
+                result.model,
+                generation_config,
+            )
+            _apply_context_fingerprint(sequence, context_fingerprint)
             stats = (
                 None if dry_run
                 else db.replace_topic_blocks(topic_id, pinned_ids, sequence)
@@ -241,7 +271,7 @@ original requirements and the system prompt still apply. Output JSON only.
 
 
 def _to_reconciler_shape(
-    blocks: list[dict], model: str
+    blocks: list[dict], model: str, generation_config: dict | None = None
 ) -> tuple[list[str], list[dict]]:
     """Split model output into (pinned_ids, sequence) for replace_topic_blocks."""
     pinned_ids: list[str] = []
@@ -255,7 +285,7 @@ def _to_reconciler_shape(
                 "type": block["type"],
                 "content": _to_storage_content(block),
                 "generation_metadata": _build_metadata(
-                    block.get("generation_metadata"), model
+                    block.get("generation_metadata"), model, generation_config
                 ),
             }
             if block.get("group_id") is not None:
@@ -264,16 +294,27 @@ def _to_reconciler_shape(
     return pinned_ids, sequence
 
 
-def _build_metadata(from_model, model: str) -> dict:
+def _apply_context_fingerprint(sequence: list[dict], context_fingerprint: str) -> None:
+    for item in sequence:
+        if "id" in item:
+            continue
+        meta = item.setdefault("generation_metadata", {})
+        meta["context_fingerprint"] = context_fingerprint
+
+
+def _build_metadata(from_model, model: str, generation_config: dict | None = None) -> dict:
     chunk_ids: list[str] = []
     if isinstance(from_model, dict):
         ids = from_model.get("source_chunk_ids")
         if isinstance(ids, list):
             chunk_ids = [i for i in ids if isinstance(i, str)]
+    generation_config = generation_config or agent3_generation_config(model=model)
     return {
         "agent": "agent3",
         "model": model,
         "prompt_version": PROMPT_VERSION,
+        "output_format_version": generation_config["output_format_version"],
+        "decoding": generation_config["decoding"],
         "source_chunk_ids": chunk_ids,
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }

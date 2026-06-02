@@ -15,6 +15,7 @@ from dataclasses import dataclass
 
 import anthropic
 
+from pipeline.db_guard import ensure_writable
 from pipeline.db import (
     get_conn,
     nearest_topic_candidates,
@@ -282,6 +283,7 @@ def write_dependencies(edges: list[Edge], course_topic_ids: set[str]) -> None:
     """Idempotent: delete edges touching this course's topics, then bulk insert."""
     if not course_topic_ids:
         return
+    ensure_writable()
     with get_conn() as conn, conn.cursor() as cur:
         ids = list(course_topic_ids)
         cur.execute(

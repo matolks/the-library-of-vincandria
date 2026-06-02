@@ -14,12 +14,16 @@ output, and reconcile against pinned cohorts.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import time
 from dataclasses import dataclass
 from typing import Optional
 
 from pipeline import db
+from pipeline.fingerprints import fingerprint_payload
+from pipeline import llm
+from pipeline.prompt import OUTPUT_FORMAT_VERSION, PROMPT_VERSION
 
 
 # ---- dataclasses ----------------------------------------------------------
@@ -44,6 +48,7 @@ class PrereqTopic:
 class ChunkContext:
     id: str
     content: str
+    content_hash: str
     source_path: str
     page_number: Optional[int]
     similarity: float  # cosine similarity in approx. [0, 1]; higher = closer
@@ -81,6 +86,14 @@ class TopicContext:
     cohorts: tuple[BlockCohort, ...]  # in topic order; filter .pinned for anchors
     coverage: str  # 'dense' if any chunk in top-K cleared the floor, else 'sparse'
     top_similarity: float  # max similarity over the unfiltered top-K (0.0 if none)
+
+
+@dataclass(frozen=True)
+class StaleDecision:
+    stale: bool
+    reason: str
+    expected_fingerprint: str
+    stored_fingerprints: tuple[str, ...]
 
 
 # ---- main entrypoint ------------------------------------------------------
@@ -203,6 +216,7 @@ def _fetch_chunks(topic_id: str, k: int) -> tuple[ChunkContext, ...]:
         ChunkContext(
             id=r["id"],
             content=r["content"],
+            content_hash=r.get("contentHash") or _sha256_text(r["content"]),
             source_path=r["sourcePath"],
             page_number=r["pageNumber"],
             similarity=1.0 - float(r["distance"]),
@@ -257,6 +271,10 @@ def _as_dict(value) -> Optional[dict]:
     return json.loads(value)
 
 
+def _sha256_text(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
 def _resolve_topic_id(slug: str) -> str:
     conn = db.get_conn()
     with conn.cursor() as cur:
@@ -291,6 +309,110 @@ def _resolve_generation_targets(
             )
         raise SystemExit(f"No topics in course={course_slug!r}")
     return [(r[0], r[1]) for r in rows]
+
+
+def agent3_generation_config(
+    *,
+    model: str | None = None,
+    max_tokens: int = llm.DEFAULT_MAX_TOKENS,
+    temperature: float = llm.DEFAULT_TEMPERATURE,
+) -> dict:
+    """Return the behavior-affecting Agent 3 config included in fingerprints."""
+    return {
+        "model": model or llm.DEFAULT_MODEL,
+        "decoding": {
+            "max_tokens": max_tokens,
+            "temperature": temperature,
+        },
+        "output_format_version": OUTPUT_FORMAT_VERSION,
+    }
+
+
+def compute_context_fingerprint(
+    context: TopicContext,
+    *,
+    generation_config: dict | None = None,
+) -> str:
+    """Fingerprint the inputs Agent 3 actually depends on."""
+    generation_config = generation_config or agent3_generation_config()
+    pinned_anchors = []
+    for cohort in context.cohorts:
+        if not cohort.pinned:
+            continue
+        pinned_anchors.append(
+            {
+                "group_id": cohort.group_id,
+                "blocks": [
+                    {
+                        "id": block.id,
+                        "type": block.type,
+                        "content": block.content,
+                        "group_id": block.group_id,
+                    }
+                    for block in cohort.blocks
+                ],
+            }
+        )
+
+    return fingerprint_payload(
+        {
+            "topic": {
+                "slug": context.topic.slug,
+                "title": context.topic.title,
+                "summary": context.topic.summary,
+            },
+            "prompt_version": PROMPT_VERSION,
+            "generation_config": generation_config,
+            "source_chunks": [
+                {"id": chunk.id, "content_hash": chunk.content_hash}
+                for chunk in context.chunks
+            ],
+            "prerequisite_topic_slugs": [p.slug for p in context.prereqs],
+            "pinned_anchors": pinned_anchors,
+        }
+    )
+
+
+def topic_has_persisted_blocks(topic_id: str) -> bool:
+    conn = db.get_conn()
+    with conn.cursor() as cur:
+        cur.execute(
+            'SELECT 1 FROM "Block" WHERE "topicId" = %s LIMIT 1',
+            (topic_id,),
+        )
+        return cur.fetchone() is not None
+
+
+def topic_is_stale(topic_id: str) -> bool:
+    return explain_topic_staleness(topic_id).stale
+
+
+def explain_topic_staleness(
+    topic_id: str,
+    *,
+    generation_config: dict | None = None,
+) -> StaleDecision:
+    context = get_topic_context(topic_id)
+    if not context.cohorts:
+        fresh = compute_context_fingerprint(
+            context, generation_config=generation_config
+        )
+        return StaleDecision(True, "missing_blocks", fresh, ())
+    fresh = compute_context_fingerprint(
+        context, generation_config=generation_config
+    )
+    stored = tuple(sorted({
+        block.generation_metadata.get("context_fingerprint")
+        for cohort in context.cohorts
+        for block in cohort.blocks
+        if isinstance(block.generation_metadata, dict)
+        and block.generation_metadata.get("context_fingerprint")
+    }))
+    if fresh in stored:
+        return StaleDecision(False, "fingerprint_match", fresh, stored)
+    if not stored:
+        return StaleDecision(True, "missing_context_fingerprint", fresh, stored)
+    return StaleDecision(True, "fingerprint_mismatch", fresh, stored)
 
 
 # ---- CLI ------------------------------------------------------------------
@@ -344,6 +466,18 @@ def _main() -> None:
     parser.add_argument("--topic", help="optional topic slug for generation")
     parser.add_argument("--dry-run", action="store_true",
                         help="validate model output without writing blocks")
+    parser.add_argument("--missing-only", action="store_true",
+                        help="generate only topics with no persisted blocks")
+    parser.add_argument("--stale-only", action="store_true",
+                        help="generate only topics with no blocks or changed context")
+    parser.add_argument("--force-all", action="store_true",
+                        help="generate all targets even when --missing-only/--stale-only would skip")
+    parser.add_argument("--model",
+                        help="Agent 3 model override; included in context fingerprints")
+    parser.add_argument("--max-tokens", type=int, default=llm.DEFAULT_MAX_TOKENS,
+                        help=f"Agent 3 max_tokens (default: {llm.DEFAULT_MAX_TOKENS})")
+    parser.add_argument("--temperature", type=float, default=llm.DEFAULT_TEMPERATURE,
+                        help=f"Agent 3 temperature (default: {llm.DEFAULT_TEMPERATURE})")
     parser.add_argument("--json", action="store_true",
                         help="emit full GenerationResult objects as JSON")
     parser.add_argument("--pause-seconds", type=float, default=0.0,
@@ -378,8 +512,14 @@ def _main() -> None:
         from pipeline.orchestrator import generate_blocks_for_topic
 
         targets = _resolve_generation_targets(args.course, args.topic)
+        generation_config = agent3_generation_config(
+            model=args.model,
+            max_tokens=args.max_tokens,
+            temperature=args.temperature,
+        )
         totals = {
             "topics": len(targets),
+            "skipped": 0,
             "ok": 0,
             "refused_sparse": 0,
             "failed_validation": 0,
@@ -395,7 +535,56 @@ def _main() -> None:
         for i, (topic_id, slug) in enumerate(targets):
             if i and args.pause_seconds > 0:
                 time.sleep(args.pause_seconds)
-            result = generate_blocks_for_topic(topic_id, dry_run=args.dry_run)
+            if args.missing_only and not args.force_all and topic_has_persisted_blocks(topic_id):
+                totals["skipped"] += 1
+                if not args.json:
+                    print(f"{slug}: skipped reason=existing_blocks")
+                else:
+                    print(json.dumps({
+                        "topic_id": topic_id,
+                        "slug": slug,
+                        "status": "skipped",
+                        "reason": "existing_blocks",
+                    }, sort_keys=True))
+                continue
+            if args.stale_only and not args.force_all:
+                stale = explain_topic_staleness(
+                    topic_id,
+                    generation_config=generation_config,
+                )
+                if stale.stale:
+                    if not args.json:
+                        print(
+                            f"{slug}: regenerating reason={stale.reason} "
+                            f"fingerprint={stale.expected_fingerprint}"
+                        )
+                else:
+                    totals["skipped"] += 1
+                    if not args.json:
+                        print(
+                            f"{slug}: skipped reason={stale.reason} "
+                            f"fingerprint={stale.expected_fingerprint}"
+                        )
+                    else:
+                        print(json.dumps({
+                            "topic_id": topic_id,
+                            "slug": slug,
+                            "status": "skipped",
+                            "reason": stale.reason,
+                            "context_fingerprint": stale.expected_fingerprint,
+                            "stored_fingerprints": stale.stored_fingerprints,
+                        }, sort_keys=True))
+                    continue
+            elif args.force_all and (args.missing_only or args.stale_only):
+                if not args.json:
+                    print(f"{slug}: regenerating reason=force_all")
+            result = generate_blocks_for_topic(
+                topic_id,
+                dry_run=args.dry_run,
+                model=args.model,
+                max_tokens=args.max_tokens,
+                temperature=args.temperature,
+            )
             if args.json:
                 print(json.dumps(asdict(result), sort_keys=True))
             else:
@@ -418,6 +607,7 @@ def _main() -> None:
         print(
             "TOTAL: "
             f"topics={totals['topics']} ok={totals['ok']} "
+            f"skipped={totals['skipped']} "
             f"refused_sparse={totals['refused_sparse']} "
             f"failed_validation={totals['failed_validation']} "
             f"failed_parse={totals['failed_parse']} "

@@ -17,6 +17,7 @@ if TYPE_CHECKING:
 
 
 PROMPT_VERSION = "agent3.v4"
+OUTPUT_FORMAT_VERSION = "agent3.block-output.v1"
 
 
 SYSTEM_PROMPT = """\

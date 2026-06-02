@@ -10,6 +10,7 @@ from typing import Optional
 
 from pipeline.anchor_integrity import validate_anchor_integrity
 from pipeline.orchestrator import (
+    _apply_context_fingerprint,
     _filter_source_chunk_ids,
     _to_reconciler_shape,
     _to_storage_content,
@@ -79,6 +80,30 @@ def test_to_reconciler_shape_keeps_pinned_refs_and_stores_new_blocknote_content(
     }
     assert sequence[1]["generation_metadata"]["source_chunk_ids"] == ["chunk_web"]
     assert sequence[1]["generation_metadata"]["agent"] == "agent3"
+    assert (
+        sequence[1]["generation_metadata"]["output_format_version"]
+        == "agent3.block-output.v1"
+    )
+    assert sequence[1]["generation_metadata"]["decoding"] == {
+        "max_tokens": 20000,
+        "temperature": 0,
+    }
+
+
+def test_apply_context_fingerprint_marks_generated_blocks_only():
+    sequence = [
+        {"id": "pinned_1"},
+        {
+            "type": "paragraph",
+            "content": {"type": "paragraph", "content": []},
+            "generation_metadata": {"source_chunk_ids": []},
+        },
+    ]
+
+    _apply_context_fingerprint(sequence, "ctx_123")
+
+    assert "generation_metadata" not in sequence[0]
+    assert sequence[1]["generation_metadata"]["context_fingerprint"] == "ctx_123"
 
 
 def test_pinned_anchor_accepts_persisted_object_content_without_normalizing():

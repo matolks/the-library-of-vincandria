@@ -24,6 +24,7 @@ model Course {
   name      String
   topics    Topic[]
   chunks    Chunk[]
+  pipelineStates PipelineState[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -125,4 +126,20 @@ model Chunk {
   @@unique([courseId, sourcePath, chunkIndex])
   @@index([courseId])
   @@index([contentHash])
+}
+
+model PipelineState {
+  id          String   @id @default(cuid())
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId    String
+  stage       String
+  subjectKey  String
+  fingerprint String
+  status      String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([courseId, stage, subjectKey])
+  @@index([courseId, stage])
 }

@@ -72,6 +72,11 @@ TOPIC_GROUPS = [
     {"slug": "engineering-communication", "name": "Engineering Communication",
         "description": "Technical Writing, Documentation"},
 ]
+DISALLOWED_NEW_GROUP_SLUGS = {
+    # Too narrow/course-shaped; numerical-computation topics belong under
+    # math-foundations, with programming-software when tooling/code is central.
+    "numerical-methods",
+}
 
 SYSTEM_PROMPT = """You are an expert curriculum analyst. Given chunked text from a university course, 
 you extract the distinct topics covered and assign each to one or more broad subject groups.
@@ -80,7 +85,9 @@ Rules:
 - A topic is a coherent concept or technique that could stand as its own page (e.g. "Fourier Transform", "malloc internals", "Bode plots").
 - Do not create topics for administrative content (syllabi, grading policies, course logistics).
 - A topic can belong to multiple groups if it genuinely spans them.
-- You are given a suggested list of groups. Use them when they fit. If a topic belongs to a group not on the list, create a new group with a sensible slug and name.
+- You are given a suggested list of broad site navigation groups. Use them whenever they fit.
+- Create a new group only for a genuinely broad cross-course area that none of the suggested groups cover.
+- Do not create narrow subdiscipline or course-shaped groups such as "numerical-methods", "algorithms", "calculus", or a course title. Put those topics in the closest broad existing group instead.
 - Return only valid JSON. No preamble, no explanation, no markdown fences.
 - Course slugs are NOT group slugs. Groups are broad subjects spanning many courses (e.g. math-foundations, computer-systems). Never create a group named after the course itself or use the course slug as a group.
 - Every slug in any topic's "groups" array must either be a suggested group or appear in "new_groups". No exceptions.
@@ -238,8 +245,11 @@ def write_topics(course_slug: str, extraction: dict, chunks: list[dict]) -> dict
             slug=g["slug"], name=g["name"], description=g["description"])
         group_id_map[g["slug"]] = gid
 
-    # Upsert any new groups the model created
+    # Upsert any new groups the model created. Filter known narrow/course-shaped
+    # slugs defensively so a single course does not create duplicate navigation.
     for g in extraction.get("new_groups", []):
+        if g["slug"] in DISALLOWED_NEW_GROUP_SLUGS:
+            continue
         gid = db.upsert_topic_group(
             slug=g["slug"], name=g["name"], description=g.get("description"))
         group_id_map[g["slug"]] = gid
@@ -248,7 +258,8 @@ def write_topics(course_slug: str, extraction: dict, chunks: list[dict]) -> dict
     topic_id_map: dict[str, str] = {}
     for t in extraction.get("topics", []):
         group_ids = [group_id_map[s]
-                     for s in t.get("groups", []) if s in group_id_map]
+                     for s in t.get("groups", [])
+                     if s in group_id_map and s not in DISALLOWED_NEW_GROUP_SLUGS]
         topic_id = db.upsert_topic(
             slug=t["slug"],
             title=t["title"],

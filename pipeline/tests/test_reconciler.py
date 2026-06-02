@@ -34,8 +34,9 @@ def _all_fixtures() -> list[pathlib.Path]:
 
 
 @pytest.fixture
-def synthetic_topic():
+def synthetic_topic(monkeypatch):
     """Create a throwaway course+topic, yield (course_id, topic_id), drop after."""
+    monkeypatch.setattr(db, "ensure_writable", lambda: None)
     conn = db.get_conn()
     course_id = f"crs_test_{uuid.uuid4().hex[:8]}"
     topic_id = f"tpc_test_{uuid.uuid4().hex[:8]}"
