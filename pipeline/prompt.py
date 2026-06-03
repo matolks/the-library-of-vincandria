@@ -16,12 +16,12 @@ if TYPE_CHECKING:
     from pipeline.block_gen import TopicContext
 
 
-PROMPT_VERSION = "agent3.v4"
+PROMPT_VERSION = "agent3.v5"
 OUTPUT_FORMAT_VERSION = "agent3.block-output.v1"
 
 
 SYSTEM_PROMPT = """\
-You are generating teaching blocks for a mathematics topic in a structured learning system. Output is a single ordered JSON array of blocks that will be rendered in a BlockNote-based editor.
+You are generating teaching blocks for a course topic in a structured learning system. Output is a single ordered JSON array of blocks that will be rendered in a BlockNote-based editor.
 
 THREE LOCKED CONTRACTS
 
@@ -76,7 +76,7 @@ Return a single JSON object, no prose preamble, no markdown fences:
 
 Each newly generated (non-anchor) block may include:
   generation_metadata: { source_chunk_ids: string[] }
-listing chunk IDs from the user prompt that materially grounded the block. Use an empty array when no chunks contributed.
+listing chunk IDs from the user prompt that materially grounded the block. Use only exact chunk IDs from VALID SOURCE CHUNK IDS in the user prompt; never invent, shorten, transform, or copy source filenames as IDs. Use an empty array when no chunks contributed.
 
 Each anchor block in your output MUST include its `id` and `content` exactly as provided in PINNED ANCHORS. Do not include `generation_metadata` on anchors; their provenance is unchanged.
 Pinned-anchor `content` is persisted BlockNote JSON and may be an object rather than the generated-block content array. Copy pinned anchor objects exactly; do not normalize them to the generated-block schema.
@@ -105,10 +105,14 @@ Geometry accuracy rules for plotted surfaces:
 - For closed surfaces that require two z branches, do not show only one branch as if it were the whole surface. Either plot a clearly labeled cap/hemisphere and say it is one branch, or use prose until the renderer supports implicit surfaces.
 
 When to use group_id. Set the same group_id on adjacent blocks when the later block depends on the earlier block being immediately visible. Use a fresh `group_id` per cohort; the value is opaque (any short string works).
-- Display math + immediate interpretation: group a display equation with the next paragraph when that paragraph begins from the equation, defines its symbols, interprets the equality/inequality, names a geometric meaning, or explains why the formula matters.
+- Display math + immediate interpretation: group a display equation with adjacent prose when that prose introduces the equation, begins from it, defines its symbols, interprets the equality/inequality, names a geometric meaning, or explains why the formula matters.
 - Plot + feature paragraph: group every plot with the immediately following paragraph when that paragraph names visible features, explains the shape, calls out axes/traces/intercepts/extrema, or says what the learner should notice.
 - Worked example: group the setup math, computation math, and explanatory paragraphs that form one computation. Keep the cohort short, but do not split the actual computation from the prose that explains it.
+- Domain anchors: in math topics, group formula + interpretation, plot + explanation, and worked-example computation chains. In algorithms topics, group pseudocode/code + the immediately following invariant, correctness, or complexity explanation; trace + invariant; and theorem/recurrence + interpretation. In numerical topics, group algorithm/formula + error analysis, code/tableau + readout, and worked-step computations.
+- Algorithm code rule: when you emit a codeBlock or pseudocode block, the next block should normally be a paragraph or callout in the same group_id that explains its invariant, correctness argument, or runtime. Do not insert a heading between algorithm code and that explanation.
 - Do not group ordinary topic flow: if the next paragraph introduces a new idea rather than interpreting the previous math/plot/example, leave `group_id` null.
+
+Transition quality. Avoid boilerplate openers and closers that could be pasted into any topic. Start with the concrete method, formula, example, or decision rule this topic teaches. Do not include false-start prose such as "wait" or "more carefully" inside a final explanation; present the corrected derivation directly. When moving between examples, state the connection or explicitly mark the new example as separate.
 """
 
 
@@ -151,6 +155,13 @@ def _render_user_prompt(context: "TopicContext") -> str:
     if not context.chunks:
         parts.append("None.")
     else:
+        parts.append(
+            "VALID SOURCE CHUNK IDS: "
+            + ", ".join(c.id for c in context.chunks)
+        )
+        parts.append(
+            "Use only these exact IDs in generation_metadata.source_chunk_ids."
+        )
         for c in context.chunks:
             src = _basename(c.source_path)
             page = f", p.{c.page_number}" if c.page_number else ""

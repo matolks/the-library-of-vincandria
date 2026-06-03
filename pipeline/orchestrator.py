@@ -21,6 +21,8 @@ from pipeline.block_gen import (
     agent3_generation_config,
     compute_context_fingerprint,
     get_topic_context,
+    should_use_structured_json,
+    strip_invalid_source_ids,
 )
 from pipeline import llm
 from pipeline.block_schema import validate_block_schema
@@ -47,6 +49,7 @@ class GenerationResult:
     dry_run: bool = False
     validation_errors: tuple[str, ...] = ()
     reconciler_stats: dict | None = None
+    preview_sequence: list[dict] | None = None
 
 
 def generate_blocks_for_topic(
@@ -56,13 +59,21 @@ def generate_blocks_for_topic(
     model: str | None = None,
     max_tokens: int = llm.DEFAULT_MAX_TOKENS,
     temperature: float = llm.DEFAULT_TEMPERATURE,
+    structured_json: bool | None = None,
+    include_preview: bool = False,
 ) -> GenerationResult:
     """Generate blocks for one topic. Persists unless dry_run=True."""
     context = get_topic_context(topic_id)
+    use_structured_json = (
+        structured_json
+        if structured_json is not None
+        else should_use_structured_json(context)
+    )
     generation_config = agent3_generation_config(
         model=model,
         max_tokens=max_tokens,
         temperature=temperature,
+        structured_json=use_structured_json,
     )
 
     if context.coverage == "sparse":
@@ -96,6 +107,7 @@ def generate_blocks_for_topic(
                 model=model,
                 max_tokens=max_tokens,
                 temperature=temperature,
+                structured_json=use_structured_json,
             )
         except LLMResponseError as e:
             if attempt == MAX_ATTEMPTS:
@@ -112,7 +124,11 @@ def generate_blocks_for_topic(
         last_model = result.model
 
         allowed_chunk_ids = {chunk.id for chunk in context.chunks}
-        _filter_source_chunk_ids(result.blocks, allowed_chunk_ids)
+        strip_invalid_source_ids(
+            result.blocks,
+            allowed_chunk_ids,
+            topic_slug=context.topic.slug,
+        )
         errors = _validate(result.blocks, pinned_cohorts, allowed_chunk_ids)
         if not errors:
             pinned_ids, sequence = _to_reconciler_shape(
@@ -139,6 +155,7 @@ def generate_blocks_for_topic(
                 top_similarity=context.top_similarity,
                 dry_run=dry_run,
                 reconciler_stats=stats,
+                preview_sequence=sequence if dry_run and include_preview else None,
             )
 
         if attempt == MAX_ATTEMPTS:
@@ -237,17 +254,8 @@ def _validate_source_chunk_ids(
 
 
 def _filter_source_chunk_ids(blocks: list[dict], allowed_chunk_ids: set[str]) -> None:
-    """Drop hallucinated provenance IDs while preserving valid model citations."""
-    for block in blocks:
-        meta = block.get("generation_metadata")
-        if not isinstance(meta, dict):
-            continue
-        ids = meta.get("source_chunk_ids")
-        if not isinstance(ids, list):
-            continue
-        meta["source_chunk_ids"] = [
-            chunk_id for chunk_id in ids if chunk_id in allowed_chunk_ids
-        ]
+    """Backward-compatible wrapper for tests/imports predating the named helper."""
+    strip_invalid_source_ids(blocks, allowed_chunk_ids)
 
 
 def _build_retry_prompt(original_user: str, errors: list[str], raw_text: str) -> str:
@@ -315,6 +323,7 @@ def _build_metadata(from_model, model: str, generation_config: dict | None = Non
         "prompt_version": PROMPT_VERSION,
         "output_format_version": generation_config["output_format_version"],
         "decoding": generation_config["decoding"],
+        "structured_json": generation_config["structured_json"],
         "source_chunk_ids": chunk_ids,
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }

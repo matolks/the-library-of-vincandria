@@ -65,6 +65,20 @@ def test_context_fingerprint_changes_when_decoding_params_change():
     )
 
 
+def test_context_fingerprint_changes_when_structured_json_mode_changes():
+    context = _context()
+    structured = agent3_generation_config(structured_json=True)
+    prompt_only = agent3_generation_config(structured_json=False)
+
+    assert compute_context_fingerprint(
+        context,
+        generation_config=structured,
+    ) != compute_context_fingerprint(
+        context,
+        generation_config=prompt_only,
+    )
+
+
 def test_stale_decision_matrix_for_same_source_changed_source_and_model_swap(
     monkeypatch,
 ):

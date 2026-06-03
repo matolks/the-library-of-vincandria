@@ -1,0 +1,655 @@
+{
+  "course_slug": "numerical-computation",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-03T13:13:49.551565+00:00",
+  "topics": [
+    {
+      "topic_id": "a14bb839-56e3-4950-b092-ff5adba44a06",
+      "topic_slug": "number-base-conversion-floating-point",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5153,
+      "output_tokens": 507,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.023621700000000002,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "bbc2312b-f8d4-42ca-a336-59036977ebda",
+      "topic_slug": "floating-point-error-propagation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5468,
+      "output_tokens": 621,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0262767,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "9cda150a-dbfd-4c61-bc11-aeab9e5a77f8",
+      "topic_slug": "loss-of-significance",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7269,
+      "output_tokens": 802,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0343947,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "fcef364a-ad66-43c7-aad7-7340c4467111",
+          "description": "The block states the naive formula gives r2 \u2248 1.74 \u00d7 10\u207b\u2078, but the source chunk (af838060) states the naive quadroots gives r2 = 1.7385e\u221208, which rounds to 1.74 \u00d7 10\u207b\u2078 \u2014 that part is consistent; however, the block attributes the cancellation to '\u2212b \u2212 \u221a(b\u00b2\u22124ac)' when in fact for b = \u2212123454321 (negative), the problematic root is r1 computed via \u2212b + \u221a(b\u00b2\u22124ac), i.e., the root using the '+' sign. The description of which root suffers cancellation is inverted relative to the source.",
+          "suggested_fix": "Clarify that for b negative and large in magnitude, it is the root r1 = (\u2212b + \u221a(b\u00b2\u22124ac))/(2a) that suffers cancellation (adding a large positive \u2212b to a nearly equal \u221a(b\u00b2\u22124ac)), not r2."
+        }
+      ]
+    },
+    {
+      "topic_id": "e2501766-7cc8-4769-bc7e-e572b7202b3b",
+      "topic_slug": "taylor-series-finite-difference",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9382,
+      "output_tokens": 1209,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0468387,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "8fe56866-e853-457c-bc59-5a4118b35610",
+      "topic_slug": "matlab-programming-numerical-methods",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9243,
+      "output_tokens": 650,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0380367,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "67af2665-119f-4395-8a0b-95dc7b3dad11",
+          "description": "The design matrix column for the log(1+x) term uses log(1+xk) where xk is a row vector, producing a row vector, but the other columns ones(6,1) and xk' are column vectors; concatenating them with [] would error or produce wrong dimensions \u2014 log(1+xk)' (transposed) is needed to form a valid 6\u00d73 matrix.",
+          "suggested_fix": "Change log(1+xk) to log(1+xk)' in the design matrix construction: X = [ones(6,1), xk', log(1+xk)'];"
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "a2ac2fcb-e65a-42d0-87cf-1d5cfae2e651",
+          "description": "The opening paragraph is a generic course-level overview ('Matlab is the primary implementation environment\u2026') that restates the topic title and summary without adding specific content not already conveyed by the section headings.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "d4a8c91b-bc1a-4a7e-9886-c60020fe4bd9",
+      "topic_slug": "polynomial-interpolation-lagrange-newton",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10380,
+      "output_tokens": 1366,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0521877,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "d8e16e09-416a-401f-a262-634827aab86f",
+          "description": "The divided difference table shows f[x_1,x_2] = 17/2 and f[x_2,x_3] = 9/2 and f[x_0,x_1,x_2] = 2, but the correct values are f[2,3] = (28-11)/(3-2) = 17, f[3,4] = (63-28)/(4-3) = 35, f[0,2,3] = (17-2)/(3-0) = 5, and f[2,3,4] = (35-17)/(4-2) = 9, as confirmed by the source chunk.",
+          "suggested_fix": "Replace the table entries so that f[2,3]=17, f[3,4]=35, f[0,2,3]=5, f[2,3,4]=9, and f[0,2,3,4]=1, matching the source and yielding coefficients c0=7, c1=2, c2=5, c3=1."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "3ae3bd79-8a03-4e43-a2d5-6f7e6df25fdb",
+          "description": "The paragraph reads off c2=2 and c3=1 from the (incorrect) table, but the correct second-order divided difference coefficient is c2=5, giving the Newton form p3(x)=7+2x+5x(x-2)+1\u00b7x(x-2)(x-3).",
+          "suggested_fix": "Change c2=2 to c2=5 and update the Newton form expression in the following display-math block accordingly."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "91dfc637-be32-4ac3-ad2c-ad3229725e8d",
+          "description": "The Newton form is written as p3(x)=7+2x+2\u00b7x(x-2)+1\u00b7x(x-2)(x-3), but the correct coefficient of x(x-2) is 5, not 2, consistent with f[0,2,3]=5.",
+          "suggested_fix": "Replace '2\\,x(x-2)' with '5\\,x(x-2)' so the expression reads p3(x)=7+2x+5x(x-2)+x(x-2)(x-3)."
+        }
+      ]
+    },
+    {
+      "topic_id": "2eb4da66-0e7d-46a6-9084-2eaa18ccacfd",
+      "topic_slug": "chebyshev-nodes-interpolation-error",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7476,
+      "output_tokens": 1084,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.039245699999999994,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "de007377-47ca-4be7-a991-af775a408a1f",
+          "description": "The block states that the zeros of T_{n+1}(x) are 'called the Chebyshev nodes of Type II (or sometimes Type I, depending on convention)', but the zeros formula given (using (2i+1)\u03c0/(2(n+1))) corresponds to what the source calls Type II and is the interior-only variant, while the extrema formula (i\u03c0/n) is Type I \u2014 the block's parenthetical conflates the two types in a way that is misleading and contradicts the source's own labeling.",
+          "suggested_fix": "Remove the parenthetical about naming conventions or clarify that the zeros of T_{n+1} are commonly called Type II nodes, while the extrema of T_n are Type I (Chebyshev\u2013Lobatto) nodes."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "eafcbd2e-e94f-4078-b097-08b1227dcb0d",
+          "description": "The block claims every Chebyshev polynomial 'oscillates exactly n+1 times between -1 and +1', but T_n has n+1 extrema (including endpoints), meaning it attains \u00b11 exactly n+1 times \u2014 it does not oscillate n+1 times; T_n oscillates n times (has n-1 interior extrema plus the two endpoint values), so the count is off by one.",
+          "suggested_fix": "State that T_n attains the values \u00b11 exactly n+1 times (at n+1 extrema), or equivalently that it has n+1 equioscillation points, rather than saying it 'oscillates exactly n+1 times'."
+        }
+      ]
+    },
+    {
+      "topic_id": "96b63bbd-04dd-4a25-8c1f-15fadee755ad",
+      "topic_slug": "spline-interpolation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10401,
+      "output_tokens": 769,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0432957,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "d97709e0-2122-4def-aaaf-1e0ada493bcc",
+          "description": "The block claims the first two terms of the cubic piece formula are 'the cubic Hermite interpolant of the second-derivative values,' but they are actually the linear interpolant of the second-derivative values (each is a cubic in x because it is z_i or z_{i+1} times a cubic factor, but together they form the unique cubic whose second derivative linearly interpolates z_i and z_{i+1}); calling them a 'cubic Hermite interpolant' is misleading and incorrect \u2014 a cubic Hermite interpolant matches function values and first derivatives, not second derivatives.",
+          "suggested_fix": "Replace 'cubic Hermite interpolant of the second-derivative values' with 'the cubic whose second derivative linearly interpolates z_i and z_{i+1}'."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "8aafb7a6-0425-44dd-95e1-3df7f0a29b26",
+          "description": "The block states that evaluating the spline at any point after finding the correct interval is 'O(log n) or O(1) per query,' but finding the interval via binary search is O(log n) and applying the formula is O(1); conflating the two as a single cost description is imprecise and the O(log n) applies to the search, not the formula evaluation.",
+          "suggested_fix": "Clarify: 'finding the correct interval takes O(log n) via binary search, and applying the cubic piece formula is O(1) per query.'"
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "4551e296-771f-404c-b457-a7f271a4541e",
+          "description": "Block 4551e296 (paragraph interpreting the solved z-values and directing the reader to use piece S_2 for x=1.8) immediately follows the display-math system block 1a630bf0 and explicitly walks through that specific computation, but the two blocks share no group_id.",
+          "suggested_fix": "Assign both blocks 1a630bf0 and 4551e296 to the same group_id (e.g., g-example-system)."
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "8f2da738-cb55-4f5e-a1ce-0dc8d6cda49f",
+          "description": "The opening paragraph is a generic textbook gloss about the Runge phenomenon and splines that could appear verbatim in any spline topic without adding information specific to this topic's content.",
+          "suggested_fix": "Either delete it or replace it with a sentence that references the specific construction (tridiagonal system, natural boundary conditions) covered in this topic."
+        }
+      ]
+    },
+    {
+      "topic_id": "d439117c-3c21-4f69-88ac-5df7df81ee12",
+      "topic_slug": "numerical-integration-trapezoid-simpson",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9517,
+      "output_tokens": 723,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.039953699999999995,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "86c0eda5-fadc-45a3-a81d-6fd1dfaec067",
+      "topic_slug": "romberg-richardson-extrapolation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8273,
+      "output_tokens": 962,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0398067,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "f791edb8",
+          "description": "The upper summation limit in the recursive trapezoid formula is written as '2^i - 1', but the correct upper limit for the new midpoints at refinement level i is '2^(i-1) - 1', as confirmed by the MATLAB code in the same topic which correctly uses '2^(i-1)-1'.",
+          "suggested_fix": "Change the upper limit of the sum from $2^i - 1$ to $2^{i-1} - 1$ in the display-math block."
+        }
+      ]
+    },
+    {
+      "topic_id": "d5b0ffe8-c443-4ff0-ac11-6496d3079d86",
+      "topic_slug": "gaussian-quadrature",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9262,
+      "output_tokens": 1080,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0445437,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "022e2f04-d1fc-4f97-95a0-138d7763b44b",
+          "description": "The third equation gives 0.25*a1 + 0.25*a3 = 2/3, and with a1 = a3 this yields 0.5*a1 = 2/3, so a1 = a3 = 4/3, not 2/3 as stated; then a2 = 2 - 8/3 = -2/3, not 2/3.",
+          "suggested_fix": "Correct the solution to a1 = a3 = 4/3 and a2 = 2 - 8/3 = -2/3, and update the displayed rule in block de7b0ecf accordingly."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "de7b0ecf-4eab-4b81-a1f4-d70ec4321fa4",
+          "description": "The rule displays all three weights as 2/3, but the correct weights derived from the linear system are a1 = a3 = 4/3 and a2 = -2/3.",
+          "suggested_fix": "Replace the displayed rule with (4/3)*f(-0.5) + (-2/3)*f(0) + (4/3)*f(0.5)."
+        }
+      ]
+    },
+    {
+      "topic_id": "d9bd9fde-a50f-4db2-8f6d-f5d434ccccc8",
+      "topic_slug": "bisection-method",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7544,
+      "output_tokens": 781,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0349047,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "20c0dab0-6f91-4a9a-82e8-997e84e3147f",
+      "topic_slug": "fixed-point-iteration",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8074,
+      "output_tokens": 756,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0361197,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "d86cfc3f-206d-44e6-b4c2-2fb6ee8ec9ca",
+      "topic_slug": "newtons-method",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8966,
+      "output_tokens": 850,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0402057,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "0e859be6-0986-46c9-8804-15e77ddde0a1",
+      "topic_slug": "secant-method",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8359,
+      "output_tokens": 1042,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.041264699999999994,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "c8e7f39a-582f-4b75-b9db-5ebdf1881d8f",
+          "description": "The secant iteration formula shown uses $x_n^5 - 64$ in the numerator, which is wrong because the correct function is $f(x) = x^5 - 43$ (as shown in source chunk 7e169d00), not $x^5 - 64$.",
+          "suggested_fix": "Replace $x_n^5 - 64$ with $x_n^5 - 43$ in the iteration formula."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "4d5cd9f9-e053-41f1-ba18-241867627d1a",
+          "description": "The block states the exact value is $4^{3/5} \\approx 2.297397$, but the source (chunk cc970bfa) gives the exact value as $4^{3/5} = 2.2973967099407$; more importantly, the problem is actually computing $43^{1/5}$ (the fifth root of 43), not $4^{3/5}$ interpreted as $64^{1/5}$, so the numerical value cited is consistent with $43^{1/5}$ but the algebraic description throughout is wrong.",
+          "suggested_fix": "Clarify that the problem computes $43^{1/5}$ (the fifth root of 43) with exact value $\\approx 2.2974$, correcting the function definition from $x^5-64$ to $x^5-43$."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "cb46c921-4f37-4de2-88de-d15516e47161",
+          "description": "The block claims Newton's method requires 'two evaluations per step' when $f'$ must be computed numerically, but Newton's method analytically requires one function evaluation and one derivative evaluation per step; the claim of two evaluations is only true if the derivative itself is approximated by a finite difference, which is a special case not stated.",
+          "suggested_fix": "Clarify that Newton's method requires one evaluation of $f$ and one of $f'$ per step, and that the secant method saves the cost of the derivative evaluation (whether analytic or numerical)."
+        }
+      ]
+    },
+    {
+      "topic_id": "a434bec8-fb6a-4e52-89ed-d2256f7fddab",
+      "topic_slug": "gaussian-elimination-pivoting",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9242,
+      "output_tokens": 1048,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0440037,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "bddff4c0-aa80-4746-a17a-e25f70e90dbe",
+          "description": "After subtracting \u03b2 times row 1 from row 2, the second equation becomes (1\u2212\u03b2)x\u2082 = 2\u2212\u03b2, not (1\u2212\u03b2)x\u2082 = 2 as stated; the correct result still gives x\u2082 = 1 when \u03b2 \u2260 1, but the claimed intermediate equation is algebraically wrong.",
+          "suggested_fix": "Replace '(1 - \u03b2)x\u2082 = 2' with '(1 - \u03b2)x\u2082 = 2 - \u03b2' and note that when \u03b2 \u2248 1 the near-zero coefficient 1\u2212\u03b2 on x\u2082 causes loss of significance in computing x\u2082 from this equation."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "85c8ef1b-90a4-434e-91d7-a43b0245f1dd",
+          "description": "Block b4c24cfd explicitly introduces the back-substitution formula with 'Back-substitution then recovers the unknowns from bottom to top:' and the immediately following display-math block 85c8ef1b contains that formula, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks b4c24cfd and 85c8ef1b."
+        }
+      ]
+    },
+    {
+      "topic_id": "0ff76105-84f6-4d5f-a778-222d4b44c479",
+      "topic_slug": "tridiagonal-banded-systems",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8357,
+      "output_tokens": 1085,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.041903699999999995,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "e30ba33a-2eaa-46b2-a4a3-8edb19c44ff7",
+      "topic_slug": "iterative-methods-linear-systems",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9387,
+      "output_tokens": 1487,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0510237,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "1ec3968e-366d-455e-962f-53b13fd8ee85",
+          "description": "The displayed GS-based SOR matrix form $x^{(k+1)} = [(1-\\omega)I - \\omega D^{-1}(L+U)]x^{(k)} + \\omega D^{-1}b$ is actually the Jacobi-based SOR formula; the correct GS-based SOR matrix form is $x^{(k+1)} = (D+\\omega L)^{-1}[(1-\\omega)D - \\omega U]x^{(k)} + \\omega(D+\\omega L)^{-1}b$.",
+          "suggested_fix": "Replace the matrix form with the correct GS-based SOR: $x^{(k+1)} = (D+\\omega L)^{-1}[(1-\\omega)D - \\omega U]x^{(k)} + \\omega(D+\\omega L)^{-1}b$."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "67d01c55-7551-42bc-bc2c-437dc1865c53",
+          "description": "The SOR iteration matrix is stated as $B_\\omega = (1-\\omega)I - \\omega D^{-1}(L+U)$, which is the Jacobi-based SOR iteration matrix, not the Gauss-Seidel-based SOR iteration matrix that this section is presenting.",
+          "suggested_fix": "Correct the iteration matrix to $B_\\omega = (D+\\omega L)^{-1}[(1-\\omega)D - \\omega U]$."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "fefaf3a3-0a93-4e26-83f5-1e4228380326",
+          "description": "The block claims the Jacobi-based SOR iteration matrix is 'identical in structure to the Gauss-Seidel-based SOR,' but the two have structurally different iteration matrices: $(1-\\omega)I - \\omega D^{-1}(L+U)$ versus $(D+\\omega L)^{-1}[(1-\\omega)D - \\omega U]$.",
+          "suggested_fix": "Remove or correct the claim of structural identity; note instead that both are relaxation schemes but with different iteration matrices and convergence properties."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "medium",
+          "block_id": "206c0676-f121-4542-8440-10685cb8692a",
+          "description": "The paragraph describes a specific iteration-count-vs-\u03c9 curve for a 9\u00d79 tridiagonal system with a visible minimum around \u03c9 \u2248 1.5\u20131.6, but no function2d plot block accompanies it to show this curve.",
+          "suggested_fix": "Add a function2d plot block showing iteration count as a function of \u03c9, or reference that the data comes from a numerical experiment whose results are summarized in the callout."
+        }
+      ]
+    },
+    {
+      "topic_id": "54ff67c3-5b8f-4dd3-bf89-6f8497731985",
+      "topic_slug": "method-of-least-squares",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10184,
+      "output_tokens": 963,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0455547,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "23fa4ed9-92db-44dd-877d-f2f75c6d9c3a",
+          "description": "The computed values of $A^T A$ and $A^T \\mathbf{b}$ are both wrong: the correct off-diagonal of $A^T A$ is $2(3)+1(-4)+2(-1)=0$, not $-4$, and the correct $A^T \\mathbf{b}$ is $(-9, 40)^T$, not $(-7, 28)^T$.",
+          "suggested_fix": "Replace with $A^T A = \\begin{pmatrix} 9 & 0 \\\\ 0 & 26 \\end{pmatrix}$ and $A^T \\mathbf{b} = \\begin{pmatrix} -9 \\\\ 40 \\end{pmatrix}$, then re-solve for the correct least-squares solution."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "medium",
+          "block_id": "ad2d0008-70e4-4af3-bebb-bbce73746980",
+          "description": "The parabolic fit worked example concludes with a specific function $g(x) = 1.05x^2 + 0.9$ whose shape is discussed, but no function2d plot of this parabola accompanies the example.",
+          "suggested_fix": "Add a function2d plot block with expression '1.05*x^2 + 0.9' over domain x in [-2, 2] immediately after this paragraph."
+        }
+      ]
+    },
+    {
+      "topic_id": "391a4f3a-8ccd-4443-90bf-cd6b26be9944",
+      "topic_slug": "ode-euler-heun-runge-kutta",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10321,
+      "output_tokens": 1148,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0487407,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "03a690af-922d-4750-a7bb-da8b232c71ac",
+          "description": "The intermediate value f(1.2) = 2(1.44) + 1.2 - 1 is written as 2.08, but 2\u00d71.44 = 2.88 so f(1.2) = 2.88 + 0.2 = 3.08; the subsequent line then states 0.1\u00d72.08 = 0.308 (which is also wrong as 0.1\u00d72.08 = 0.208), with the two errors cancelling to give the correct final answer 1.508.",
+          "suggested_fix": "Replace '2(1.44) + 1.2 - 1' result with 3.08 and the product line with '0.1 \u00d7 3.08 = 0.308' so the intermediate steps are arithmetically consistent with the correct final answer."
+        }
+      ]
+    },
+    {
+      "topic_id": "892a524b-c12a-4924-9334-b7e1274a408c",
+      "topic_slug": "multistep-methods-adams-bashforth-moulton",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8990,
+      "output_tokens": 1170,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0450777,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "89d0815e-31db-423b-9c29-34d2fd25bdbd",
+          "description": "The callout claims the 2nd-order ABM method uses 'exactly two new function evaluations' per step, but the corrector as implemented substitutes the predicted value directly (no re-evaluation after correction), so only one new evaluation (for f_{n+1}^P) is needed per step; the second evaluation mentioned conflates the predictor slope with a post-correction refresh that is not performed in the 2nd-order scheme described.",
+          "suggested_fix": "Correct the callout to state that the 2nd-order ABM method uses one new function evaluation per step (the predicted slope f_{n+1}^P), and clarify that the 'refresh' evaluation is only needed if the corrector is iterated or if f_{n+1} is stored for the next predictor step."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "834a5cc7-bf46-40d4-abd4-039287b62a23",
+          "description": "The paragraph claims the 4th-order ABM method 'requires only two function evaluations per step (one for the predictor slope, one to refresh after correction)', but the predictor uses f_n, f_{n-1}, f_{n-2}, f_{n-3} which are already stored, so only one new evaluation is needed for f_{n+1}^P (the predictor slope); the 'refresh' after correction is a re-evaluation of f at the corrected point to store for the next step, making it at most two, but the description is misleading because it implies both are 'new' in the same sense as RK4's four evaluations \u2014 more precisely, only one truly new evaluation is required if the corrected f_{n+1} is reused as f_n in the next step.",
+          "suggested_fix": null
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "f5cb494e-d96f-4c0d-9c03-5f19e0473424",
+          "description": "The comparison table states '2nd-order ABM: 2 evaluations/step', but the 2nd-order ABM predictor-corrector as described (with the corrector substituting the predicted value directly without iteration) requires only one new function evaluation per step (computing f_{n+1}^P); the value f_n is already stored from the previous step.",
+          "suggested_fix": "Change '2 evaluations/step' to '1 new evaluation/step (plus reuse of stored f_n)' for the 2nd-order ABM entry, consistent with the corrector formula described."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "49b33a6f-afbe-407a-a959-c5009c4e729a",
+          "description": "The comparison table states '4th-order ABM: 2 evaluations/step', but as with the 2nd-order case, only one new evaluation per step is strictly required (for f_{n+1}^P), since f_n, f_{n-1}, f_{n-2}, f_{n-3} are all stored from prior steps; the claim of two evaluations is inconsistent with the method's description.",
+          "suggested_fix": "Change '2 evaluations/step' to '1\u20132 evaluations/step' with a note that one evaluation is for the predictor and optionally one more if f_{n+1} is refreshed after correction."
+        }
+      ]
+    },
+    {
+      "topic_id": "c2c72e14-5fc1-4dfc-a5db-1730bcc41423",
+      "topic_slug": "systems-odes-higher-order",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10032,
+      "output_tokens": 1294,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.050063699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "4b4336b4-6c6f-4313-8611-29ef84b0351c",
+          "description": "The stability condition for the explicit Euler method applied to $x' = \\lambda x$ with $\\lambda = -100$ requires $|1 + h\\lambda| \\leq 1$, giving $h \\leq 2/100 = 0.02$; however, for RK4 the stability region is larger (the stability limit for RK4 on $x'=\\lambda x$ with real negative $\\lambda$ is approximately $h|\\lambda| \\leq 2.785$, i.e., $h \\leq 0.02785$), so stating the threshold as $h < 2/100 = 0.02$ is the Euler stability bound, not the RK4 bound, yet the surrounding context (and the source chunk) is about RK4 instability, making the stated threshold misleading for RK4.",
+          "suggested_fix": "Clarify that $h < 0.02$ is the Euler stability bound; for RK4 the stability threshold for this problem is approximately $h < 0.028$, and note that the source examples use RK4 with step sizes around 0.025\u20130.030 to demonstrate instability near the RK4 limit."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "c6864772-0137-4b81-96b4-c247cd3e267d",
+          "description": "The paragraph explicitly describes the Lorenz attractor as a 'butterfly-shaped' 3-D curve and the time-series plots of $x(t), y(t), z(t)$, but no surface3d or function2d plot block accompanies this visual description; however, the Lorenz attractor is a parametric 3-D curve, not a surface3d or function2d object, so the renderer cannot honestly display it.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "6e7bffb6-ece7-40f5-844b-35f1cff15082",
+      "topic_slug": "two-point-bvp-shooting-methods",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9051,
+      "output_tokens": 1168,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0452307,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "f1884d3f-0352-4ef2-98a2-fd32d080c7ae",
+          "description": "The opening paragraph ('A two-point boundary value problem specifies conditions on the solution at both endpoints\u2026') is a generic textbook definition that could appear in any BVP topic without any content specific to shooting methods.",
+          "suggested_fix": "Merge this sentence into the next paragraph that introduces the shooting idea, or add a concrete forward reference to the shooting strategy to make it topic-specific."
+        }
+      ]
+    },
+    {
+      "topic_id": "20f79721-0b86-42e4-840d-6e94a0ba32a6",
+      "topic_slug": "finite-difference-bvp-1d",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8567,
+      "output_tokens": 1053,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0420537,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "de048c1a-2670-43e1-bc50-e89dd8b11652",
+          "description": "The source chunk states the diagonal of A is -(4 + 4h\u00b2) but the source chunk for the Matlab code uses -(4 + 4*h*h) consistently; however the source chunk for the written-out system (chunk 6a923707) states the diagonal is '-(4 + 2h\u00b2)' in the prose description ('with \u2212(4 + 2h\u00b2) on the diagonal'), while the actual algebra (multiply by 2h\u00b2 and collect) gives -(4 + 4h\u00b2). The generated block correctly shows -(4+4h\u00b2) on the diagonal, which matches the algebra and the Matlab code, so this is not an error in the generated block.",
+          "suggested_fix": null
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "77d2a651-2e0a-4ca0-be80-d37db274ac9b",
+          "description": "The convergence analysis section introduces u(x) = sin(x) on [0,\u03c0] as the canonical test case whose shape matters for understanding the error analysis, but no function2d plot of this exact solution is provided.",
+          "suggested_fix": "Add a function2d plot with expression sin(x) and domain x:[0, 3.14159] to visualize the canonical test solution."
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "fb22efa8-d45f-457d-8336-46b5366595f4",
+          "description": "The opening paragraph describes the shooting method and FDM at a high level without any content specific to this topic's equations or examples, and could be replaced by the section headings that follow without loss of information.",
+          "suggested_fix": "Either delete this block or replace it with a sentence that references the specific BVP or tridiagonal structure introduced in this topic."
+        }
+      ]
+    },
+    {
+      "topic_id": "509c253e-7ca1-4bbf-bd47-ebc1918266f8",
+      "topic_slug": "finite-difference-elliptic-pde-2d",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 11096,
+      "output_tokens": 1190,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0516957,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "218eeac8-572b-4b1f-8996-bf5e0a903cbd",
+          "description": "The claim that 'A is diagonally dominant (strictly, after sign flip)' is incorrect: the standard five-point Laplacian matrix has diagonal entry magnitude 4 and the sum of off-diagonal magnitudes is also 4 for all interior nodes not adjacent to a boundary, so the matrix is only weakly (not strictly) diagonally dominant.",
+          "suggested_fix": "Change 'strictly' to 'weakly' and note that irreducibility is needed to guarantee convergence, as the callout block immediately following already correctly states."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "b4fcb288-0ef4-414e-9a6a-32e80d8c76d4",
+          "description": "The paragraph states the sparse direct solver cost 'scales roughly as $O(N^3)$' for this banded structure, but banded Gaussian elimination on an $(N-1)^2 \\times (N-1)^2$ matrix with bandwidth $N-1$ costs $O((N-1)^2 \\cdot (N-1)^2) = O(N^4)$, consistent with what the earlier bullet block dc5b4618 correctly states.",
+          "suggested_fix": "Change '$O(N^3)$' to '$O(N^4)$' to be consistent with the earlier correct statement in the sparsity section."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "e91fe6f5-e01b-4e21-80a9-7e2c21952ed2",
+          "description": "Block e91fe6f5 introduces the equation $2u_{xx}+u_{yy}=0$ and calls it a 'Laplace equation', but the standard Laplace equation is $u_{xx}+u_{yy}=0$; the equation with coefficient 2 is a more general elliptic PDE, and calling it 'Laplace' without qualification may confuse learners who just learned that Laplace means $\\Delta u=0$.",
+          "suggested_fix": "Clarify that this is a variable-coefficient (anisotropic) elliptic equation, not the standard Laplace equation, or note it is a scaled version."
+        }
+      ]
+    },
+    {
+      "topic_id": "dfa7f728-59f4-4c0d-a9e6-1b0d0d5e549f",
+      "topic_slug": "finite-difference-heat-equation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8893,
+      "output_tokens": 758,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.038606699999999994,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    }
+  ],
+  "totals": {
+    "findings": 40,
+    "cost": 1.0846511999999997,
+    "in": 228887,
+    "out": 25566,
+    "cache_create": 0,
+    "cache_read": 48334,
+    "skipped": 0,
+    "severity_low": 5,
+    "severity_medium": 8,
+    "severity_high": 27
+  }
+}

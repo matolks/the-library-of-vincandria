@@ -9,9 +9,9 @@ from dataclasses import dataclass
 from typing import Optional
 
 from pipeline.anchor_integrity import validate_anchor_integrity
+from pipeline.block_gen import strip_invalid_source_ids
 from pipeline.orchestrator import (
     _apply_context_fingerprint,
-    _filter_source_chunk_ids,
     _to_reconciler_shape,
     _to_storage_content,
     _validate,
@@ -88,6 +88,7 @@ def test_to_reconciler_shape_keeps_pinned_refs_and_stores_new_blocknote_content(
         "max_tokens": 20000,
         "temperature": 0,
     }
+    assert sequence[1]["generation_metadata"]["structured_json"] is False
 
 
 def test_apply_context_fingerprint_marks_generated_blocks_only():
@@ -179,7 +180,7 @@ def test_validate_rejects_unknown_source_chunk_ids():
     assert "chunk_fake" in " ".join(errors)
 
 
-def test_filter_source_chunk_ids_drops_unknown_ids_before_validation():
+def test_strip_invalid_source_ids_drops_unknown_ids_before_validation():
     blocks = [
         {
             "type": "paragraph",
@@ -190,13 +191,33 @@ def test_filter_source_chunk_ids_drops_unknown_ids_before_validation():
         }
     ]
 
-    _filter_source_chunk_ids(blocks, {"chunk_real", "chunk_other"})
+    strip_invalid_source_ids(blocks, {"chunk_real", "chunk_other"})
 
     assert blocks[0]["generation_metadata"]["source_chunk_ids"] == [
         "chunk_real",
         "chunk_other",
     ]
     assert _validate(blocks, [], {"chunk_real", "chunk_other"}) == []
+
+
+def test_strip_invalid_source_ids_logs_each_drop(caplog):
+    blocks = [
+        {
+            "id": "model_anchor",
+            "type": "paragraph",
+            "content": [{"type": "text", "text": "Grounded sentence."}],
+            "generation_metadata": {
+                "source_chunk_ids": ["chunk_real", "chunk_fake", "chunk_ghost"]
+            },
+        }
+    ]
+
+    strip_invalid_source_ids(blocks, {"chunk_real"}, topic_slug="topic-a")
+
+    assert blocks[0]["generation_metadata"]["source_chunk_ids"] == ["chunk_real"]
+    assert "chunk_fake" in caplog.text
+    assert "chunk_ghost" in caplog.text
+    assert "topic-a" in caplog.text
 
 
 def test_validate_rejects_agent3_generated_image_blocks():

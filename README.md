@@ -11,18 +11,18 @@ This is the first module running on AIStack, a local AI platform designed to sup
 
 ## Status
 
-| Stage                              | Status      |
-| ---------------------------------- | ----------- |
-| Schema (Prisma + Supabase)         | Done        |
-| Chunker (Ollama, Stage 1)          | Done        |
-| Agent 1 — Extractor (topics)       | Done        |
-| Agent 2 — Mapper (dependencies)    | Done        |
-| Agent 3 — Block Generator          | Done, v4 QA |
-| Agent 4 — Web Enricher             | Done, v1    |
-| Course pipeline orchestrator       | Done, CLI   |
-| Eval harness (`pipeline/evals/`)   | Done, v1    |
-| Public website                     | Done, v1    |
-| Admin dashboard + BlockNote editor | Deferred / out of scope |
+| Stage                            | Status      |
+| -------------------------------- | ----------- |
+| Schema (Prisma + Supabase)       | Done        |
+| Chunker (Ollama, Stage 1)        | Done        |
+| Agent 1 — Extractor (topics)     | Done        |
+| Agent 2 — Mapper (dependencies)  | Done        |
+| Agent 3 — Block Generator        | Done, v4 QA |
+| Agent 4 — Web Enricher           | Done, v1    |
+| Course pipeline orchestrator     | Done, CLI   |
+| Eval harness (`pipeline/evals/`) | Done, v1    |
+| Public website                   | Done, v1    |
+| BlockNote editor                 | Deferred    |
 
 ---
 
@@ -371,28 +371,29 @@ mapper context, and the classifier now reports all 19 topics as
 --require-enricher-skipped` passes against it.
 
 - 16 local source files, 94 original local chunks
-- 18 topics extracted, all linked to `math-foundations`
+- 19 topics extracted, all linked to `math-foundations`
 - Slugs stable across re-runs (anchored via prior-extraction lookup)
 - All topic embeddings populated
-- Agent 4 enrichment brought all topics above coverage threshold: no sparse topics and no thin topics under `strong>=0.75`, `strong_min=3`
-- Generated block pages persisted for all 18 topics
-- 1,054 generated blocks currently persisted
-- 60 unique chunk IDs referenced by generated block provenance; all resolve to same-course chunks
+- Agent 4 enrichment brought all topics above the sparse threshold; `mvc-level-curves` remains thin-but-generated under `strong>=0.75`, `strong_min=3`
+- Generated block pages persisted for all 19 topics
+- 997 total blocks currently persisted: 995 generated blocks plus 2 manually edited anchors
+- Agent 3 v5 selective persisted run completed on 2026-06-03 for the 14 MVC topics with repeated `missing_group`, `generic_prose`, or `confusing_transition` findings
+- Current persisted block versions: 720 `agent3.v5` blocks and 277 preserved `agent3.v4`/manual blocks
+- 66 unique chunk IDs referenced by generated block provenance; all resolve to same-course chunks after cleaning four preserved `mvc-quadric-surfaces` metadata references
 - Provenance references include local `exams`, local `homework`, and Agent 4 `web` chunks
 - 50 prerequisite edges; known-bad mapper edges from `scripts/drop_bad_edges.py` are excluded
 - No cycles
 - Transitive ancestor queries validated against manual calc-curriculum intuition (e.g. `mvc-lagrange-multipliers` correctly resolves to 7 ancestors across 2 depth levels)
 - Mapper cost per run: ~$0.13
-- Current Agent 3 prompt version: `agent3.v4`
-- Current persisted block set: 18/18 topics, 1,058 blocks, all `agent3.v4`
-- Latest full Agent 3 persisted run: one full MVC v4 pass completed topic-by-topic; `mvc-arc-length` failed validation once and then cleared on targeted rerun
-- Latest judge prompt version: `judge.v4`
-- Latest full judge report: `reports/judge_multivariable-calculus_20260531T204802Z.json`
-- Latest judge status: 43 findings in the full report (20 high, 21 medium, 2 low), with all 18 topics parse-clean
-- Dominant judge clusters: `missing_group` is down from 27 to 15; `missing_plot` is now mostly renderer-scope tension around geometry examples; factual findings still need human triage with citation footers visible
+- Current Agent 3 prompt version: `agent3.v5`
+- Latest Agent 3 persisted run: selective MVC v5 pass, `reports/agent3_v5_persist_mvc_20260603T112411Z.log`; 14/14 topics ok, 724 blocks written, no validation or parse failures
+- Latest judge prompt version: `judge.v5`
+- Latest full judge report: `reports/judge_multivariable-calculus_v5_postpersist_20260603.json` (`--no-record`; no `PipelineState` writes)
+- Latest judge status: 20 findings across 19 topics (10 high, 10 medium), with all 19 topics parse-clean
+- Dominant judge clusters after selective v5 persistence: 9 `missing_plot`, 5 `factual_error`, 2 `missing_group`, 2 `broken_plot_spec`, 2 `confusing_transition`
 - Image block infrastructure is present (`BlockType.image`, block schema/types, renderer, `block-images` Supabase Storage bucket); Agent 3 validation rejects generated image blocks
 - Topic pages render citation footers from `generation_metadata.source_chunk_ids`, joined to `Chunk`, so judge triage can see grounding sources without inline citation prose
-- Final content-generation eval: all checks passing (`no_sparse_topics`, block schemas, source chunk IDs, pinned anchors, prereq cycles, known-bad edges)
+- Final content-generation eval: all checks passing on 2026-06-03 (`no_sparse_topics`, block schemas, source chunk IDs, pinned anchors, prereq cycles, known-bad edges)
 
 ---
 
@@ -409,21 +410,23 @@ Current status: content generated for all topics and content-generation evals pa
 - 26 topics extracted; the structure still looks coherent: floating point, finite differences, interpolation/splines, quadrature, nonlinear solves, linear systems, least squares, ODEs, BVPs, and PDE finite differences
 - Four thin-but-dense topics remain under `strong>=0.75`, `strong_min=3`: `number-base-conversion-floating-point`, `floating-point-error-propagation`, `loss-of-significance`, `fixed-point-iteration`
 - Agent 4 found no curated URLs for those thin topics, but block generation succeeded; thinness is not currently the blocker
-- 1,424 generated `agent3.v4` blocks persisted across all 26 topics
-- 93 unique source chunk IDs referenced by generated block provenance; all resolve
+- 1,332 generated blocks persisted across all 26 topics
+- Agent 3 v5 selective persisted run completed on 2026-06-03 for the 15 numerical topics with repeated `missing_group`, `generic_prose`, or `confusing_transition` findings
+- Current persisted block versions: 735 `agent3.v5` blocks and 597 preserved `agent3.v4` blocks
+- 96 unique source chunk IDs referenced by generated block provenance; all resolve
 - 63 prerequisite edges persisted, with no cycles
 - Mapper needed manual false-positive exclusions for a floating-point peer edge and Matlab-tooling reverse edges; those are now in `pipeline.mapper.MANUAL_EXCLUDED_EDGES`
-- Final eval log: `logs/numcomp-evals-20260531-final-with-coverage.log`
-- Final judge report: `reports/judge_numerical-computation_20260601T014240Z.json`
-- Judge status: 46 findings across 26 topics, with 19 `ok` topics and 7 `parse_failed` judge topics
-- Judge clusters: 22 `missing_group`, 18 `factual_error`, 2 `generic_prose`, 2 `confusing_transition`, 1 `missing_plot`, 1 `broken_plot_spec`
-- Factual judge quality is mixed: at least two high-severity factual findings explicitly self-refute by saying the generated content is correct
+- Final content-generation eval: all checks passing on 2026-06-03
+- Final Agent 3 log: `reports/agent3_v5_persist_numerical_20260603T112411Z.log`; 15/15 topics ok, 735 blocks written, no validation or parse failures
+- Final judge report: `reports/judge_numerical-computation_v5_postpersist_20260603.json` (`--no-record`; no `PipelineState` writes)
+- Judge status: 40 findings across 26 topics (27 high, 8 medium, 5 low), with all 26 topics parse-clean
+- Judge clusters after selective v5 persistence: 29 `factual_error`, 4 `generic_prose`, 4 `missing_plot`, 2 `missing_group`, 1 `confusing_transition`
 
 Readout decision:
 
-1. Build `judge.v5` first. Reasons: 7 judge parse failures and recurring self-contradictory factual-error false positives make the report too noisy to drive content edits confidently.
-2. Then tighten Agent 3 compliance. Reasons: `missing_group` is still the dominant real mechanical cluster, and both numerical computation and DSA exposed transient invalid `source_chunk_ids` during generation.
-3. Defer local one-off content patches for this course until judge.v5 separates real isolated content bugs from false positives.
+1. Do not run a broad post-generation group-label pass for this course right now. `missing_group` dropped from 25 to 2 after the selective v5 regeneration.
+2. Triage high-severity `factual_error` findings first, especially interpolation, quadrature, linear-system, ODE, and finite-difference topics.
+3. Treat remaining `generic_prose`, `missing_plot`, and `confusing_transition` findings as isolated content/renderer patches unless the next judge run shows a broader pattern.
 
 ---
 
@@ -440,12 +443,15 @@ Current status: generated for all topics and content-generation evals pass.
 - Agent 4 found no curated URLs for those thin topics; generated thin topics succeeded where attempted
 - 74 prerequisite edges persisted, with no cycles
 - Mapper needed manual exclusions for reverse/example edges around divide-and-conquer, max-flow/graph-modeling, and MST theory; those are now in `pipeline.mapper.MANUAL_EXCLUDED_EDGES`
-- 1,691 generated `agent3.v4` blocks persisted across all 36 topics
-- 181 unique source chunk IDs referenced by generated block provenance; all resolve
-- Final eval log: `logs/dsa-evals-20260601-final.log`
-- Final judge report: `reports/judge_data-structures-and-algorithms_20260601T035631Z.json`
-- Judge status: 53 findings across 36 topics, with 35 `ok` topics and 1 `parse_failed` judge topic (`dsa-set-cover`)
-- Judge clusters: 20 `missing_group`, 19 `factual_error`, 7 `confusing_transition`, 5 `generic_prose`, 2 `missing_plot`
+- 1,596 generated blocks persisted across all 36 topics
+- Agent 3 v5 selective persisted run completed on 2026-06-03 for the 13 DSA topics with repeated `missing_group`, `generic_prose`, or `confusing_transition` findings
+- Current persisted block versions: 565 `agent3.v5` blocks and 1,031 preserved `agent3.v4` blocks
+- 184 unique source chunk IDs referenced by generated block provenance; all resolve
+- Final content-generation eval: all checks passing on 2026-06-03
+- Final Agent 3 log: `reports/agent3_v5_persist_dsa_20260603T112411Z.log`; 13/13 topics ok, 565 blocks written, no validation or parse failures
+- Final judge report: `reports/judge_data-structures-and-algorithms_v5_postpersist_20260603.json` (`--no-record`; no `PipelineState` writes)
+- Judge status: 43 findings across 36 topics (16 high, 23 medium, 4 low), with all 36 topics parse-clean
+- Judge clusters after selective v5 persistence: 19 `factual_error`, 14 `missing_group`, 4 `confusing_transition`, 2 `generic_prose`, 2 `prereq_gap`, 1 `broken_plot_spec`, 1 `missing_plot`
 
 DSA exposed repeated Agent 3 issues outside math-heavy courses:
 
@@ -453,13 +459,13 @@ DSA exposed repeated Agent 3 issues outside math-heavy courses:
 - Invalid `source_chunk_ids` before provenance filtering (`dsa-floyd-warshall`)
 - Successful generation for pseudocode/complexity topics including MoMSelect, Strassen, graph basics, DFS/BFS, Dijkstra, Bellman-Ford, Floyd-Warshall, max flow, DP fundamentals, LIS/LCS, RNA folding, knapsack, Huffman, MSTs, union-find, LP, and graph modeling
 
-Readout decision: DSA is healthy at the structural/eval layer, but not clean enough to justify broadening to operating systems or systems programming yet. Its judge profile matches numerical computation: judge parse/noise issues plus repeated Agent 3 grouping and content-precision findings. Do `judge.v5`, then an Agent 3 compliance pass, then rejudge numerical computation and DSA before adding the systems course.
+Readout decision: DSA is healthy at the structural/eval layer and improved under selective `agent3.v5`, but it still is not clean enough to justify broadening to operating systems or systems programming. Grouping improved from 18 to 14 misses, but factual/content precision remains the larger signal. Patch high-severity factual findings and the two `prereq_gap` findings before adding the systems course.
 
 ---
 
 ## Next phase playbook
 
-The next phase is about proving generalization one course at a time. Numerical computation and DSA are both healthy at the structural/eval layer, but both show judge/Agent 3 quality work before the next broadening step.
+The next phase is about proving generalization one course at a time. MVC, numerical computation, and DSA are healthy at the structural/eval layer after selective `agent3.v5` persistence, but the latest judge reports still point to factual/content precision work before the next broadening step.
 
 ### 0. Rerun rollout checkpoint
 
@@ -475,37 +481,48 @@ Status: complete for the first three production courses.
 - Data structures and algorithms: dry classification was clean, backfill was
   applied, and post-apply classification is 36/36 `already_current`.
 
-### 1. Tighten the judge, then Agent 3
+### 1. Selective Agent 3 v5 persisted pass
 
-Create `judge.v5` before making another broad content-editing pass. Numerical computation produced a useful full-course report, but 7/26 judge topics failed parse and several high-severity factual findings self-refuted. A noisy judge makes it too easy to spend effort on the wrong content fixes.
+Status: complete on 2026-06-03, using the explicit production-write gate (`PIPELINE_DB_TARGET=prod PIPELINE_ALLOW_PROD_WRITES=1`) and the audit topic lists in `reports/agent3_v5_selective_*_topics.txt`.
 
-Judge v5 should focus on:
+| Course                | Topics regenerated |                     Current blocks | Current v5 blocks | Eval | Latest judge report                                                         | Findings delta |
+| --------------------- | -----------------: | ---------------------------------: | ----------------: | ---- | --------------------------------------------------------------------------- | -------------- |
+| MVC                   |                 14 | 997 total; 995 generated, 2 manual |               720 | Pass | `reports/judge_multivariable-calculus_v5_postpersist_20260603.json`         | 45 -> 20       |
+| Numerical computation |                 15 |                    1,332 generated |               735 | Pass | `reports/judge_numerical-computation_v5_postpersist_20260603.json`          | 66 -> 40       |
+| DSA                   |                 13 |                    1,596 generated |               565 | Pass | `reports/judge_data-structures-and-algorithms_v5_postpersist_20260603.json` | 47 -> 43       |
 
-- Factual-error discipline: only flag a generated claim that is actually wrong.
-- No source-only errors: if the source chunk has an error but the generated block does not repeat it, do not flag the block.
-- No self-contradictory findings: if the description says "this is correct", omit it.
-- Better parse resilience for model outputs that are nearly JSON but wrapped in stray text.
+Grouping is no longer broadly bad enough to justify a cross-course post-generation group-label pass: MVC `missing_group` is 21 -> 2, numerical computation is 25 -> 2, and DSA is 18 -> 14. DSA still has several grouping misses, but they are mixed with preserved healthy pages and isolated content issues rather than a universal label failure.
 
-Then create the next Agent 3 prompt/compliance pass. It should focus on:
+### 2. Judge v5 status and next content action
 
-- More aggressive grouping for display math plus immediate interpretation.
-- More aggressive grouping for plot plus the paragraph that names features of that plot.
-- Stronger source-ID discipline: use only IDs shown in `SOURCE CHUNKS`, and omit provenance rather than inventing or mutating IDs.
-- Stronger JSON discipline for long code/pseudocode-heavy topics, especially graph algorithms and dynamic programming examples.
-- Plotting concrete geometry examples when relevant, while staying within renderer reality.
+Status: `judge.v5` is built and verified in report-only mode.
 
-Run after the next judge/Agent 3 pass:
+- Parser hardening handles stray prose, fenced JSON, bare keys, trailing commas, Python-literal dicts, LaTeX/set braces before the JSON object, and unescaped LaTeX backslashes inside strings.
+- Finding cleanup drops self-contradictory or non-actionable factual scratchpad findings before they enter reports.
+- `--no-record` allows production-backed read-only judge reports without mutating `PipelineState`.
+- Post-persist v5 reports: MVC 19/19 parse-clean, numerical computation 26/26 parse-clean, DSA 36/36 parse-clean.
+
+Next action: do isolated factual/content patches, not another broad generator pass. Start with high-severity factual errors in numerical computation and DSA, plus the two DSA `prereq_gap` findings. Keep renderer-scope plot findings separate from mathematical content fixes.
+
+Run after content patches:
 
 ```bash
 env -u ANTHROPIC_API_KEY .venv/bin/python -m pipeline.evals.content_generation --course data-structures-and-algorithms
-env -u ANTHROPIC_API_KEY CLAUDE_JUDGE_TIMEOUT=300 .venv/bin/python -m pipeline.judge --course data-structures-and-algorithms --pause-seconds 1
+env -u ANTHROPIC_API_KEY CLAUDE_JUDGE_TIMEOUT=300 .venv/bin/python -m pipeline.judge --course data-structures-and-algorithms --pause-seconds 1 --no-record
 env -u ANTHROPIC_API_KEY .venv/bin/python -m pipeline.evals.content_generation --course numerical-computation
-env -u ANTHROPIC_API_KEY CLAUDE_JUDGE_TIMEOUT=300 .venv/bin/python -m pipeline.judge --course numerical-computation --pause-seconds 1
+env -u ANTHROPIC_API_KEY CLAUDE_JUDGE_TIMEOUT=300 .venv/bin/python -m pipeline.judge --course numerical-computation --pause-seconds 1 --no-record
+env -u ANTHROPIC_API_KEY CLAUDE_JUDGE_TIMEOUT=300 .venv/bin/python -m pipeline.judge --course multivariable-calculus --pause-seconds 1 --no-record
 ```
 
-Compare category counts across MVC, numerical computation, and DSA. Repeated categories across courses are prompt or renderer issues; isolated factual findings can wait for local patch scripts after judge.v5 is trustworthy.
+Post-persist v5 comparison:
 
-### 2. Add image blocks after the MVC QA loop stabilizes
+- MVC: 45 -> 20 findings; current clusters are 9 `missing_plot`, 5 `factual_error`, 2 `missing_group`, 2 `broken_plot_spec`, 2 `confusing_transition`
+- Numerical computation: 66 -> 40 findings; current clusters are 29 `factual_error`, 4 `generic_prose`, 4 `missing_plot`, 2 `missing_group`, 1 `confusing_transition`
+- DSA: 47 -> 43 findings; current clusters are 19 `factual_error`, 14 `missing_group`, 4 `confusing_transition`, 2 `generic_prose`, 2 `prereq_gap`, 1 `broken_plot_spec`, 1 `missing_plot`
+
+Do not broaden to Operating Systems or Systems Programming yet. The three-course loop is structurally stable, but the judge signal says the next safest move is high-severity factual/content patching and a focused rejudge.
+
+### 3. Add image blocks after the MVC QA loop stabilizes
 
 Status: done for the minimal infrastructure pass. Image blocks are manual/local-only and survive regeneration through the existing pinned-anchor path.
 
@@ -520,7 +537,7 @@ Implementation checklist:
 - [x] Keep the model contract explicit: Agent 3 validation rejects generated `image`; only local/manual edits should create it.
 - [x] Verify pinned image anchors through the reconciler-shape test; local/manual insert helpers should set `manually_edited=true`.
 
-### 3. Add citation footers next
+### 4. Add citation footers next
 
 Status: done for topic pages. Citation footers pair naturally with judge triage because they expose which chunks grounded each generated topic.
 
@@ -534,15 +551,15 @@ Implementation checklist:
 
 This makes factual-error review faster: when the judge flags a block, the footer shows the source chunks the page was grounded in.
 
-### 4. Add the next contrast course
+### 5. Add the next contrast course
 
-After numerical computation completes cleanly, add `data-structures-and-algorithms` next. It is the best contrast without jumping straight into capstone or technical-writing material: algorithmic, code-adjacent, conceptually structured, and likely to expose whether Agent 3 handles examples, pseudocode, complexity, and prerequisite mapping outside math-heavy courses.
+DSA has now served as the first algorithmic/code-adjacent contrast course. Do not add Operating Systems or Systems Programming until the high-severity factual/content findings in numerical computation and DSA are patched and rejudged.
 
 Recommended order:
 
-1. **Numerical Computation**: finish the blocked end-to-end run and treat it as the real generalization readout.
-2. **Data Structures and Algorithms**: next contrast course after numerical computation is healthy.
-3. **Operating Systems** or **Systems Programming**: broadening step if both numerical computation and DSA look healthy, to test lower-level systems content.
+1. **Numerical Computation**: patch high-severity factual findings and rejudge.
+2. **Data Structures and Algorithms**: patch high-severity factual findings plus the two `prereq_gap` findings and rejudge.
+3. **Operating Systems** or **Systems Programming**: broadening step only after numerical computation and DSA look healthy under the post-patch judge reports.
 
 Course shakedown:
 

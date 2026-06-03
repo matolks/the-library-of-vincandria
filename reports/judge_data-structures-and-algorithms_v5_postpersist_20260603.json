@@ -1,0 +1,813 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-03T13:22:58.168055+00:00",
+  "topics": [
+    {
+      "topic_id": "a6cd1242-3507-4600-ab54-0e2131482ae5",
+      "topic_slug": "dsa-asymptotic-notation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4826,
+      "output_tokens": 705,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0256107,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "85bb0c7a-5b19-4a7c-8aaf-dab983a68305",
+      "topic_slug": "dsa-divide-and-conquer-recurrences",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7669,
+      "output_tokens": 1499,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0460497,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "99d84d78-165b-4fb2-bcf5-b122088c141e",
+          "description": "The unrolling formula shows the sum index running from $i=0$ to $\\log_2 n$ (inclusive), but after $k = \\log_2 n$ substitutions the sum should have indices $i = 0$ to $k-1 = \\log_2 n - 1$; the upper limit should be $\\log_2 n - 1$, not $\\log_2 n$, to be consistent with the general unrolling formula presented in block g-unroll.",
+          "suggested_fix": "Change the upper summation limit to $\\log_2 n - 1$ to match the general unrolling formula $\\sum_{i=0}^{k-1}$."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "2c9dceec-49a6-49b9-8e9a-5f6092e84cc7",
+          "description": "The paragraph claims 'each level contributes $\\Theta(n)$ total' without showing why the total work per level stays $\\Theta(n)$ despite the variable number of subproblems, creating a logical gap between the recurrence and the conclusion that accumulated work is $kn$.",
+          "suggested_fix": "Add a brief explanation: at level $k$ there are $n^{1/2+1/4+\\cdots+1/2^k}$ subproblems each of size $n^{1/2^k}$, and their combined work is $\\Theta(n)$, so each level contributes $\\Theta(n)$."
+        }
+      ]
+    },
+    {
+      "topic_id": "7f90b5c2-3f69-4a2a-8c2a-4ef1a960089a",
+      "topic_slug": "dsa-heaps",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5014,
+      "output_tokens": 1316,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.035339699999999995,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "34c2d373-6bfb-4eee-983b-86e2fe187b97",
+          "description": "The callout block defining the Max-Heap Property formula immediately follows the paragraph (97a1c334) that introduces the max-heap property, and the callout explicitly interprets and formalizes the equation from that paragraph, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 97a1c334 and 34c2d373 so they are rendered as a coupled unit."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "809cf8cc-effb-425d-9a53-08c24ed8ec9a",
+          "description": "The HeapifyUp pseudocode block is immediately followed by paragraph 7f624dd0 that walks through the specific insertion example using that exact code, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 809cf8cc and 7f624dd0."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "75d14787-747b-4725-996b-4f9c3a4c46c8",
+          "description": "The HeapifyDown pseudocode block is immediately followed by paragraph 0802541f that explains the logic of choosing the larger child in that exact code, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 75d14787 and 0802541f."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "3a02f8ab-f703-49b2-8532-0a007bb70730",
+          "description": "The BuildHeap pseudocode block is immediately followed by paragraph 9b0057c8 that explains why its complexity is O(n) rather than O(n log n), directly interpreting that algorithm, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 3a02f8ab and 9b0057c8."
+        }
+      ]
+    },
+    {
+      "topic_id": "c716460c-d96b-4b8e-acba-5b62f3f17a78",
+      "topic_slug": "dsa-heapsort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3906,
+      "output_tokens": 685,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0225507,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "9072f571-3714-44ef-ab1a-0c3695daef9c",
+      "topic_slug": "dsa-quicksort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3352,
+      "output_tokens": 328,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.015533700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "c6e45aa2-e9fb-46c8-921b-d852d16634a9",
+          "description": "The display-math block for the worst-case recurrence is immediately followed by a paragraph (36a7ebe8) that explicitly interprets that equation and explains the unrolling, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks c6e45aa2 and 36a7ebe8 to couple the formula with its interpretation."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "bd449880-39ae-42a2-a72a-695ce4f7b47b",
+          "description": "The display-math block for the 10%\u201390% unbalanced-split recurrence is immediately followed by a paragraph (180e791d) that explicitly interprets the recursion tree depth and cost of that equation, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks bd449880 and 180e791d to couple the formula with its interpretation."
+        }
+      ]
+    },
+    {
+      "topic_id": "96b25d94-c33b-4274-91d8-3e8ff7cb0677",
+      "topic_slug": "dsa-mom-select",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5229,
+      "output_tokens": 713,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0269397,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "28450f95-d067-4de1-b9c3-1f25b1520885",
+      "topic_slug": "dsa-strassen",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5489,
+      "output_tokens": 458,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0238947,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "339d3529-01c1-4555-a414-7b7d8c4d8276",
+          "description": "The reconstruction formula for C_22 is given as M_1 - M_2 + M_3 + M_6, but the correct Strassen formula is C_22 = M_1 - M_2 + M_3 + M_6 \u2014 actually this needs verification: expanding with the given M definitions, C_22 should be M_1 + M_4 - M_2 + M_6 (i.e., M_1 - M_2 + M_4 + M_6), not M_1 - M_2 + M_3 + M_6.",
+          "suggested_fix": "Change C_22 to M_1 - M_2 + M_4 + M_6 to match the standard Strassen reconstruction and the M_i definitions given in the block sequence."
+        },
+        {
+          "category": "broken_plot_spec",
+          "severity": "medium",
+          "block_id": "a0da690a-ce6e-4fb7-8b3f-7b055fb60f39",
+          "description": "The expression array [\"x^3\", \"x^(log(7)/log(2))\"] uses a list format for function2d, which expects a single expression string, not an array; additionally it is unclear whether the renderer supports multi-series arrays.",
+          "suggested_fix": "Split into two separate function2d plot blocks, one with expression \"x^3\" and one with expression \"x^(log(7)/log(2))\", or confirm the renderer supports array expressions."
+        }
+      ]
+    },
+    {
+      "topic_id": "e0069a95-8dae-40e8-9f40-ae0d4dc67b8e",
+      "topic_slug": "dsa-sorting-lower-bounds",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4468,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0142167,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "61691b1e-2002-4317-b6b0-3d79bd04cb0e",
+      "topic_slug": "dsa-graph-basics",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3327,
+      "output_tokens": 754,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.021848700000000002,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "0a3f5fc7-ae23-47a3-8545-c91cbb6e8edf",
+          "description": "The callout states that for a simple graph $|E| \\leq |V|^2$, but for a simple undirected graph the correct bound is $|E| \\leq \\binom{|V|}{2} = |V|(|V|-1)/2$, and for a simple directed graph $|E| \\leq |V|(|V|-1)$; neither allows $|V|^2$ edges in a simple graph (which forbids self-loops).",
+          "suggested_fix": "Change the bound to $|E| \\leq |V|(|V|-1)/2$ for undirected simple graphs, or note the directed case separately as $|E| \\leq |V|(|V|-1)$."
+        }
+      ]
+    },
+    {
+      "topic_id": "26cbda85-9d77-4941-a6fb-1a9bdf26e500",
+      "topic_slug": "dsa-dfs",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4802,
+      "output_tokens": 850,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0277137,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "11ad0046-1a8a-4be3-a06d-54f31229af97",
+      "topic_slug": "dsa-topological-sort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3627,
+      "output_tokens": 793,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.023333700000000002,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "41d927e6-8492-4154-ac5b-74c1549d6d63",
+          "description": "The parenthetical comment 'no vertex points to it' is incorrect for vertex A; the correct reason A finishes last is that it has no incoming edges from other vertices in this traversal, but more precisely A is the DFS start and has the largest post number because all other vertices are its descendants \u2014 the comment 'no vertex points to it' confuses in-degree with post-number ordering and is misleading, though the deeper issue is that the symmetric comment on D ('no outgoing edges') is the correct style, making A's comment factually wrong as stated.",
+          "suggested_fix": "Change the parenthetical for A to '(first visited \u2014 all others are descendants)' or simply remove the parenthetical."
+        }
+      ]
+    },
+    {
+      "topic_id": "fca2ea25-8c15-4652-af09-73907c63baf8",
+      "topic_slug": "dsa-scc",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5671,
+      "output_tokens": 1064,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0335307,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "confusing_transition",
+          "severity": "medium",
+          "block_id": "9b659203-e234-433b-9360-cf34e3bee70b",
+          "description": "Block 9b659203 states 'the vertex with the highest DFS post number in G^R belongs to a source SCC in G^R, which is a sink SCC in G', but the preceding bullet (2d39896a) only states that source SCCs in G become sink SCCs in G^R \u2014 the reverse direction (sink SCCs in G^R correspond to source SCCs in G, and source SCCs in G^R correspond to sink SCCs in G) is not explicitly stated in the bullets, creating a logical leap for a learner trying to follow the chain of reasoning.",
+          "suggested_fix": "Add a sentence in block 9b659203 explicitly invoking the symmetric relationship: 'Since source SCCs of G become sink SCCs of G^R, the reverse also holds \u2014 sink SCCs of G^R are source SCCs of G, and source SCCs of G^R are sink SCCs of G.'"
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "60b6f21e-449e-4458-9157-b8934dcda197",
+          "description": "The display-math block listing post numbers (60b6f21e) is immediately followed by block fb176f04 which explicitly interprets those numbers ('Step 3 \u2014 Sort vertices by decreasing post number'), but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 60b6f21e, fb176f04, and b1455d96 so they are rendered as a cohesive unit."
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "ab24b322-c09a-47eb-9675-ddeb47490c47",
+          "description": "The paragraph 'Consider a directed graph G on vertices v1, \u2026, v10. We apply Kosaraju's algorithm as follows.' is a boilerplate setup sentence that adds no information beyond what the section heading already conveys and could be deleted without loss.",
+          "suggested_fix": "Remove the paragraph and let the numbered steps begin directly, or merge it with the first step."
+        }
+      ]
+    },
+    {
+      "topic_id": "8581a60e-301f-404d-a21c-75ed65f44724",
+      "topic_slug": "dsa-bfs",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3567,
+      "output_tokens": 8,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0113787,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "87c40aac-1c34-4222-aaf2-270be803f6fa",
+      "topic_slug": "dsa-2-colorability",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6702,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0208587,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "b66e1a60-ee11-41d5-a27f-c1a7f4feed9b",
+      "topic_slug": "dsa-dijkstra",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4296,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.013700700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "614955fd-93a6-40a5-8749-9caa9cdf81ae",
+      "topic_slug": "dsa-bellman-ford",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5053,
+      "output_tokens": 837,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0282717,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "04738d0a-2941-4d5b-8125-bf078e0b2ba7",
+          "description": "The block claims that in Round 2, edge (A,E) updates dist[E] and (G,F) updates dist[F], but the stated edge processing order is (S,A),(B,A),(B,C),(C,D),(D,E),(F,E),(G,F),(S,G),(F,A),(A,E),(E,B) \u2014 so (G,F) is processed before (S,G), meaning dist[G] is still \u221e when (G,F) is processed in Round 1, and in Round 2 the description of which edges fire and in what sequence is misleading/incorrect given the fixed processing order.",
+          "suggested_fix": "Correct the Round 2 trace to reflect the stated edge processing order: (G,F) fires because dist[G]=10 was set in Round 1, updating dist[F]; then (F,E) fires updating dist[E]; then (A,E) may also update dist[E]; then (E,B) fires updating dist[B]."
+        }
+      ]
+    },
+    {
+      "topic_id": "a55c0e8f-6fd9-484b-8e27-11cf9d885dd8",
+      "topic_slug": "dsa-floyd-warshall",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5101,
+      "output_tokens": 466,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0228507,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "6a30b76d-f15c-4fb6-aaab-51f65135063c",
+          "description": "The bullet states 'the shortest path may pass through k zero times or once' \u2014 but this is actually the correct behavior, so labeling it 'Wrong' is itself wrong; the misconception being corrected ('must pass through vertex k exactly once') is indeed wrong, but the correction given is accurate and should not be labeled as a misconception.",
+          "suggested_fix": "Reframe this bullet as correcting the misconception that the path must pass through k exactly once, and clarify that the path may use k zero or one times as an intermediate \u2014 which is the correct statement, not a misconception."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "fdcf93e3-ddcb-490b-94cd-5ee0a2ed16a6",
+          "description": "The paragraph states 'we only consider simple paths (no negative cycles)' as the reason there are exactly two cases (path avoids k or passes through k exactly once), but the real reason is the DP subproblem structure: if k appears more than once as an intermediate, the sub-paths i\u2192k and k\u2192j already optimally handle vertices 1\u2026k-1, so k need not appear again; invoking 'simple paths' is an imprecise justification that conflates the assumption with the structural argument.",
+          "suggested_fix": "Replace the simple-paths justification with the correct DP argument: if the optimal path uses k as an intermediate, it can be split at the first occurrence of k into i\u2192k and k\u2192j, both of which use only vertices from {1,\u2026,k-1} as intermediates."
+        }
+      ]
+    },
+    {
+      "topic_id": "62f74876-b1c5-4edc-9b93-f20c93f6b90b",
+      "topic_slug": "dsa-max-flow",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10214,
+      "output_tokens": 988,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0460197,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "2cf18309-1814-483e-a83b-55d51e5f5e9b",
+          "description": "The callout states 'if an edge is unsaturated ($f(e) = 0$), only its forward edge appears,' but 'unsaturated' means $f(e) < c(e)$, not $f(e) = 0$; the correct condition for only the forward edge appearing is $f(e) = 0$ (zero flow), not merely unsaturated.",
+          "suggested_fix": "Replace 'unsaturated ($f(e) = 0$)' with 'carries zero flow ($f(e) = 0$)' to correctly distinguish the zero-flow case from the general unsaturated case."
+        }
+      ]
+    },
+    {
+      "topic_id": "3f5f3f5a-0787-4c93-8d6e-4456fe3f0c46",
+      "topic_slug": "dsa-dp-fundamentals",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8258,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0255867,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "116726c1-021d-45ee-97c8-a4e957a98db5",
+      "topic_slug": "dsa-lis",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8724,
+      "output_tokens": 558,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0350997,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "4b12e2e5-c31e-4004-834b-8e05513c7ca7",
+      "topic_slug": "dsa-edit-distance",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7765,
+      "output_tokens": 1074,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0399627,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "b732cce5-3de3-4ac8-9985-83a65a7ff6df",
+          "description": "The verification claim 'delete the first A and substitute the second A with G, leaving AGC' is incorrect: deleting the first A from AACG gives ACG, then substituting A\u2192G gives GCG, not AGC; a correct 2-operation path would be, e.g., delete the C (giving AAG) then substitute the first A with nothing \u2014 the stated sequence of operations does not produce AGC.",
+          "suggested_fix": "Replace with a correct 2-operation sequence, e.g., substitute the second A with G (AACG\u2192AGCG) then delete the final G (AGCG\u2192AGC), or delete the second A (AACG\u2192ACG) then substitute C\u2192G at position 2 (ACG\u2192AGG)... more precisely: delete second A giving ACG, then substitute C with G giving AGG \u2014 actually the simplest correct path is: delete the second A (AACG\u2192ACG) and substitute C\u2192G giving AGG, which also fails; correct the example to: substitute X[2]=A with G giving AGCG, then delete X[4]=G giving AGC \u2014 two operations."
+        }
+      ]
+    },
+    {
+      "topic_id": "4eba4701-fe9e-4a75-b776-7addf23751c6",
+      "topic_slug": "dsa-lcs",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8839,
+      "output_tokens": 1002,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.042104699999999995,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "28c86453-6548-4998-8d7a-4efc5320a697",
+          "description": "The block claims one LCS of X=ABCBDAB and Y=BDCABA is 'BCBA' of length 4, but 'BCBA' is not a subsequence of Y=BDCABA in the correct order: B(1),C(3),B(5),A(6) \u2014 checking X: B(2),C(3),B(4),A(7) \u2014 this is valid in X, and in Y: B(1),C(3),B(5),A(6) \u2014 this is valid in Y, so BCBA is actually a correct LCS of length 4.",
+          "suggested_fix": null
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "3107e36a-68df-4bd4-b05c-8047a9d50dd1",
+          "description": "The paragraph immediately preceding the base-case display-math block (id=92bb3a00) introduces the base cases but shares no group_id with the display-math block it directly sets up.",
+          "suggested_fix": "Assign the same group_id (e.g., 'base-cases') to block 3107e36a and block 92bb3a00."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "cbb701fc-1357-4b4e-88f7-ca663f287152",
+          "description": "The paragraph introducing the two recurrence cases (block cbb701fc) is immediately followed by the bullet blocks and then the display-math recurrence, but the introductory paragraph is not grouped with the recurrence display-math block (a5846786) that it directly leads into.",
+          "suggested_fix": "Add the introductory paragraph block to the 'recurrence-display' group, or create a group spanning the intro paragraph through the recurrence display-math."
+        }
+      ]
+    },
+    {
+      "topic_id": "dfea5034-f406-4d90-8488-dac9bf8d04ca",
+      "topic_slug": "dsa-rna-secondary-structure",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8116,
+      "output_tokens": 649,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.034640699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "ac791c8f-b853-4ab3-91e5-4b1dcfdf51b0",
+          "description": "The block claims position 4 is A and position 6 is U, but in CAAGACUGU position 4 is G and position 6 is C, making pair (4,6) a G\u2013C pair, not A\u2013U.",
+          "suggested_fix": "Replace 'position 4 is A and position 6 is U' with 'position 4 is G and position 6 is C, making it a G\u2013C pair'."
+        }
+      ]
+    },
+    {
+      "topic_id": "dfbc638c-decf-41f5-bd4e-da90fcdc4c45",
+      "topic_slug": "dsa-knapsack",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7569,
+      "output_tokens": 416,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.029504700000000002,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "1d085190-854d-4bbf-b023-8b9b9137a5f0",
+      "topic_slug": "dsa-greedy-interval-scheduling",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6945,
+      "output_tokens": 768,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.032912699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "22915e93-d1b3-4fef-bb98-b8dbe58ae362",
+          "description": "The block states earliest-start-time 'can block all others, leaving only one interval in the solution,' but the source's counterexample for this rule finds two intervals {1,7}, not one, so the claim of leaving only one interval is incorrect.",
+          "suggested_fix": "Replace 'leaving only one interval in the solution' with 'leaving far fewer intervals than the optimum (e.g., two instead of four).'"
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "29e72d3c-3396-45db-aa8e-0ab09372af6c",
+          "description": "The opening paragraph ('A greedy algorithm builds a solution by making a sequence of locally optimal choices, never revisiting a decision once it is made. The appeal is simplicity and speed; the challenge is proving that local optimality adds up to global optimality.') is a generic textbook gloss that could appear in any greedy-algorithms topic without adding content specific to interval scheduling.",
+          "suggested_fix": "Merge the generic greedy description into the framework section or replace with a sentence that immediately references the interval scheduling problem specifically."
+        }
+      ]
+    },
+    {
+      "topic_id": "c76b03e7-5212-4742-8e80-949666a76ccf",
+      "topic_slug": "dsa-huffman-encoding",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6821,
+      "output_tokens": 822,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0333507,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "fed5db3c-1c50-487b-9143-044e63f1d998",
+          "description": "The paragraph 'The total cost of an encoding is the weighted sum of codeword lengths:' directly introduces the display-math block e44436b6 (which is in group cost-def), but this paragraph is not in that group, breaking the coupling between the introductory sentence and the formula it presents.",
+          "suggested_fix": "Add group_id='cost-def' to block fed5db3c so the introductory sentence and the formula it introduces are grouped together."
+        }
+      ]
+    },
+    {
+      "topic_id": "c27fd329-6deb-42b2-98c3-13716aefbe1f",
+      "topic_slug": "dsa-horn-formulas",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7037,
+      "output_tokens": 511,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0293337,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "427b739e-2aae-4061-8e7a-0e70ba200484",
+          "description": "The block states 'SAT \u2014 deciding whether a propositional formula has a satisfying assignment \u2014 is NP-hard in general,' but the standard and precise claim is that SAT (and 3-SAT) is NP-complete, not merely NP-hard; saying NP-hard without NP-membership is technically imprecise but more importantly the source chunks consistently describe SAT/3-SAT as NP-hard meaning NP-complete, and calling it only NP-hard could mislead learners into thinking it might not be in NP.",
+          "suggested_fix": null
+        },
+        {
+          "category": "prereq_gap",
+          "severity": "medium",
+          "block_id": "ac3a5b2d-7bf2-48c6-a317-e37d48da8f46",
+          "description": "The block references 2-SAT being solvable via strongly connected components (SCCs) on an implication graph, but SCCs and implication graphs are not in the listed prerequisites and are not introduced anywhere in this topic before this mention.",
+          "suggested_fix": "Either add a brief parenthetical defining SCCs and implication graphs, or soften the reference to 'a graph-based polynomial-time algorithm' without naming the specific technique."
+        },
+        {
+          "category": "prereq_gap",
+          "severity": "medium",
+          "block_id": "76dac448-3205-455a-8adb-343227c4ea94",
+          "description": "The summary callout again references '2-SAT \u2014 O(n+m) via SCC' without SCC being a listed prerequisite or introduced in this topic.",
+          "suggested_fix": "Replace 'via SCC' with 'via a polynomial-time graph algorithm' or add SCC as a prerequisite."
+        }
+      ]
+    },
+    {
+      "topic_id": "9065365a-eeca-4e43-951e-b8cd443a8ec4",
+      "topic_slug": "dsa-set-cover",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6564,
+      "output_tokens": 1068,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.036269699999999995,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "041eee96-e8b2-4042-a408-9f84cd30822e",
+          "description": "The block claims the optimal cover has size 3, but S2 \u222a S3 = {2,4,5,6} \u222a {1,3,5,7} = {1,2,3,4,5,6,7} = U, so the optimal cover actually has size 2.",
+          "suggested_fix": "Correct the example so that no two sets cover U, or adjust the sets so the true optimum is 3, and update the surrounding text accordingly."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "161bd3e9-a7ba-4241-aaea-70503fe0e456",
+          "description": "The formal-argument callout directly continues and quantifies the proof sketch in the immediately preceding paragraph (b9cfdff0) but the two blocks share no group_id.",
+          "suggested_fix": "Assign both block b9cfdff0 and block 161bd3e9 the same group_id (e.g., group=proof-sketch)."
+        }
+      ]
+    },
+    {
+      "topic_id": "18b4269d-841f-400d-bc3a-b8ee402aeefd",
+      "topic_slug": "dsa-kruskal",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6950,
+      "output_tokens": 767,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.032912699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "02a6c9ec-35b9-4f11-820b-5dd47f43be08",
+          "description": "The correctness argument claims e* is the minimum-weight crossing edge for the cut (S, V\\S) 'because all lighter edges were already processed and either accepted or would have crossed within a single component' \u2014 but a lighter edge could have been a crossing edge for this same cut and been accepted into E1 already, which would mean e* is NOT the minimum crossing edge; the correct argument is that e* is the minimum-weight crossing edge among edges not yet in E1, i.e., the lightest edge crossing this cut that hasn't been used, which by the cut property suffices \u2014 but as stated the claim that e* is the minimum-weight crossing edge for the cut is false when lighter crossing edges were previously accepted.",
+          "suggested_fix": "Clarify that e* is the lightest edge not yet in E1 that crosses the cut (S, V\\S), and that the cut property requires only that e* be a minimum-weight crossing edge among all edges (accepted lighter edges are already in the tree and don't affect the argument for e*)."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "e8ab5325-13a6-49a8-9bcb-7310514b177d",
+          "description": "Step 3 says 'both accepted in turn' for weight-3 edges (d,f) and (b,c) but does not update the component listing, making it unclear what the components are before step 4 references {a,b,c} and {d,e,f}.",
+          "suggested_fix": "Add the updated component state after step 3: Components: {a,b,c}, {d,e,f}, {g}."
+        }
+      ]
+    },
+    {
+      "topic_id": "841c8fe2-b8b5-42e7-8577-ed6af58fca2a",
+      "topic_slug": "dsa-prim",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7884,
+      "output_tokens": 510,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0318597,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "012164d1-34dd-45f1-b530-48892d9b213d",
+          "description": "The block claims 'E1 contains no edge crossing this cut before the current step (all edges added so far have both endpoints inside S once extracted)' \u2014 this is backwards: edges in E1 connect a vertex that was outside S to one inside S at the time of selection, so each edge in E1 has one endpoint that was in S and one that was outside S when chosen; after extraction both endpoints are in S, but the correct reason the Cut Property applies is that E1 contains no edge crossing the *current* cut (S, V\\S), not that all E1 edges have both endpoints inside S.",
+          "suggested_fix": "Clarify that the Cut Property applies because E1 is a partial MST (by induction) and the current cut (S, V\\S) is a valid cut with no E1 edge crossing it \u2014 since every previously added edge connects two vertices both now in S."
+        }
+      ]
+    },
+    {
+      "topic_id": "3524dd16-d4e4-488d-b6a5-87ae63c4108b",
+      "topic_slug": "dsa-mst-theory",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8829,
+      "output_tokens": 461,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.033959699999999995,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "842c873d-cd60-4044-b662-bad181756250",
+          "description": "The callout states the cycle a-b-c-a has edge weights 5, 4, 3 and claims the lightest edge (weight 3) 'may still be excluded,' but the source chunk's counterexample uses a 4-vertex graph (a, b, c, d) with specific weights where the lightest cycle edge is weight 1 on cycle a-b-c-a with weights 5, 4, 3 \u2014 the generated example conflates the cycle weights with the source and does not accurately represent a valid counterexample, since in a triangle with only weights 5, 4, 3 the weight-3 edge IS in the MST (it is the minimum spanning tree of a triangle).",
+          "suggested_fix": "Use a counterexample with at least 4 vertices (as in the source), e.g., a graph where the cycle a-b-c-a has weights 5, 4, 3 but vertex a is also connected to c via a cheaper path through d, so the weight-3 edge is excluded."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "131d51e3-99bf-4ea3-a75f-acdf26e8eadd",
+          "description": "The display-math block defining E(C) is immediately followed by a paragraph (54690439) that explicitly interprets the formula and explains what it means for undirected graphs, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 131d51e3 and 54690439."
+        }
+      ]
+    },
+    {
+      "topic_id": "67884828-61f9-466a-a87a-fd132d523a71",
+      "topic_slug": "dsa-union-find",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5921,
+      "output_tokens": 571,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.026885700000000002,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "0669df14-0151-4a37-8b3f-62b456cebeeb",
+          "description": "The block claims union-find supports operations in 'nearly constant amortized time' as a general statement, but this is only true when both union by rank AND path compression are combined; with union by rank alone (which is the basis for much of the topic's analysis) the per-operation time is \u0398(log n), not nearly constant.",
+          "suggested_fix": "Qualify the claim: 'nearly constant amortized time when both union by rank and path compression are used together.'"
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "58e4ae88-cab9-43dc-a5f1-8027ad94348a",
+          "description": "The paragraph in block 58e4ae88 sets up the induction and leads directly into the display-math block 473040e8, but the paragraph is not in the same group as the display-math and its interpretation paragraph (group=height-proof), so the setup prose is decoupled from the grouped equation it introduces.",
+          "suggested_fix": "Add group_id='height-proof' to block 58e4ae88 so the setup paragraph, the equation, and its interpretation are all grouped together."
+        }
+      ]
+    },
+    {
+      "topic_id": "88363650-a77c-4a05-99fd-cac7667b2052",
+      "topic_slug": "dsa-linear-programming",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8361,
+      "output_tokens": 1196,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0435807,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "e474be61-0cbe-46d6-95d8-d0b02ac1a935",
+          "description": "The paragraph describes the feasible region as a convex polygon in the first quadrant bounded by two resource constraints, a specific 2D geometric object that warrants a function2d plot of the constraint boundary lines, but no plot accompanies this description.",
+          "suggested_fix": "Add function2d plots for the two constraint lines (e.g., x2 = (24 - 6*x)/4 and x2 = (6 - x)/2) over x in [0,4] to show the feasible region boundary."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "5c5f3b96-3e08-4164-a0e7-670cccee207e",
+          "description": "The claim that each pivot takes O(mn) time is incorrect; a single pivot row-reduces m+1 rows each of length n+m, so the cost is O(m*(m+n)) or simply O(mn) when n dominates, but more precisely O(m*n) is a reasonable bound only if n includes slack variables; the standard statement is O(mn) per pivot where m is the number of constraints and n the number of variables (including slacks), which is defensible, so this is not clearly wrong.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "c84f39c7-9a5d-45b5-bada-360241a39f38",
+      "topic_slug": "dsa-binary-search",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7949,
+      "output_tokens": 893,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0377997,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "9efbb7fb-b3f8-4469-bef5-1e15bdb5d6d6",
+          "description": "The display-math block proving B[i+1] >= B[i] is immediately followed by block 8f9d00fe which explicitly interprets that inequality and derives the binary search direction rules, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 9efbb7fb and 8f9d00fe."
+        }
+      ]
+    },
+    {
+      "topic_id": "db8fb73c-a0d9-4117-8ed4-70d0aa083b86",
+      "topic_slug": "dsa-graph-modeling",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4222,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0134187,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "28a68be0-0ba5-4ef4-a297-05b8804b049f",
+      "topic_slug": "dsa-non-adjacent-dp",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8759,
+      "output_tokens": 855,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0396597,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "confusing_transition",
+          "severity": "medium",
+          "block_id": "a43069d6-5de7-4d16-808d-bb2a869e5272",
+          "description": "The backtrace step says 'If dp[i] = dp[i-1], element a_i was not chosen' but this condition is not always unambiguous \u2014 when dp[i-1] also equals dp[i-2]+a_i (a tie), the procedure silently picks the 'not chosen' branch without warning the learner that ties may yield multiple valid reconstructions.",
+          "suggested_fix": "Add a note that when dp[i-1] = dp[i-2]+a_i (a tie), either branch is valid and the backtrace may produce any one correct subsequence."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 43,
+    "cost": 1.0584852000000002,
+    "in": 227826,
+    "out": 23662,
+    "cache_create": 0,
+    "cache_read": 66924,
+    "skipped": 0,
+    "severity_low": 4,
+    "severity_medium": 23,
+    "severity_high": 16
+  }
+}

@@ -12,10 +12,12 @@ Usage:
     python -m pipeline.judge --course multivariable-calculus
     python -m pipeline.judge --course multivariable-calculus --topic mvc-quadric-surfaces
     python -m pipeline.judge --course multivariable-calculus --output reports/mvc.json
+    python -m pipeline.judge --course multivariable-calculus --no-record
 """
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import os
 import pathlib
@@ -32,7 +34,7 @@ from pipeline.fingerprints import fingerprint_payload
 from pipeline.llm import DEFAULT_MODEL, PRICING_USD_PER_MTOK
 
 
-PROMPT_VERSION = "judge.v4"
+PROMPT_VERSION = "judge.v5"
 REQUEST_TIMEOUT_SECONDS = float(os.environ.get("CLAUDE_JUDGE_TIMEOUT", "180"))
 
 CATEGORIES = (
@@ -83,7 +85,10 @@ factual_error
   Guardrails:
   - Evaluate the generated BLOCK SEQUENCE, not the source chunks. If a source chunk contains an error but the generated block does not repeat it, do not flag it.
   - Do not flag a factual_error because a block is merely less precise than a source chunk unless it becomes false or misleading.
+  - Do not flag a factual_error for a merely nonstandard convention, missing qualification, unsupported source detail, or ambiguous phrasing unless the generated block becomes false.
+  - A factual_error finding must name the exact generated claim and the exact reason it is false. If you are unsure, omit it.
   - If your own reasoning concludes the generated statement is correct, omit the finding.
+  - Never emit a factual_error as a note about something you considered but decided to skip. Omitted findings belong outside the JSON, and because the output is JSON-only, they should not appear at all.
   - A plot showing one explicitly labeled branch, cap, or sheet is not a factual error merely because a fuller implicit surface would have another branch.
 
 prereq_gap
@@ -117,6 +122,7 @@ missing_group
 
 generic_prose
   A block that reads like a generic textbook gloss with no specific content unique to the topic — "It is important to understand X", "X has many applications in science and engineering", boilerplate openers and closers. Flag only when the block could be deleted without losing information.
+  Do NOT flag a concise transition sentence as generic when it names a concrete method, formula, example, or result from the topic.
 
 confusing_transition
   Two consecutive blocks have a logical leap a learner would stumble on — an unstated intermediate step, a sudden notation change, a switch of variables without warning. Reference both block_ids in the description.
@@ -144,6 +150,10 @@ Return a single JSON object, no prose preamble, no markdown fences:
 }
 
 If there are no findings, return {"findings": []}.
+
+The JSON is not a scratchpad. Include only final, actionable findings. Do not include
+candidate findings that say "skipping", "borderline", "not strictly wrong",
+"actually correct", "no factual error", "no fix needed", or similar language.
 
 PLOT EXPRESSION DIALECT (reference for broken_plot_spec)
 - mathjs, not JavaScript
@@ -330,11 +340,11 @@ def _parse_findings(raw: str) -> list[JudgeFinding]:
             raise ValueError(f"findings[{i}].severity={sev!r} not in {SEVERITIES}")
         finding = JudgeFinding(
             category=cat, severity=sev,
-            block_id=f.get("block_id"),
+            block_id=_clean_block_id(f.get("block_id")),
             description=str(f.get("description", "")),
-            suggested_fix=f.get("suggested_fix"),
+            suggested_fix=_clean_optional_text(f.get("suggested_fix")),
         )
-        if _is_self_contradictory_finding(finding):
+        if _is_non_actionable_finding(finding):
             continue
         out.append(finding)
     return out
@@ -343,33 +353,120 @@ def _parse_findings(raw: str) -> list[JudgeFinding]:
 _SELF_CONTRADICTORY_RE = re.compile(
     r"\b("
     r"actually correct|mathematically correct|is correct|are correct|"
+    r"states this correctly|indeed correct|correct as written|"
     r"not incorrect|not wrong|not broken|not an issue|no issue|"
+    r"no factual error|not a factual error|"
     r"valid as written|safe as written|does not need|no fix needed|"
     r"this is fine|is fine"
     r")\b",
     re.IGNORECASE,
 )
 
+_NON_ACTIONABLE_RE = re.compile(
+    r"\b("
+    r"omit|omitting|skip|skipping|borderline|not strictly wrong|"
+    r"without qualification is misleading but not|"
+    r"could be parsed|ambiguous due to operator precedence"
+    r")\b",
+    re.IGNORECASE,
+)
 
-def _is_self_contradictory_finding(finding: JudgeFinding) -> bool:
+
+def _is_non_actionable_finding(finding: JudgeFinding) -> bool:
     text = f"{finding.description} {finding.suggested_fix or ''}"
-    return bool(_SELF_CONTRADICTORY_RE.search(text))
+    if _SELF_CONTRADICTORY_RE.search(text):
+        return True
+    if finding.category == "factual_error" and _NON_ACTIONABLE_RE.search(text):
+        return True
+    return False
+
+
+def _clean_block_id(value) -> str | None:
+    if value is None:
+        return None
+    if isinstance(value, str):
+        stripped = value.strip()
+        return stripped or None
+    return str(value)
+
+
+def _clean_optional_text(value) -> str | None:
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text or text.lower() == "null":
+        return None
+    return text
 
 
 def _parse_first_json_object(text: str):
     """Parse the first JSON object in a response with stray leading/trailing text."""
-    start = text.find("{")
-    if start == -1:
+    candidate = _first_balanced_object(text)
+    if candidate is None:
         raise ValueError("no JSON object found in response")
     decoder = json.JSONDecoder()
-    candidate = text[start:]
     try:
         parsed, _ = decoder.raw_decode(candidate)
         return parsed
     except json.JSONDecodeError:
         repaired = _repair_jsonish(candidate)
-        parsed, _ = decoder.raw_decode(repaired)
-        return parsed
+        try:
+            parsed, _ = decoder.raw_decode(repaired)
+            return parsed
+        except json.JSONDecodeError:
+            escaped = _escape_invalid_json_backslashes(repaired)
+            try:
+                parsed, _ = decoder.raw_decode(escaped)
+                return parsed
+            except json.JSONDecodeError:
+                try:
+                    return ast.literal_eval(candidate)
+                except (SyntaxError, ValueError) as e:
+                    raise ValueError(f"could not parse JSON object: {e}") from e
+
+
+def _first_balanced_object(text: str) -> str | None:
+    for start in (m.start() for m in re.finditer(r"\{", text)):
+        candidate = _balanced_object_from(text, start)
+        if candidate is None:
+            continue
+        if _looks_like_findings_object(candidate):
+            return candidate
+    start = text.find("{")
+    if start == -1:
+        return None
+    return _balanced_object_from(text, start)
+
+
+def _balanced_object_from(text: str, start: int) -> str | None:
+    depth = 0
+    in_string = False
+    quote = ""
+    escaped = False
+    for i in range(start, len(text)):
+        ch = text[i]
+        if in_string:
+            if escaped:
+                escaped = False
+            elif ch == "\\":
+                escaped = True
+            elif ch == quote:
+                in_string = False
+            continue
+        if ch in {'"', "'"}:
+            in_string = True
+            quote = ch
+        elif ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start:i + 1]
+    return text[start:]
+
+
+def _looks_like_findings_object(text: str) -> bool:
+    return bool(re.search(r"""(["']?)findings\1\s*:""", text))
 
 
 def _repair_jsonish(text: str) -> str:
@@ -377,6 +474,37 @@ def _repair_jsonish(text: str) -> str:
     repaired = re.sub(r"(?<=[{,])\s*([A-Za-z_][A-Za-z0-9_]*)\s*:", r'"\1":', text)
     repaired = re.sub(r",\s*([}\]])", r"\1", repaired)
     return repaired
+
+
+def _escape_invalid_json_backslashes(text: str) -> str:
+    """Escape LaTeX-style backslashes inside JSON strings without touching valid escapes."""
+    out: list[str] = []
+    in_string = False
+    escaped = False
+    for i, ch in enumerate(text):
+        if not in_string:
+            out.append(ch)
+            if ch == '"':
+                in_string = True
+            continue
+        if escaped:
+            next_ch = text[i + 1] if i + 1 < len(text) else ""
+            valid_escape = ch in {'"', "\\", "/", "b", "f", "n", "r", "t", "u"}
+            looks_like_latex_command = ch.isalpha() and next_ch.isalpha()
+            if not valid_escape or looks_like_latex_command:
+                out.append("\\\\")
+            out.append(ch)
+            escaped = False
+            continue
+        if ch == "\\":
+            escaped = True
+            continue
+        out.append(ch)
+        if ch == '"':
+            in_string = False
+    if escaped:
+        out.append("\\\\")
+    return "".join(out)
 
 
 def judge_topic(
@@ -523,6 +651,8 @@ def _main() -> None:
     p.add_argument("--model", default=DEFAULT_MODEL)
     p.add_argument("--changed-only", action="store_true",
                    help="judge only topics whose block content changed")
+    p.add_argument("--no-record", action="store_true",
+                   help="write the report only; do not update PipelineState")
     args = p.parse_args()
 
     targets = _resolve_targets(args.course, args.topic)
@@ -572,7 +702,8 @@ def _main() -> None:
                 print(f"{slug}: ERROR {type(e).__name__}: {e}")
                 continue
             results.append(result)
-            record_judge_state(result, fingerprint)
+            if not args.no_record:
+                record_judge_state(result, fingerprint)
             print(_summarize(result))
             totals["findings"] += len(result.findings)
             totals["cost"] += result.usd_cost

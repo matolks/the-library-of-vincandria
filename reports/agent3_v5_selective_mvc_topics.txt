@@ -1,0 +1,14 @@
+mvc-quadric-surfaces
+mvc-dot-product
+mvc-lines-planes-3d
+mvc-parametric-curves
+mvc-arc-length
+mvc-motion-3d
+mvc-level-curves
+mvc-limits-continuity
+mvc-partial-derivatives
+mvc-tangent-planes
+mvc-chain-rule
+mvc-optimization
+mvc-lagrange-multipliers
+mvc-double-integrals

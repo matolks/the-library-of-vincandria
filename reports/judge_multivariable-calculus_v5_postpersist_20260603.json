@@ -1,0 +1,417 @@
+{
+  "course_slug": "multivariable-calculus",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-03T13:04:41.022011+00:00",
+  "topics": [
+    {
+      "topic_id": "bed01221-f9ac-424e-b168-b85a1b2b52f6",
+      "topic_slug": "mvc-quadric-surfaces",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8138,
+      "output_tokens": 2100,
+      "cache_creation_tokens": 1859,
+      "cache_read_tokens": 0,
+      "usd_cost": 0.06288525,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "5d1a30a6-8a2a-419d-b9ac-ca4e595738f2",
+          "description": "The hyperboloid of one sheet is described with its standard equation and geometric features (waist, cooling-tower shape) but no surface3d plot is provided for it, even though a surface3d plot of the upper portion (e.g., sqrt(c^2*(1 + x^2/a^2 + y^2/b^2)) would be a hyperboloid of two sheets, per the quadric guardrail) \u2014 however, the guardrail explicitly says do NOT flag a missing_plot for a hyperboloid of one sheet.",
+          "suggested_fix": null
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "5d1a30a6-8a2a-419d-b9ac-ca4e595738f2",
+          "description": "The hyperboloid of one sheet section describes the surface's geometry (waist, cooling-tower shape, connected sheet) without any accompanying surface3d plot, while every other quadric type in the topic has a plot; per the quadric guardrail this surface cannot be honestly shown as a single-valued z=f(x,y) surface3d, so this is infrastructure debt rather than a content finding \u2014 withdrawing.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "29128932-682d-43cb-a99e-d99b2505ab5a",
+      "topic_slug": "mvc-vectors-3d",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7605,
+      "output_tokens": 475,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0304977,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "efa02201-f549-4ca5-8d2f-b881139dcc95",
+      "topic_slug": "mvc-dot-product",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9128,
+      "output_tokens": 270,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0319917,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "df1bae00-4a4d-4d7c-9b9e-be41cbbb2024",
+          "description": "The block states that the scalar (u\u00b7v)/\u2016v\u2016\u00b2 'scales the unit vector in the direction of v to the correct length,' but (u\u00b7v)/\u2016v\u2016\u00b2 times v is not the same as scaling a unit vector \u2014 the formula multiplies v itself (not the unit vector v/\u2016v\u2016) by the scalar, so the description conflates the two equivalent forms and is technically incorrect.",
+          "suggested_fix": "Rewrite as: 'The scalar (u\u00b7v)/\u2016v\u2016\u00b2 is the signed length of the projection divided by \u2016v\u2016, and multiplying it by v (not the unit vector) gives the projection vector; equivalently, proj_v u = ((u\u00b7v)/\u2016v\u2016)(v/\u2016v\u2016).'"
+        }
+      ]
+    },
+    {
+      "topic_id": "7e405c50-ba01-4aa1-a98b-c650ee4b96c8",
+      "topic_slug": "mvc-cross-product",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10091,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0310857,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "a7ec6cc1-28f5-4849-b614-f0c49c73df70",
+      "topic_slug": "mvc-lines-planes-3d",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8950,
+      "output_tokens": 888,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0407277,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "2b1a8ea6-16ea-4d0c-baee-3248e0e684c7",
+          "description": "The display-math block giving parametric equations immediately follows the vector-form equation and expands it component-by-component, but it shares no group_id with the preceding display-math block (343f5b76) that it directly expands.",
+          "suggested_fix": "Add the same group_id (e.g., group=line-vector-form) to block 2b1a8ea6 so it is grouped with the vector form it expands."
+        }
+      ]
+    },
+    {
+      "topic_id": "38323237-7fdd-4197-99f9-c6a4307e045c",
+      "topic_slug": "mvc-parametric-curves",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7744,
+      "output_tokens": 651,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0335547,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "broken_plot_spec",
+          "severity": "medium",
+          "block_id": "0ecaef65-9125-47a5-ac6d-5b4cf33aaf9a",
+          "description": "The surface3d expression `sqrt(max(0, 1 - x^2))` is a function of x only (independent of y), so it plots a flat half-cylinder cross-section extruded along y, not the cylinder x\u00b2+y\u00b2=1; the y-axis is relabeled '\u2248 angle' but y is not used in the expression, making the plot misleading and not an honest depiction of the cylinder.",
+          "suggested_fix": "Use a note or different approach; an honest single-valued surface3d cannot represent the full cylinder x\u00b2+y\u00b2=1, so consider removing the plot or replacing it with a plot of the helix's xz-projection (e.g., expression=\"cos(y)\" with y as the z-axis stand-in) and updating the caption accordingly."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "ea4fe227-2d63-420d-8ddc-950969cd720c",
+          "description": "The prose claims 'The surface below shows the helical path traced on the cylinder x\u00b2+y\u00b2=1 \u2014 the cylinder itself is the surface, and the helix wraps around it,' but the plot expression `sqrt(max(0, 1-x^2))` does not produce the cylinder x\u00b2+y\u00b2=1; it produces only the top half of a circular cross-section extruded along y, which is not the cylinder.",
+          "suggested_fix": "Either remove the plot and the claim about visualizing the cylinder, or replace the description with an accurate account of what the plot actually shows."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "c31943d6-d4bf-4ab4-b7ae-dc6af6760074",
+          "description": "Block c31943d6 is in group 'helix-visual' and explicitly names visible features of the plot ('At every value of t, the point is exactly one unit from the z-axis'), but the plot block 0ecaef65 is also in group 'helix-visual', so the grouping is present \u2014 however, the paragraph introduces new claims (xz-projection is x=cos z, yz-projection is y=sin z) that are not grouped with any display-math block interpreting them.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "e64c9eca-198f-4705-b323-9b29b2df774f",
+      "topic_slug": "mvc-vector-calculus-ops",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10530,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0324027,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "045d4841-f798-4f36-8c9a-89e32fbf07af",
+      "topic_slug": "mvc-arc-length",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9237,
+      "output_tokens": 8,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0283887,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "02e7317c-c155-4776-8cc4-498b983e529b",
+      "topic_slug": "mvc-motion-3d",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10213,
+      "output_tokens": 220,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0344967,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "bc8478ed-5ad7-42d7-bf4c-98c5933363a6",
+          "description": "The paragraph describes the specific 3D path r(t) = \u27e84cos t, 4sin t, 4+t\u00b2\u27e9 as a 'helix-like curve that spirals upward' with geometric features worth visualizing, but no surface3d or any plot block accompanies this section.",
+          "suggested_fix": "Add a surface3d plot block showing z = 4 + (x\u00b2 + y\u00b2) or note that a parametric3d renderer is needed; if parametric3d is unsupported, document this as infrastructure debt rather than leaving the prose without any visual."
+        }
+      ]
+    },
+    {
+      "topic_id": "a721981d-1f68-49b5-add1-5919f119bdfa",
+      "topic_slug": "mvc-multivariable-functions",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8888,
+      "output_tokens": 551,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.035486699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "ae5d964c-03d5-4a74-a53c-b2000111f71e",
+          "description": "The bullet claims z = sqrt(x^2 + y^2) is the upper nappe of a cone, a specific surface whose shape matters for geometric intuition, but no surface3d plot accompanies it.",
+          "suggested_fix": "Add a surface3d plot block with expression=\"sqrt(x^2 + y^2)\" over a suitable domain such as x: [-2,2], y: [-2,2]."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "58771963-7ba3-42ed-a427-77d7b457f485",
+          "description": "The bullet claims z = sqrt(1 - x^2 - y^2) is the upper hemisphere of the unit sphere, a specific surface whose shape matters, but no surface3d plot accompanies it.",
+          "suggested_fix": "Add a surface3d plot block with expression=\"sqrt(max(0, 1 - x^2 - y^2))\" over domain x: [-1,1], y: [-1,1] to show the upper hemisphere."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "medium",
+          "block_id": "652283cd-89f5-4a2b-a2db-739b15088c7d",
+          "description": "The worked example for f(x,y) = ln(4 - x^2 - 4y^2) describes a specific elliptical domain region that the learner is expected to sketch, but no function2d plot of the ellipse boundary and its interior is provided.",
+          "suggested_fix": "Add a function2d or note that a parametric2d plot of the ellipse x^2/4 + y^2 = 1 would be needed; since parametric2d is unsupported, consider adding a surface3d of the function itself to illustrate the domain indirectly, or accept this as infrastructure debt."
+        }
+      ]
+    },
+    {
+      "topic_id": "d40eb120-5f65-44f2-aabc-bc10b00a489b",
+      "topic_slug": "mvc-level-curves",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6848,
+      "output_tokens": 622,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0304317,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "60fdf996-083f-4a85-ac20-a5e71233e430",
+          "description": "The block claims 'The circles grow farther apart as c increases, reflecting the fact that the paraboloid flattens near its vertex and steepens away from it,' but for f(x,y)=x\u00b2+y\u00b2 the paraboloid steepens away from the vertex, which means the circles actually grow closer together (not farther apart) as c increases, since equal increments in height correspond to smaller increments in radius at larger radii.",
+          "suggested_fix": "Replace with: 'The circles grow closer together as c increases, reflecting the fact that the paraboloid steepens away from its vertex \u2014 equal increments in height correspond to smaller increments in radius at larger radii.'"
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "5a705fb5-a3d2-4940-a505-205f99eddb2e",
+          "description": "The block states a saddle point 'appears where contours cross or pinch,' but level curves of a smooth function can never cross (as the topic itself states in block c280d058), and at a saddle point the contours do not cross \u2014 they form hyperbola-like curves that approach each other near the saddle without intersecting.",
+          "suggested_fix": "Replace 'contours cross or pinch' with 'contours form a figure-eight or hyperbolic pattern that narrows toward the saddle point, with the function increasing along one axis and decreasing along the perpendicular axis.'"
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "72f6260f-c438-4d5b-99c0-b5dfaafb0c3d",
+          "description": "The paragraph describes a family of concentric circles as the contour map of f(x,y)=x\u00b2+y\u00b2, but the accompanying plot (bb795f16) shows the 3D paraboloid surface rather than the 2D contour map of concentric circles that the text is specifically discussing.",
+          "suggested_fix": "Add a function2d plot block showing the concentric circle level curves (e.g., expressions for circles at c=1,2,3,4) to directly illustrate the contour map described in the text."
+        }
+      ]
+    },
+    {
+      "topic_id": "25ec70bf-281f-4e51-9076-cf04ad2cb3e7",
+      "topic_slug": "mvc-limits-continuity",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9011,
+      "output_tokens": 434,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0341007,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "broken_plot_spec",
+          "severity": "medium",
+          "block_id": "13b38fe6-5b08-4d13-bb80-0bfe4932849c",
+          "description": "The expression '(x^2 - y^2) / (x^2 + y^2 + 0.0001)' uses a small epsilon offset to avoid division by zero, but this means the surface does not actually represent f(x,y) = (x\u00b2\u2212y\u00b2)/(x\u00b2+y\u00b2) at the origin \u2014 the plotted function is a different (everywhere-defined) function, which could mislead learners about the discontinuity being illustrated.",
+          "suggested_fix": "Use the expression '(x^2 - y^2) / (x^2 + y^2)' with a domain that excludes a tiny neighborhood of the origin, or acknowledge in the caption that a regularization offset is used for rendering purposes."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "medium",
+          "block_id": "58e19afc-649b-4ae5-bb9c-17a9e0dae05d",
+          "description": "The continuity example describes a specific region defined by the half-plane x+y>0 with the parabola y=x\u00b2 removed, but no plot accompanies it to help the learner visualize this 2D region; a function2d plot of the boundary curves (x+y=0 and y=x\u00b2) would directly illustrate the region.",
+          "suggested_fix": "Add a function2d plot showing the lines x+y=0 and y=x\u00b2 to illustrate the region of continuity."
+        }
+      ]
+    },
+    {
+      "topic_id": "72dc0446-578d-4c74-8052-822a9a07792a",
+      "topic_slug": "mvc-partial-derivatives",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9236,
+      "output_tokens": 1012,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0434457,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "5af52d7d-567f-4a6b-8eb1-edf9d05e1694",
+          "description": "The block claims the Leibniz and subscript conventions for mixed partials 'are opposite,' but both $\\partial^2 f/\\partial y\\,\\partial x$ (differentiate $x$ first, innermost) and $f_{xy}$ (differentiate $x$ first, left-to-right) denote the same operation, so they are not opposite conventions.",
+          "suggested_fix": "Replace 'these two conventions are opposite' with a statement that both notations agree: differentiate with respect to the first-named variable first, and the apparent reversal in Leibniz notation is resolved by reading the denominator right-to-left."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "medium",
+          "block_id": "1ae42d67-907f-4c6e-ad56-e10afd4aa074",
+          "description": "Block 5af52d7d tells the learner the two conventions are 'opposite,' but the immediately following callout block 1ae42d67 states both describe the same mixed partial, directly contradicting the preceding paragraph and leaving the learner confused about which statement to trust.",
+          "suggested_fix": "Correct block 5af52d7d so it no longer claims the conventions are opposite, making it consistent with the callout."
+        }
+      ]
+    },
+    {
+      "topic_id": "bffebaa7-d467-4954-8abf-858bf1218734",
+      "topic_slug": "mvc-tangent-planes",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9536,
+      "output_tokens": 515,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0368907,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "c4c9f99c-5420-44a7-aea3-bfc06d6fbe35",
+      "topic_slug": "mvc-gradient-directional-derivatives",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9535,
+      "output_tokens": 329,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.034097699999999995,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "c335053e-9b32-4cb2-91cf-9722cbe42a54",
+      "topic_slug": "mvc-chain-rule",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9456,
+      "output_tokens": 360,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.034325699999999994,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "07ea7e8c-60af-4845-b1f4-e73e5f134f6f",
+      "topic_slug": "mvc-optimization",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9546,
+      "output_tokens": 1030,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.044645699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "3389a641-c253-4cb8-8609-21ea2aa9a1f7",
+      "topic_slug": "mvc-lagrange-multipliers",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9758,
+      "output_tokens": 1052,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0456117,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "confusing_transition",
+          "severity": "medium",
+          "block_id": "d60f3208-395f-4570-98b2-6865227b1fe8",
+          "description": "The multiple-constraint Lagrangian uses a minus sign (L = f \u2212 \u03a3\u03bbk\u00b7gk) while the single-constraint Lagrangian in block d68982b7 uses a plus sign (L = f + \u03bb\u00b7g), with no explanation of the sign change, which will confuse learners trying to reconcile the two formulations.",
+          "suggested_fix": "Either use a consistent sign convention throughout, or explicitly note that the sign of \u03bb is a convention choice and that the two forms are equivalent up to redefining \u03bb."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "medium",
+          "block_id": "b372a202-4673-432d-b2f1-6dce6e3ad80d",
+          "description": "The plot shows only the upper half of the unit circle, but the constrained minimum occurs at (\u22121/\u221a5, \u22122/\u221a5) which lies on the lower half, so the plot misrepresents the constraint curve relevant to the worked example.",
+          "suggested_fix": "Add a second function2d plot of the lower half \u2212sqrt(1 \u2212 x^2) in the same group, or note explicitly that only the upper half is shown and the minimum lies on the lower half."
+        }
+      ]
+    },
+    {
+      "topic_id": "b213595a-462a-46ba-b5a7-437337ac6129",
+      "topic_slug": "mvc-double-integrals",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9471,
+      "output_tokens": 801,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0409857,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    }
+  ],
+  "totals": {
+    "findings": 20,
+    "cost": 0.70605285,
+    "in": 172921,
+    "out": 11352,
+    "cache_create": 1859,
+    "cache_read": 33462,
+    "skipped": 0,
+    "severity_low": 0,
+    "severity_medium": 10,
+    "severity_high": 10
+  }
+}

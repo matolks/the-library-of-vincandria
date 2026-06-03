@@ -23,6 +23,7 @@ import anthropic
 DEFAULT_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-6")
 DEFAULT_MAX_TOKENS = 20000
 DEFAULT_TEMPERATURE = 0
+DEFAULT_STRUCTURED_JSON = os.environ.get("CLAUDE_AGENT3_STRUCTURED_JSON", "0") == "1"
 REQUEST_TIMEOUT_SECONDS = float(os.environ.get("CLAUDE_AGENT3_TIMEOUT", "180"))
 
 # USD per million tokens. Verified May 2026. Update when Anthropic does.
@@ -32,6 +33,18 @@ PRICING_USD_PER_MTOK: dict[str, dict[str, float]] = {
     "claude-opus-4-7":   {"input": 5.00, "output": 25.00, "cache_write": 6.25, "cache_read": 0.50},
     "claude-opus-4-6":   {"input": 5.00, "output": 25.00, "cache_write": 6.25, "cache_read": 0.50},
     "claude-haiku-4-5":  {"input": 1.00, "output":  5.00, "cache_write": 1.25, "cache_read": 0.10},
+}
+
+
+BLOCKS_JSON_SCHEMA = {
+    "type": "object",
+    "required": ["blocks"],
+    "properties": {
+        "blocks": {
+            "type": "array",
+            "items": {"type": "object"},
+        },
+    },
 }
 
 
@@ -64,6 +77,7 @@ def call_llm(
     model: str | None = None,
     max_tokens: int = DEFAULT_MAX_TOKENS,
     temperature: float = DEFAULT_TEMPERATURE,
+    structured_json: bool = DEFAULT_STRUCTURED_JSON,
     client: anthropic.Anthropic | None = None,
 ) -> LLMResult:
     """Call the model and return parsed blocks plus token accounting.
@@ -78,22 +92,36 @@ def call_llm(
     model = model or DEFAULT_MODEL
     client = client or anthropic.Anthropic(timeout=REQUEST_TIMEOUT_SECONDS)
 
-    response = client.messages.create(
-        model=model,
-        max_tokens=max_tokens,
-        temperature=temperature,
-        system=[
+    request = {
+        "model": model,
+        "max_tokens": max_tokens,
+        "temperature": temperature,
+        "system": [
             {
                 "type": "text",
                 "text": system,
                 "cache_control": {"type": "ephemeral"},
             }
         ],
-        messages=[{"role": "user", "content": user}],
-    )
+        "messages": [{"role": "user", "content": user}],
+    }
+    if structured_json:
+        request["tools"] = [
+            {
+                "name": "emit_blocks",
+                "description": "Return the generated teaching block JSON object.",
+                "input_schema": BLOCKS_JSON_SCHEMA,
+            }
+        ]
+        request["tool_choice"] = {"type": "tool", "name": "emit_blocks"}
 
-    raw_text = _extract_text(response)
-    blocks = _parse_blocks(raw_text)
+    response = client.messages.create(**request)
+
+    raw_text, blocks = (
+        _extract_tool_payload(response)
+        if structured_json
+        else _extract_text_payload(response)
+    )
 
     usage = response.usage
     input_tokens = usage.input_tokens
@@ -122,6 +150,27 @@ def _extract_text(response) -> str:
     ).strip()
 
 
+def _extract_text_payload(response) -> tuple[str, list[dict]]:
+    raw_text = _extract_text(response)
+    return raw_text, _parse_blocks(raw_text)
+
+
+def _extract_tool_payload(response) -> tuple[str, list[dict]]:
+    for block in response.content:
+        if getattr(block, "type", None) != "tool_use":
+            continue
+        if getattr(block, "name", None) != "emit_blocks":
+            continue
+        payload = getattr(block, "input", None)
+        raw_text = json.dumps(payload, sort_keys=True)
+        return raw_text, _coerce_blocks_payload(payload, raw_text)
+    raw_text = _extract_text(response)
+    raise LLMResponseError(
+        "structured response did not include required emit_blocks tool call",
+        raw_text,
+    )
+
+
 _FENCE_RE = re.compile(r"^```(?:json)?\s*|\s*```$", re.MULTILINE)
 
 
@@ -140,6 +189,10 @@ def _parse_blocks(raw_text: str) -> list[dict]:
             f"response was not valid JSON: {e.msg} at line {e.lineno} col {e.colno}",
             raw_text,
         )
+    return _coerce_blocks_payload(parsed, raw_text)
+
+
+def _coerce_blocks_payload(parsed, raw_text: str) -> list[dict]:
     if not isinstance(parsed, dict):
         raise LLMResponseError(
             f"response root must be a JSON object, got {type(parsed).__name__}",

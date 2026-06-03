@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import logging
 import time
 from dataclasses import dataclass
 from typing import Optional
@@ -24,6 +25,9 @@ from pipeline import db
 from pipeline.fingerprints import fingerprint_payload
 from pipeline import llm
 from pipeline.prompt import OUTPUT_FORMAT_VERSION, PROMPT_VERSION
+
+
+logger = logging.getLogger(__name__)
 
 
 # ---- dataclasses ----------------------------------------------------------
@@ -286,8 +290,9 @@ def _resolve_topic_id(slug: str) -> str:
 
 
 def _resolve_generation_targets(
-    course_slug: str, topic_slug: str | None
+    course_slug: str, topic_slug: str | None, topic_slugs: tuple[str, ...] = ()
 ) -> list[tuple[str, str]]:
+    selected_slugs = _normalize_topic_filters(topic_slug, topic_slugs)
     conn = db.get_conn()
     with conn.cursor() as cur:
         cur.execute(
@@ -296,19 +301,55 @@ def _resolve_generation_targets(
             FROM "Topic" t
             JOIN "Course" c ON c.id = t."courseId"
             WHERE c.slug = %s
-              AND (%s::text IS NULL OR t.slug = %s)
+              AND (%s::text[] IS NULL OR t.slug = ANY(%s::text[]))
             ORDER BY t."order"
             """,
-            (course_slug, topic_slug, topic_slug),
+            (course_slug, selected_slugs or None, selected_slugs or None),
         )
         rows = cur.fetchall()
     if not rows:
-        if topic_slug:
+        if selected_slugs:
             raise SystemExit(
-                f"No topic with slug={topic_slug!r} in course={course_slug!r}"
+                f"No matching topic slugs in course={course_slug!r}: "
+                f"{', '.join(selected_slugs)}"
             )
         raise SystemExit(f"No topics in course={course_slug!r}")
+    found = {r[1] for r in rows}
+    missing = [slug for slug in selected_slugs if slug not in found]
+    if missing:
+        raise SystemExit(
+            f"Topic slug(s) not found in course={course_slug!r}: "
+            f"{', '.join(missing)}"
+        )
     return [(r[0], r[1]) for r in rows]
+
+
+def _normalize_topic_filters(
+    topic_slug: str | None, topic_slugs: tuple[str, ...] = ()
+) -> list[str]:
+    seen: set[str] = set()
+    normalized: list[str] = []
+    for raw in ((topic_slug,) if topic_slug else ()) + topic_slugs:
+        for part in str(raw).split(","):
+            slug = part.strip()
+            if not slug or slug in seen:
+                continue
+            seen.add(slug)
+            normalized.append(slug)
+    return normalized
+
+
+def _load_topic_slugs_file(path: str | None) -> tuple[str, ...]:
+    if not path:
+        return ()
+    slugs: list[str] = []
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            stripped = line.split("#", 1)[0].strip()
+            if not stripped:
+                continue
+            slugs.extend(part.strip() for part in stripped.split(",") if part.strip())
+    return tuple(slugs)
 
 
 def agent3_generation_config(
@@ -316,6 +357,7 @@ def agent3_generation_config(
     model: str | None = None,
     max_tokens: int = llm.DEFAULT_MAX_TOKENS,
     temperature: float = llm.DEFAULT_TEMPERATURE,
+    structured_json: bool = llm.DEFAULT_STRUCTURED_JSON,
 ) -> dict:
     """Return the behavior-affecting Agent 3 config included in fingerprints."""
     return {
@@ -324,8 +366,36 @@ def agent3_generation_config(
             "max_tokens": max_tokens,
             "temperature": temperature,
         },
+        "structured_json": structured_json,
         "output_format_version": OUTPUT_FORMAT_VERSION,
     }
+
+
+def should_use_structured_json(context: TopicContext) -> bool:
+    """Route code/pseudocode-heavy topics through Anthropic JSON-schema mode."""
+    if any(cohort.pinned for cohort in context.cohorts):
+        return False
+
+    haystack = " ".join(
+        [
+            context.topic.course_slug,
+            context.topic.slug,
+            context.topic.title,
+            context.topic.summary or "",
+            *(chunk.content[:1000] for chunk in context.chunks),
+        ]
+    ).lower()
+    markers = (
+        "algorithm",
+        "pseudocode",
+        "code",
+        "programming",
+        "matlab",
+        "python",
+        "runtime",
+        "complexity",
+    )
+    return any(marker in haystack for marker in markers)
 
 
 def compute_context_fingerprint(
@@ -381,6 +451,37 @@ def topic_has_persisted_blocks(topic_id: str) -> bool:
             (topic_id,),
         )
         return cur.fetchone() is not None
+
+
+def strip_invalid_source_ids(
+    blocks: list[dict],
+    allowed_chunk_ids: set[str],
+    *,
+    topic_slug: str | None = None,
+) -> None:
+    """Drop hallucinated provenance IDs while preserving valid model citations."""
+    for index, block in enumerate(blocks):
+        meta = block.get("generation_metadata")
+        if not isinstance(meta, dict):
+            continue
+        ids = meta.get("source_chunk_ids")
+        if not isinstance(ids, list):
+            continue
+
+        valid_ids = [chunk_id for chunk_id in ids if chunk_id in allowed_chunk_ids]
+        dropped_ids = [chunk_id for chunk_id in ids if chunk_id not in allowed_chunk_ids]
+        if not dropped_ids:
+            continue
+
+        for chunk_id in dropped_ids:
+            logger.warning(
+                "Dropping invalid source_chunk_id=%r topic=%s block_index=%s block_id=%s",
+                chunk_id,
+                topic_slug or "(unknown)",
+                index,
+                block.get("id") or "(new)",
+            )
+        meta["source_chunk_ids"] = valid_ids
 
 
 def topic_is_stale(topic_id: str) -> bool:
@@ -464,6 +565,10 @@ def _main() -> None:
     )
     parser.add_argument("--course", help="course slug for generation")
     parser.add_argument("--topic", help="optional topic slug for generation")
+    parser.add_argument("--topics",
+                        help="comma-separated topic slugs for selective generation")
+    parser.add_argument("--topics-file",
+                        help="file of topic slugs, one per line or comma-separated; # comments allowed")
     parser.add_argument("--dry-run", action="store_true",
                         help="validate model output without writing blocks")
     parser.add_argument("--missing-only", action="store_true",
@@ -478,8 +583,17 @@ def _main() -> None:
                         help=f"Agent 3 max_tokens (default: {llm.DEFAULT_MAX_TOKENS})")
     parser.add_argument("--temperature", type=float, default=llm.DEFAULT_TEMPERATURE,
                         help=f"Agent 3 temperature (default: {llm.DEFAULT_TEMPERATURE})")
+    parser.set_defaults(structured_json=None)
+    parser.add_argument("--structured-json", dest="structured_json",
+                        action="store_true",
+                        help="force Anthropic JSON-schema output_config")
+    parser.add_argument("--no-structured-json", dest="structured_json",
+                        action="store_false",
+                        help="disable Anthropic JSON-schema output_config")
     parser.add_argument("--json", action="store_true",
                         help="emit full GenerationResult objects as JSON")
+    parser.add_argument("--include-preview", action="store_true",
+                        help="with --dry-run --json, include the validated reconciler sequence")
     parser.add_argument("--pause-seconds", type=float, default=0.0,
                         help="sleep between topic generations to respect API rate limits")
     parser.add_argument("--topic-slug",
@@ -511,12 +625,10 @@ def _main() -> None:
 
         from pipeline.orchestrator import generate_blocks_for_topic
 
-        targets = _resolve_generation_targets(args.course, args.topic)
-        generation_config = agent3_generation_config(
-            model=args.model,
-            max_tokens=args.max_tokens,
-            temperature=args.temperature,
-        )
+        topic_slugs = tuple(_normalize_topic_filters(
+            args.topics, _load_topic_slugs_file(args.topics_file)
+        ))
+        targets = _resolve_generation_targets(args.course, args.topic, topic_slugs)
         totals = {
             "topics": len(targets),
             "skipped": 0,
@@ -548,6 +660,18 @@ def _main() -> None:
                     }, sort_keys=True))
                 continue
             if args.stale_only and not args.force_all:
+                topic_context = get_topic_context(topic_id)
+                use_structured_json = (
+                    args.structured_json
+                    if args.structured_json is not None
+                    else should_use_structured_json(topic_context)
+                )
+                generation_config = agent3_generation_config(
+                    model=args.model,
+                    max_tokens=args.max_tokens,
+                    temperature=args.temperature,
+                    structured_json=use_structured_json,
+                )
                 stale = explain_topic_staleness(
                     topic_id,
                     generation_config=generation_config,
@@ -584,6 +708,8 @@ def _main() -> None:
                 model=args.model,
                 max_tokens=args.max_tokens,
                 temperature=args.temperature,
+                structured_json=args.structured_json,
+                include_preview=args.include_preview,
             )
             if args.json:
                 print(json.dumps(asdict(result), sort_keys=True))

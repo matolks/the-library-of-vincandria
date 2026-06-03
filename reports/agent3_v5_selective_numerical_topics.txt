@@ -1,0 +1,15 @@
+number-base-conversion-floating-point
+matlab-programming-numerical-methods
+spline-interpolation
+romberg-richardson-extrapolation
+fixed-point-iteration
+newtons-method
+secant-method
+tridiagonal-banded-systems
+iterative-methods-linear-systems
+multistep-methods-adams-bashforth-moulton
+systems-odes-higher-order
+two-point-bvp-shooting-methods
+finite-difference-bvp-1d
+finite-difference-elliptic-pde-2d
+finite-difference-heat-equation
