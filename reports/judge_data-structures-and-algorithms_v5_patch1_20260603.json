@@ -1,0 +1,737 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-03T23:25:18.409614+00:00",
+  "topics": [
+    {
+      "topic_id": "a6cd1242-3507-4600-ab54-0e2131482ae5",
+      "topic_slug": "dsa-asymptotic-notation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4826,
+      "output_tokens": 665,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0250107,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "85bb0c7a-5b19-4a7c-8aaf-dab983a68305",
+      "topic_slug": "dsa-divide-and-conquer-recurrences",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7663,
+      "output_tokens": 939,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0376317,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "7f90b5c2-3f69-4a2a-8c2a-4ef1a960089a",
+      "topic_slug": "dsa-heaps",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5014,
+      "output_tokens": 1657,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.040454699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "ae32197a-5038-4162-aee6-cebcdfd0be4e",
+          "description": "The paragraph 'With HeapifyUp and HeapifyDown in hand, all main priority-queue operations reduce to simple array manipulations followed by one of these two procedures' is a transitional gloss that adds no specific information not already conveyed by the section heading and the numbered items that follow.",
+          "suggested_fix": "Delete the paragraph; the section heading and numbered list are self-explanatory."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "34c2d373-6bfb-4eee-983b-86e2fe187b97",
+          "description": "The callout block (id=34c2d373) immediately follows the paragraph (id=97a1c334) and explicitly restates and interprets the max-heap property formula H[i] \u2264 H[parent(i)] defined in that paragraph, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 97a1c334 and 34c2d373."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "809cf8cc-effb-425d-9a53-08c24ed8ec9a",
+          "description": "The HeapifyUp pseudocode block (id=809cf8cc) is immediately followed by the worked-example paragraph (id=7f624dd0) that walks through that exact algorithm on a specific input, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 809cf8cc and 7f624dd0."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "3a02f8ab-f703-49b2-8532-0a007bb70730",
+          "description": "The BuildHeap pseudocode block (id=3a02f8ab) is immediately followed by the paragraph (id=9b0057c8) that explains why its complexity is O(n) by interpreting the algorithm's structure, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 3a02f8ab and 9b0057c8."
+        }
+      ]
+    },
+    {
+      "topic_id": "c716460c-d96b-4b8e-acba-5b62f3f17a78",
+      "topic_slug": "dsa-heapsort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3906,
+      "output_tokens": 507,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0198807,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "31556d5c-b3a3-4019-903a-f3a885631b1a",
+          "description": "After swapping the root (4) with the last heap element (1) in a 3-element heap [4,3,1], the array becomes [1,3,4,5] (not [1,3,1,4,5] as written), and heapifying [1,3] gives [3,1], so the state should be [3,1,4,5] \u2014 the block writes '[1,3,1,4,5]' which incorrectly shows five elements in the unsorted portion when only three remain in the heap.",
+          "suggested_fix": "Correct the step to: swap root with last of heap: [1,3,4,5] (heap is [1,3,1]); heapify \u2192 [3,1,1,4,5]."
+        }
+      ]
+    },
+    {
+      "topic_id": "9072f571-3714-44ef-ab1a-0c3695daef9c",
+      "topic_slug": "dsa-quicksort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3352,
+      "output_tokens": 328,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.015533700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "c6e45aa2-e9fb-46c8-921b-d852d16634a9",
+          "description": "The display-math block for the worst-case recurrence is immediately followed by a paragraph (36a7ebe8) that explicitly interprets that equation and explains the unrolling, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks c6e45aa2 and 36a7ebe8 to couple the formula with its interpretation."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "bd449880-39ae-42a2-a72a-695ce4f7b47b",
+          "description": "The display-math block for the 10%\u201390% unbalanced-split recurrence is immediately followed by a paragraph (180e791d) that explicitly interprets the recursion tree depth and cost of that equation, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks bd449880 and 180e791d to couple the formula with its interpretation."
+        }
+      ]
+    },
+    {
+      "topic_id": "96b25d94-c33b-4274-91d8-3e8ff7cb0677",
+      "topic_slug": "dsa-mom-select",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5229,
+      "output_tokens": 1126,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.033134699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "28450f95-d067-4de1-b9c3-1f25b1520885",
+      "topic_slug": "dsa-strassen",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5477,
+      "output_tokens": 1003,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0320337,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "339d3529-01c1-4555-a414-7b7d8c4d8276",
+          "description": "The formula for C22 is given as M1 - M2 + M4 + M6, but the correct Strassen formula is C22 = M1 - M2 + M3 + M6; substituting M4 instead of M3 yields the wrong result (A22\u00b7B21 - A22\u00b7B11 terms appear instead of the correct A21\u00b7B12 + A22\u00b7B22).",
+          "suggested_fix": "Replace M4 with M3 in the C22 line: C22 = M1 - M2 + M3 + M6."
+        }
+      ]
+    },
+    {
+      "topic_id": "e0069a95-8dae-40e8-9f40-ae0d4dc67b8e",
+      "topic_slug": "dsa-sorting-lower-bounds",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4468,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0142167,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "61691b1e-2002-4317-b6b0-3d79bd04cb0e",
+      "topic_slug": "dsa-graph-basics",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3327,
+      "output_tokens": 832,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0230187,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "0a3f5fc7-ae23-47a3-8545-c91cbb6e8edf",
+          "description": "The callout states that for a simple graph $|E| \\leq |V|^2$, but for a simple undirected graph the correct bound is $|E| \\leq |V|(|V|-1)/2$, and for a simple directed graph $|E| \\leq |V|(|V|-1)$; neither allows $|V|^2$ edges in a simple graph (since self-loops are excluded).",
+          "suggested_fix": "Replace $|E| \\leq |V|^2$ with $|E| \\leq |V|(|V|-1)/2$ for undirected simple graphs, or note the directed bound separately."
+        }
+      ]
+    },
+    {
+      "topic_id": "26cbda85-9d77-4941-a6fb-1a9bdf26e500",
+      "topic_slug": "dsa-dfs",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4802,
+      "output_tokens": 841,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0275787,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "86ada1b5-5cda-45e7-901b-70a6f39509c9",
+          "description": "The display-math states a biconditional (\u27fa) between the interval nesting condition and 'w is an ancestor of v', but the source chunks state this as a one-directional fact: if w is an ancestor of v then pre[w] < pre[v] < post[v] < post[w]. The converse (that the interval nesting implies ancestry) is true in DFS trees but is not stated in the source and the biconditional overstates what is directly established by the fact as given.",
+          "suggested_fix": "Change the biconditional '\u27fa' to a one-directional implication '\u27f9' to match the source chunk's stated fact, or add a brief justification for the converse direction."
+        }
+      ]
+    },
+    {
+      "topic_id": "11ad0046-1a8a-4be3-a06d-54f31229af97",
+      "topic_slug": "dsa-topological-sort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3634,
+      "output_tokens": 568,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0199797,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "fca2ea25-8c15-4652-af09-73907c63baf8",
+      "topic_slug": "dsa-scc",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5671,
+      "output_tokens": 999,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0325557,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "c60aa34d-a4eb-4e1a-8cf6-bfcc995afe37",
+          "description": "The callout states 'The order in which components are discovered corresponds to a reverse topological order of the meta-graph', but since the second DFS processes vertices starting from sink SCCs (in the remaining graph), the SCCs are discovered in sink-first order, which is reverse topological order \u2014 this is consistent with block 0b0fab5e; however the callout says 'reverse topological order' while the source material and standard references describe discovery order as topological order of the meta-graph (sources before sinks), not reverse; the sink-first discovery is actually reverse topological order only if topological order means source-to-sink, which needs to be stated clearly to avoid confusion with block 0b0fab5e which correctly says 'reverse topological order'.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "8581a60e-301f-404d-a21c-75ed65f44724",
+      "topic_slug": "dsa-bfs",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3567,
+      "output_tokens": 8,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0113787,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "87c40aac-1c34-4222-aaf2-270be803f6fa",
+      "topic_slug": "dsa-2-colorability",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6702,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0208587,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "b66e1a60-ee11-41d5-a27f-c1a7f4feed9b",
+      "topic_slug": "dsa-dijkstra",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4296,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.013700700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "614955fd-93a6-40a5-8749-9caa9cdf81ae",
+      "topic_slug": "dsa-bellman-ford",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5049,
+      "output_tokens": 836,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0282447,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "a55c0e8f-6fd9-484b-8e27-11cf9d885dd8",
+      "topic_slug": "dsa-floyd-warshall",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5106,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0161307,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "62f74876-b1c5-4edc-9b93-f20c93f6b90b",
+      "topic_slug": "dsa-max-flow",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10214,
+      "output_tokens": 815,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0434247,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "2cf18309-1814-483e-a83b-55d51e5f5e9b",
+          "description": "The callout states 'if an edge is unsaturated ($f(e) = 0$), only its forward edge appears,' but unsaturated means $f(e) < c(e)$, not $f(e) = 0$; an unsaturated edge with $f(e) > 0$ still produces both a forward edge and a backward edge in the residual graph.",
+          "suggested_fix": "Replace 'unsaturated ($f(e) = 0$)' with 'carries zero flow ($f(e) = 0$)' to correctly describe the condition under which only the forward edge appears."
+        }
+      ]
+    },
+    {
+      "topic_id": "3f5f3f5a-0787-4c93-8d6e-4456fe3f0c46",
+      "topic_slug": "dsa-dp-fundamentals",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8258,
+      "output_tokens": 8,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0254517,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "116726c1-021d-45ee-97c8-a4e957a98db5",
+      "topic_slug": "dsa-lis",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8724,
+      "output_tokens": 904,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0402897,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "288a2118-7486-4309-9109-d83b2edc4a95",
+          "description": "The block claims that defining P_k as the LIS of prefix A[1\u00b7\u00b7\u00b7k] 'does not satisfy the optimal substructure property,' but the source chunks show the lecture actually uses exactly this definition (P_k = LIS of A[1\u00b7\u00b7\u00b7k] ending at A[k]) and notes the issue is that the naive prefix definition makes extension unclear \u2014 not that it violates optimal substructure per se; calling it a violation of optimal substructure is an overstatement that is factually incorrect.",
+          "suggested_fix": "Restate that the naive prefix definition is problematic because the LIS of A[1\u00b7\u00b7\u00b7k] need not end at A[k], making it impossible to cleanly extend to A[k+1], rather than claiming it violates the optimal substructure property."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "ae01dfde-c8be-4488-adef-8cf51d303174",
+          "description": "The block states 'the final S = [2, 4, 6, 7] does not necessarily correspond to a real subsequence of A,' but [2, 4, 6, 7] is in fact a valid increasing subsequence of A = [3, 8, 5, 9, 6, 2, 7, 4] (elements at positions 6, 8, 7, 7 \u2014 actually 2 at index 6, 4 at index 8, 6 at index 5, 7 at index 7: 2<4<6<7 and indices 6<8 is wrong for 4); more precisely the claim is meant to be a general warning but the specific example S=[2,4,6,7] actually does form a valid IS of A (2,4,6,7 appear in order in A), making the illustrative claim misleading.",
+          "suggested_fix": "Clarify that S stores optimal tail values and may not always form a valid subsequence, but avoid using this particular example as the illustration since [2,4,6,7] happens to be a valid IS of A; use a different example or remove the specific claim about this S."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "b8db816d-6369-4756-87d1-7d760ee54388",
+          "description": "The paragraph introducing the traceback arrays for A=[3,8,9,4,6,7,5] is immediately followed by the bullet listing T values (block 3a02f3ab), but these two blocks share no group_id despite the paragraph explicitly setting up the data that the bullet presents.",
+          "suggested_fix": "Assign the same group_id to blocks b8db816d and 3a02f3ab (and a7f68c77 which interprets the same T array)."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "3a02f3ab-7dfa-47a1-bf31-a1cb8b037c64",
+          "description": "The bullet listing T values and the immediately following paragraph (a7f68c77) that explicitly traces through those T values share no group_id, despite being tightly coupled.",
+          "suggested_fix": "Assign the same group_id to blocks 3a02f3ab and a7f68c77."
+        }
+      ]
+    },
+    {
+      "topic_id": "4b12e2e5-c31e-4004-834b-8e05513c7ca7",
+      "topic_slug": "dsa-edit-distance",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7777,
+      "output_tokens": 485,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0311637,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "4eba4701-fe9e-4a75-b776-7addf23751c6",
+      "topic_slug": "dsa-lcs",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8839,
+      "output_tokens": 1211,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.045239699999999994,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "cf1e40cb-b989-431b-9d41-6ed22606c969",
+          "description": "The callout states the O(mn) bound is essentially optimal and that improving to O(n^{2-\u03b5}) would violate the Strong Exponential Time Hypothesis (SETH), but the source chunk attributes this hardness result to the 'exponential time hypothesis' (ETH), not the Strong Exponential Time Hypothesis; moreover the hardness lower bound applies when m and n are both \u0398(n), making the claim about 'O(n^{2-\u03b5})' imprecise since the problem has two parameters m and n.",
+          "suggested_fix": "Change 'Strong Exponential Time Hypothesis' to 'Strong Exponential Time Hypothesis (SETH)' or simply 'the exponential time hypothesis' to match the source, and clarify the bound applies when both sequences have length \u0398(n)."
+        }
+      ]
+    },
+    {
+      "topic_id": "dfea5034-f406-4d90-8488-dac9bf8d04ca",
+      "topic_slug": "dsa-rna-secondary-structure",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8094,
+      "output_tokens": 540,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.032939699999999995,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "dfbc638c-decf-41f5-bd4e-da90fcdc4c45",
+      "topic_slug": "dsa-knapsack",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7569,
+      "output_tokens": 409,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0293997,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "low",
+          "block_id": "5e5a56fc-b255-4510-80dc-b9ce82e52a0f",
+          "description": "The summary states greedy fails because it sorts 'by value', but the greedy algorithm described in the topic (and source) sorts by value descending \u2014 the failure is not due to sorting by value per se but due to the 0/1 discrete nature; more precisely, the source also mentions sorting by value/weight ratio as another variant, but the block's phrasing 'sort by value' is an oversimplification that could mislead since the described greedy already sorts by value and the real issue is the discrete constraint, not the sorting criterion.",
+          "suggested_fix": null
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "medium",
+          "block_id": "34a688c9-fb34-4b64-85fc-638c65ee425b",
+          "description": "Block b0d64fee introduces the worked example and says 'we want to compute P(4,10)', but block 34a688c9 immediately jumps to 'after filling the table, the optimal value is P(4,10)=14' without showing any intermediate table rows or cell computations, making the 'trace' heading misleading and leaving a large unexplained gap.",
+          "suggested_fix": "Either show at least a few representative rows of the DP table, or retitle the section to 'Worked Example: Result' rather than 'Tracing the DP Table'."
+        }
+      ]
+    },
+    {
+      "topic_id": "1d085190-854d-4bbf-b023-8b9b9137a5f0",
+      "topic_slug": "dsa-greedy-interval-scheduling",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6945,
+      "output_tokens": 844,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0340527,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "c76b03e7-5212-4742-8e80-949666a76ccf",
+      "topic_slug": "dsa-huffman-encoding",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6821,
+      "output_tokens": 1045,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0366957,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "1ee80499-2dbf-44cc-9ca6-b1e176a5596a",
+          "description": "The block assigns d the code 110, but in Step 1 a (freq 1) is extracted first and becomes the left child of T1 (code bit 0) while d (freq 2) is the right child (code bit 1), so the full path gives a=110 and d=111, not d=110 and a=111.",
+          "suggested_fix": "Swap the listed codewords so that d: 111 and a: 110, consistent with a being the left child and d the right child of T1 as described in Step 1."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "b2d41868-8104-468a-bd0e-e6964d85704d",
+          "description": "The block assigns a the code 111, but since a is extracted first (smaller frequency 1) and placed as the left child of T1, a's codeword should be 110 and d's should be 111.",
+          "suggested_fix": "Change a's codeword to 110 (depth 3) and d's to 111 (depth 3) to match the left=0, right=1 convention and the merge order described in Step 1."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "b55b43d1-b2f5-435f-b94a-e5e193e7e1ea",
+          "description": "The total cost calculation uses d\u00b73=2\u00b73 and a\u00b73=1\u00b73 which are numerically correct regardless of which symbol gets which 3-bit code, but the cost breakdown implicitly confirms the wrong code assignment (d=110, a=111) stated in the preceding bullets.",
+          "suggested_fix": "Correct the codeword assignments in the preceding bullet blocks; the cost arithmetic itself (21 bits) remains valid."
+        }
+      ]
+    },
+    {
+      "topic_id": "c27fd329-6deb-42b2-98c3-13716aefbe1f",
+      "topic_slug": "dsa-horn-formulas",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7017,
+      "output_tokens": 368,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.027128700000000002,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "36eafc2a-3ce6-4801-b4c8-ef0a228aa866",
+          "description": "The unsatisfiable example says 'forward chaining now sets y = T and z = T' but does not trace whether the additional implications (e.g., (x\u2227z)\u21d2w, (w\u2227z)\u21d2x) are also triggered by z=T, leaving the learner to wonder whether w or x also get forced before the negative-clause check.",
+          "suggested_fix": "Add a brief trace noting that x and w remain false because their multi-literal premises are not fully satisfied even after z=T, so only y and z end up true."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "54fe1019-b36d-493d-b7b3-9ae96037925a",
+          "description": "The display-math block listing the Horn formula clauses is immediately followed by block 8b34da28 which explicitly interprets each clause (identifying the empty-premise clause and the negative clauses), but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 54fe1019 and 8b34da28 so they are rendered as a coupled unit."
+        }
+      ]
+    },
+    {
+      "topic_id": "9065365a-eeca-4e43-951e-b8cd443a8ec4",
+      "topic_slug": "dsa-set-cover",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6474,
+      "output_tokens": 1065,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0359547,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "confusing_transition",
+          "severity": "medium",
+          "block_id": "cd54058f-6fef-4400-826d-5c1e9055f5e8",
+          "description": "The adversarial example is introduced to show greedy can be suboptimal, but the block concludes that greedy also achieves size 2 (the optimum) on this very instance, so the example fails to demonstrate the claimed failure mode and leaves the learner without a concrete counterexample.",
+          "suggested_fix": "Replace or augment the example with one where greedy provably returns a cover strictly larger than optimal, such as the classic Slav\u00edk/Johnson construction, or explicitly state this example only motivates the possibility and point to a separate counterexample."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "161bd3e9-e561-4a56-950b-1b1c6bf65a8c",
+          "description": "The formal argument callout (161bd3e9) directly continues and formalizes the proof sketch in the immediately preceding paragraph (b9cfdff0), but the two blocks share no group_id.",
+          "suggested_fix": "Assign both b9cfdff0 and 161bd3e9 the same group_id so they are rendered as a coupled unit."
+        }
+      ]
+    },
+    {
+      "topic_id": "18b4269d-841f-400d-bc3a-b8ee402aeefd",
+      "topic_slug": "dsa-kruskal",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6941,
+      "output_tokens": 499,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0288657,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "14f79b22-7afa-4f03-89fd-e212c442967d",
+          "description": "The callout lists generic application domains (network design, clustering, circuit layout) without any specific content unique to Kruskal's algorithm, and could be deleted without losing information about the algorithm itself.",
+          "suggested_fix": "Either remove the callout or tie it specifically to how Kruskal's edge-sorting approach makes it practical for these domains."
+        }
+      ]
+    },
+    {
+      "topic_id": "841c8fe2-b8b5-42e7-8577-ed6af58fca2a",
+      "topic_slug": "dsa-prim",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7881,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0244557,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "3524dd16-d4e4-488d-b6a5-87ae63c4108b",
+      "topic_slug": "dsa-mst-theory",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8796,
+      "output_tokens": 424,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.033305699999999994,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "842c873d-cd60-4044-b662-bad181756250",
+          "description": "The callout says 'Contrast with the cycle property' but then describes the cycle property itself, when it should say 'Contrast with the cut property' \u2014 the callout is meant to contrast the cycle property's exclusion rule with the cut property's inclusion rule.",
+          "suggested_fix": "Change 'Contrast with the cycle property' to 'Contrast with the cut property' to correctly identify what is being compared."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "022ff7ba-7ea2-4ca3-a41f-27ece4a443d7",
+          "description": "The claim that 'any lighter edge crossing C would also span two different components and would have been chosen earlier' is not sufficient to establish that e* is the minimum cut-edge of C = (S_i, V \\ S_i): a lighter edge crossing C could connect S_i to a third component S_k (not S_j), and Kruskal's would have chosen it earlier only if it was globally lighter \u2014 but that lighter edge might connect different components entirely, not necessarily crossing this specific cut in a way that contradicts e* being minimum on C.",
+          "suggested_fix": "Clarify that e* is the globally smallest edge spanning two different components, and since all cut-edges of C also span two different components, any cut-edge of C lighter than e* would have been chosen before e*, making e* the minimum cut-edge of C."
+        }
+      ]
+    },
+    {
+      "topic_id": "67884828-61f9-466a-a87a-fd132d523a71",
+      "topic_slug": "dsa-union-find",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5951,
+      "output_tokens": 817,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0306657,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "88363650-a77c-4a05-99fd-cac7667b2052",
+      "topic_slug": "dsa-linear-programming",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8361,
+      "output_tokens": 910,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0392907,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "c6746e4b-55f3-482e-97cd-2d5826bdc2c7",
+          "description": "The block states that equality constraints are converted by 'splitting into two inequalities', but the standard simplex approach for equality constraints is to add an artificial variable (used in Phase I/II), not to split into two inequalities (which would require both \u2264 and \u2265, the latter needing a surplus variable, not just a second inequality).",
+          "suggested_fix": "Replace 'equality constraints are split into two inequalities' with 'equality constraints are handled by introducing artificial variables in a two-phase approach'."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "e474be61-0cbe-46d6-95d8-d0b02ac1a935",
+          "description": "The paragraph describes the feasible region as a convex polygon in the first quadrant bounded by two resource constraints, a geometric object that warrants visualization, but no function2d plot of the constraint boundary lines accompanies it (the only plot in the topic shows only the optimal iso-profit line, appearing much later).",
+          "suggested_fix": "Add function2d plots for the two constraint boundary lines (x2 = (24-6x1)/4 and x2 = (6-x1)/2) near this paragraph to show the feasible region."
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "2af25770-f09c-4129-a1ca-dabbc9f10dba",
+          "description": "The sentence 'The power of LP lies in its generality: scheduling, resource allocation, network flow, and many combinatorial problems can all be cast as LPs, and the simplex method solves them efficiently in practice' is a boilerplate application list that adds no specific content to the topic.",
+          "suggested_fix": "Remove or replace with a concrete statement about what the topic will cover."
+        }
+      ]
+    },
+    {
+      "topic_id": "c84f39c7-9a5d-45b5-bada-360241a39f38",
+      "topic_slug": "dsa-binary-search",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7949,
+      "output_tokens": 871,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.037469699999999995,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "9efbb7fb-b3f8-4469-bef5-1e15bdb5d6d6",
+          "description": "The display-math block showing B[i+1] \u2265 B[i] is immediately followed by block 8f9d00fe which explicitly interprets that inequality's consequence (what B[m] < 0 implies for the search direction), but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 9efbb7fb and 8f9d00fe so they render as a coupled unit."
+        }
+      ]
+    },
+    {
+      "topic_id": "db8fb73c-a0d9-4117-8ed4-70d0aa083b86",
+      "topic_slug": "dsa-graph-modeling",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4222,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0134187,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "28a68be0-0ba5-4ef4-a297-05b8804b049f",
+      "topic_slug": "dsa-non-adjacent-dp",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8759,
+      "output_tokens": 477,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0339897,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    }
+  ],
+  "totals": {
+    "findings": 33,
+    "cost": 1.0345452000000002,
+    "in": 227681,
+    "out": 22095,
+    "cache_create": 0,
+    "cache_read": 66924,
+    "skipped": 0,
+    "severity_low": 5,
+    "severity_medium": 14,
+    "severity_high": 14
+  }
+}

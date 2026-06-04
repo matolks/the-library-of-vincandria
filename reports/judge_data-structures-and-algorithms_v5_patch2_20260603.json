@@ -1,0 +1,386 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-03T23:30:23.569468+00:00",
+  "topics": [
+    {
+      "topic_id": "a6cd1242-3507-4600-ab54-0e2131482ae5",
+      "topic_slug": "dsa-asymptotic-notation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4826,
+      "output_tokens": 1362,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.035465699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "prereq_gap",
+          "severity": "medium",
+          "block_id": "af99166a-3414-4072-a678-caeabae7fbd3",
+          "description": "The term 'little-o' is introduced parenthetically in the limit-table bullets without any prior definition in this topic, yet it is not listed as a prerequisite concept.",
+          "suggested_fix": "Either add a brief inline definition of little-o notation before using it, or remove the parenthetical references to little-o and little-omega."
+        },
+        {
+          "category": "prereq_gap",
+          "severity": "medium",
+          "block_id": "53d5be7a-8f8e-4c93-bbb8-af305bc39598",
+          "description": "The term 'little-omega' is introduced parenthetically without any prior definition in this topic and is not listed as a prerequisite.",
+          "suggested_fix": "Either define little-omega before use or remove the parenthetical reference."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "f10a3a02-def7-4c9c-9eb2-6bee5d785665",
+          "description": "The callout states '2^{2n} = (2^n)^2, which grows quadratically in 2^n', but this framing is misleading as a justification: the correct reason 2^{2n} \u2260 O(2^n) is that 2^{2n}/2^n = 2^n \u2192 \u221e, not that it is 'quadratic in 2^n' (which conflates the base-function variable with n itself).",
+          "suggested_fix": "Replace the explanation with: '2^{2n}/2^n = 2^n \u2192 \u221e, so no fixed constant c can bound 2^{2n} \u2264 c\u00b72^n for all large n.'"
+        }
+      ]
+    },
+    {
+      "topic_id": "85bb0c7a-5b19-4a7c-8aaf-dab983a68305",
+      "topic_slug": "dsa-divide-and-conquer-recurrences",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7663,
+      "output_tokens": 1079,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.039731699999999995,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "4c59e9fc-94b4-4557-8dbb-748c867ae29d",
+          "description": "The block says 'there are log_2 n + 1 terms' in the sum indexed from i=0 to log_2 n - 1, which actually has log_2 n terms, not log_2 n + 1; however this off-by-one does not change the O(n(log n)^2) conclusion and is a minor imprecision rather than a materially wrong claim.",
+          "suggested_fix": null
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "a465edcf-2fd2-4ecc-810f-dd3b637ee28f",
+          "description": "The opening paragraph is a generic textbook description of divide-and-conquer that could appear in any algorithms course without any content specific to this topic's examples or methods.",
+          "suggested_fix": "Integrate a forward reference to the specific methods (Master Theorem, recursion tree, unrolling) and the concrete examples (merge sort, \u221an subproblems) covered in this topic."
+        }
+      ]
+    },
+    {
+      "topic_id": "7f90b5c2-3f69-4a2a-8c2a-4ef1a960089a",
+      "topic_slug": "dsa-heaps",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5014,
+      "output_tokens": 1641,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0402147,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "34c2d373-6bfb-4eee-983b-86e2fe187b97",
+          "description": "The callout block [34c2d373] states the formal max-heap property H[i] \u2264 H[parent(i)] and immediately follows the paragraph [97a1c334] that defines the heap property in prose, but the two blocks share no group_id despite the callout directly formalizing the equation introduced in the preceding paragraph.",
+          "suggested_fix": "Assign the same group_id to blocks 97a1c334 and 34c2d373."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "7f624dd0-984c-43dc-a4ac-df966c734318",
+          "description": "The paragraph [7f624dd0] walks through the specific HeapifyUp insertion example and immediately follows the code block [809cf8cc], but they share no group_id despite the paragraph being a direct worked-example walkthrough of that exact pseudocode.",
+          "suggested_fix": "Assign the same group_id to blocks 809cf8cc and 7f624dd0."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "864d01c7-de34-4653-8639-a2d848ffe1d4",
+          "description": "The paragraph [864d01c7] explicitly interprets the correctness of the IncreaseKey/DecreaseKey code block [01a708db] immediately preceding it, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 01a708db and 864d01c7."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "9b0057c8-6382-4884-a4f3-ae775544ad70",
+          "description": "The paragraph [9b0057c8] explains the O(n) complexity of the BuildHeap code block [3a02f8ab] immediately preceding it, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 3a02f8ab and 9b0057c8."
+        }
+      ]
+    },
+    {
+      "topic_id": "c716460c-d96b-4b8e-acba-5b62f3f17a78",
+      "topic_slug": "dsa-heapsort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3912,
+      "output_tokens": 674,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.022403700000000002,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "31556d5c-b3a3-4019-903a-f3a885631b1a",
+          "description": "The step shows the array after swapping root (4) with last heap element as '[1,3,**4,5**]' (4 elements), but the full array at this point should still be 5 elements: [1,3,**4**,**4**,**5**] is wrong \u2014 after step 2 the array is [4,3,1,1,5], so swapping A[1] with A[3] gives [1,3,4,1,5] with sorted suffix [4,5], i.e. the full array is [1,3,1,**4**,**5**] before heapify, not '[1,3,**4,5**]'; the notation omits the fourth element and misrepresents the array state.",
+          "suggested_fix": "Correct step 3 to show the full 5-element array: swap root 4 with A[3] to get [1,3,1,1,4,5] \u2014 wait, recount: after step 2 heap is [4,3,1,1], so swap A[1]=4 with A[4]=1 gives heap [1,3,1,4] \u2192 full array [1,3,1,**4**,**5**]; heapify on [1,3,1] \u2192 [3,1,1]; full array [3,1,1,**4**,**5**]."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "f4470f03-fba1-403b-b8f2-b4a3b872ff40",
+          "description": "Step 4 shows the array as '[1,1,**3,4,5**]' after swapping and heapifying, but following the corrected step 3 the heap before this step is [3,1,1], so swapping root 3 with last heap element 1 gives [1,1,3,**4**,**5**] and heapify on [1,1] leaves [1,1,**3,4,5**] \u2014 the result notation '[1,1,**3,4,5**]' is actually consistent, but the intermediate 'swap' result shown is missing the full array context, making the step ambiguous and potentially misleading given the earlier errors.",
+          "suggested_fix": "Rewrite steps 3\u20135 consistently showing all 5 array positions at each sub-step to avoid ambiguity."
+        }
+      ]
+    },
+    {
+      "topic_id": "9072f571-3714-44ef-ab1a-0c3695daef9c",
+      "topic_slug": "dsa-quicksort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3352,
+      "output_tokens": 324,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0154737,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "c6e45aa2-e9fb-46c8-921b-d852d16634a9",
+          "description": "The display-math block for the worst-case recurrence is immediately followed by a paragraph (36a7ebe8) that explicitly interprets that equation and explains its derivation, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks c6e45aa2 and 36a7ebe8 to couple the formula with its interpretation."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "bd449880-39ae-42a2-a72a-695ce4f7b47b",
+          "description": "The display-math block for the 10%\u201390% unbalanced-split recurrence is immediately followed by a paragraph (180e791d) that explicitly interprets that recurrence's depth and cost, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks bd449880 and 180e791d to couple the formula with its interpretation."
+        }
+      ]
+    },
+    {
+      "topic_id": "96b25d94-c33b-4274-91d8-3e8ff7cb0677",
+      "topic_slug": "dsa-mom-select",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5229,
+      "output_tokens": 1096,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.032684700000000004,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "28450f95-d067-4de1-b9c3-1f25b1520885",
+      "topic_slug": "dsa-strassen",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5477,
+      "output_tokens": 1180,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.034688699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "broken_plot_spec",
+          "severity": "medium",
+          "block_id": "a0da690a-ce6e-4fb7-8b3f-7b055fb60f39",
+          "description": "The plot expression uses an array [\"x^3\", \"x^(log(7)/log(2))\"] but the function2d kind expects a single expression string, not an array; additionally it is unclear whether the renderer supports multi-series arrays.",
+          "suggested_fix": "Split into two separate function2d plot blocks, one with expression \"x^3\" and one with \"x^(log(7)/log(2))\", or confirm the renderer supports array expressions before using this form."
+        }
+      ]
+    },
+    {
+      "topic_id": "e0069a95-8dae-40e8-9f40-ae0d4dc67b8e",
+      "topic_slug": "dsa-sorting-lower-bounds",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4468,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0142167,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "61691b1e-2002-4317-b6b0-3d79bd04cb0e",
+      "topic_slug": "dsa-graph-basics",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3327,
+      "output_tokens": 253,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.014333700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "0a3f5fc7-ae23-47a3-8545-c91cbb6e8edf",
+          "description": "The callout states '|E| \u2264 |V|\u00b2' for a simple graph, but for a simple undirected graph the correct bound is |E| \u2264 |V|(|V|\u22121)/2, and for a simple directed graph |E| \u2264 |V|(|V|\u22121); neither equals |V|\u00b2 for simple graphs (which exclude self-loops).",
+          "suggested_fix": "Replace '|E| \u2264 |V|\u00b2' with '|E| \u2264 |V|(|V|\u22121)/2' for undirected simple graphs, or note that |E| = O(|V|\u00b2) as an asymptotic bound if precision is not required."
+        }
+      ]
+    },
+    {
+      "topic_id": "26cbda85-9d77-4941-a6fb-1a9bdf26e500",
+      "topic_slug": "dsa-dfs",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4802,
+      "output_tokens": 1022,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0302937,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "86ada1b5-5cda-45e7-901b-70a6f39509c9",
+          "description": "The display-math states a biconditional (\u27fa) between the interval nesting condition and 'w is an ancestor of v', but the source chunks state this as a one-directional fact ('If vertex w is an ancestor of vertex v \u2026 then pre[w] < pre[v] < post[v] < post[w]'); the converse is true for DFS trees but the source does not assert it as a biconditional, and more importantly the block conflates the ancestor relationship with the tree/forward edge classification, which also requires w\u2260v and an actual edge.",
+          "suggested_fix": "Change the biconditional (\u27fa) to a one-directional implication (\u27f9) to match the source fact, or add a note clarifying the converse holds specifically within a DFS tree."
+        }
+      ]
+    },
+    {
+      "topic_id": "11ad0046-1a8a-4be3-a06d-54f31229af97",
+      "topic_slug": "dsa-topological-sort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3634,
+      "output_tokens": 642,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0210897,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "72e49dfe-0a23-47fd-9744-d3b2f69aea98",
+          "description": "The display-math block showing the complexity equation is immediately followed by paragraph block f1a6a8aa which explicitly interprets and extends that equation, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 72e49dfe and f1a6a8aa so they are rendered as a coupled unit."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "300818a5-ba8f-447d-a091-ad3559b630ed",
+          "description": "The callout stating the post-number fact is immediately followed by callout 5db73ac3 that explicitly proves that exact fact, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 300818a5 and 5db73ac3 to couple the fact with its proof."
+        }
+      ]
+    },
+    {
+      "topic_id": "fca2ea25-8c15-4652-af09-73907c63baf8",
+      "topic_slug": "dsa-scc",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5671,
+      "output_tokens": 837,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.030125700000000002,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "9b659203-e234-433b-9360-cf34e3bee70b",
+          "description": "The block states 'the vertex with the highest DFS post number in G^R belongs to a source SCC in G^R', but the standard result is that it belongs to a source SCC of G^R (equivalently a sink SCC of G); however, source SCCs in G become sink SCCs in G^R, so the highest post-number vertex in G^R actually belongs to a source SCC of G^R \u2014 which corresponds to a sink SCC of G. This is self-consistent and correct.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "8581a60e-301f-404d-a21c-75ed65f44724",
+      "topic_slug": "dsa-bfs",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3567,
+      "output_tokens": 8,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0113787,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "87c40aac-1c34-4222-aaf2-270be803f6fa",
+      "topic_slug": "dsa-2-colorability",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6702,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0208587,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "b66e1a60-ee11-41d5-a27f-c1a7f4feed9b",
+      "topic_slug": "dsa-dijkstra",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4296,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.013700700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "614955fd-93a6-40a5-8749-9caa9cdf81ae",
+      "topic_slug": "dsa-bellman-ford",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5049,
+      "output_tokens": 619,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0249897,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "04738d0a-2941-4d5b-8125-bf078e0b2ba7",
+          "description": "The trace states '(G,F) appears earlier than (S,G)' in the edge order, but the stated processing order is (S,A), (B,A), (B,C), (C,D), (D,E), (F,E), (G,F), (S,G), meaning (G,F) appears at position 7 and (S,G) at position 8 \u2014 so (G,F) does appear before (S,G) in the list, but the claim that this causes (G,F)'s 'useful relaxation' to occur on a later pass is misleading: in Round 2, dist[G]=10 is already known from Round 1, so (G,F) can update dist[F] in Round 2 without waiting for a later pass.",
+          "suggested_fix": "Correct the trace to note that in Round 2, (G,F) can fire because dist[G] was set in Round 1, updating dist[F] to 9."
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "e015e7b2-072e-49f4-9c21-c34639fade02",
+          "description": "The sentence 'Choosing the right shortest-path algorithm depends on the graph's edge weights and whether you need single-source or all-pairs distances' is a generic textbook gloss that adds no information beyond what the comparison list itself conveys.",
+          "suggested_fix": "Delete this sentence and let the numbered list stand alone."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 21,
+    "cost": 0.4016502,
+    "in": 76989,
+    "out": 10784,
+    "cache_create": 0,
+    "cache_read": 29744,
+    "skipped": 0,
+    "severity_low": 2,
+    "severity_medium": 12,
+    "severity_high": 7
+  }
+}

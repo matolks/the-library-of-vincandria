@@ -1,0 +1,546 @@
+{
+  "course_slug": "numerical-computation",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-03T23:04:44.918767+00:00",
+  "topics": [
+    {
+      "topic_id": "a14bb839-56e3-4950-b092-ff5adba44a06",
+      "topic_slug": "number-base-conversion-floating-point",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5151,
+      "output_tokens": 454,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0228207,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "bbc2312b-f8d4-42ca-a336-59036977ebda",
+      "topic_slug": "floating-point-error-propagation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5501,
+      "output_tokens": 380,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.022760700000000002,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "9cda150a-dbfd-4c61-bc11-aeab9e5a77f8",
+      "topic_slug": "loss-of-significance",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7301,
+      "output_tokens": 670,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.032510700000000003,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "e2501766-7cc8-4769-bc7e-e572b7202b3b",
+      "topic_slug": "taylor-series-finite-difference",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9383,
+      "output_tokens": 1047,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0444117,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "8fe56866-e853-457c-bc59-5a4118b35610",
+      "topic_slug": "matlab-programming-numerical-methods",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9243,
+      "output_tokens": 1030,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.043736699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "67af2665-119f-4395-8a0b-95dc7b3dad11",
+          "description": "The design matrix column for the log(1+x) term uses log(1+xk) where xk is a row vector, producing a row vector, but the other columns ones(6,1) and xk' are column vectors; the horizontal concatenation [ones(6,1), xk', log(1+xk)'] will error because log(1+xk) is 1\u00d76 while the others are 6\u00d71 \u2014 it should be log(1+xk)'.",
+          "suggested_fix": "Change log(1+xk)' to log(1+xk)' consistently, or write log(1+xk') to produce a column vector directly."
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "a2ac2fcb-e65a-42d0-87cf-1d5cfae2e651",
+          "description": "The opening paragraph is a generic course-level description of Matlab that could appear in any numerical methods course without any content specific to this topic's examples or algorithms.",
+          "suggested_fix": "Replace with a sentence that names the specific algorithms (Newton's method, polyfit, ode45, linear splines) covered and the concrete example (cubic interpolation of the four-point data set) used throughout."
+        }
+      ]
+    },
+    {
+      "topic_id": "d4a8c91b-bc1a-4a7e-9886-c60020fe4bd9",
+      "topic_slug": "polynomial-interpolation-lagrange-newton",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10389,
+      "output_tokens": 2252,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0655047,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "088342c8-3661-4328-8ce3-56eb3bb70e21",
+          "description": "The bullet states 'Divided differences of order k vanish identically when the underlying function is a polynomial of degree less than k', but the correct statement is that they vanish when the function is a polynomial of degree strictly less than k (i.e., degree \u2264 k\u22121); this phrasing is actually equivalent and correct. However, the topic's diagnostic section (block cd0a104c) correctly says 'order d+1 and higher will be zero' for a degree-d polynomial, meaning order-k differences vanish when k > d, i.e., when the degree is less than k \u2014 so the bullet is consistent and correct.",
+          "suggested_fix": null
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "ffd9924b-98d9-48a3-a930-bd3ab7a9024a",
+          "description": "The callout introduces the polynomial $p(x)=x^4-x^3+x^2-x+1$ and its old nodes without explaining where this example comes from or how $c=0.1$ is derived, creating a logical leap for a learner who would need to see the computation $c = (193 - p(-3)) / \\prod_{j}(-3 - x_j)$.",
+          "suggested_fix": "Add an inline computation showing $p(-3) = 81+27+9+3+1=121$... wait, $(-3)^4-(-3)^3+(-3)^2-(-3)+1=81+27+9+3+1=121$, product $=(-3+2)(-3+1)(-3)(-3-1)(-3-2)(-3-3)=(-1)(-2)(-3)(-4)(-5)(-6)=-720$, so $c=(193-121)/(-720)$... this does not give 0.1, suggesting the callout's $c=0.1$ may itself be an error from the source; flag as factual_error instead."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "ffd9924b-98d9-48a3-a930-bd3ab7a9024a",
+          "description": "The callout claims $c = 0.1$ when extending $p(x)=x^4-x^3+x^2-x+1$ (interpolating $x=-2,-1,0,1,2,3$) to the new node $x=-3$ with value 193; computing $p(-3)=81+27+9+3+1=121$ and the product $(\u22123+2)(\u22123+1)(\u22123)(\u22123\u22121)(\u22123\u22122)(\u22123\u22123)=(\u22121)(\u22122)(\u22123)(\u22124)(\u22125)(\u22126)=\u2212720$, so $c=(193\u2212121)/(\u2212720)=72/(\u2212720)=\u22120.1$, not $+0.1$; the sign of $c$ is wrong.",
+          "suggested_fix": "Change '$c = 0.1$' to '$c = -0.1$' and update the Newton extension term accordingly to $h(x)=p(x)-0.1(x+2)(x+1)x(x-1)(x-2)(x-3)$."
+        }
+      ]
+    },
+    {
+      "topic_id": "2eb4da66-0e7d-46a6-9084-2eaa18ccacfd",
+      "topic_slug": "chebyshev-nodes-interpolation-error",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7472,
+      "output_tokens": 1964,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0524337,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "96b63bbd-04dd-4a25-8c1f-15fadee755ad",
+      "topic_slug": "spline-interpolation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10402,
+      "output_tokens": 1033,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.047258699999999994,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "7bded0e2-61f1-47d0-acbb-fe1071b14d10",
+          "description": "The paragraph 'Assembling H z = v gives the 3\u00d73 tridiagonal system:' immediately precedes the display-math block (1a630fb...) but shares no group_id with it, so the prose that sets up the equation is decoupled from the equation itself.",
+          "suggested_fix": "Add both blocks to the same group, e.g., group=g-example-system."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "04366623-f23f-475b-b8cb-51059d0ea149",
+          "description": "The paragraph 'Consider the data set with knots and values:' immediately precedes the display-math table (166c1a0e) but shares no group_id with it.",
+          "suggested_fix": "Add both blocks to group g-example."
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "8f2da738-cb55-4f5e-a1ce-0dc8d6cda49f",
+          "description": "The opening paragraph's first sentence ('A single high-degree polynomial fitted to many data points oscillates wildly between knots \u2014 the Runge phenomenon') is a generic motivational gloss that could appear verbatim in any spline topic without adding content specific to this topic's construction or formulas.",
+          "suggested_fix": "Either delete the sentence or tie it directly to the specific spline construction covered here."
+        }
+      ]
+    },
+    {
+      "topic_id": "d439117c-3c21-4f69-88ac-5df7df81ee12",
+      "topic_slug": "numerical-integration-trapezoid-simpson",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9517,
+      "output_tokens": 815,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.041333699999999994,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "86c0eda5-fadc-45a3-a81d-6fd1dfaec067",
+      "topic_slug": "romberg-richardson-extrapolation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8272,
+      "output_tokens": 801,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0373887,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "d5b0ffe8-c443-4ff0-ac11-6496d3079d86",
+      "topic_slug": "gaussian-quadrature",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9248,
+      "output_tokens": 959,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.042686699999999994,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "de7b0ecf-4eab-4b81-a1f4-d70ec4321fa4",
+          "description": "Block 022e2f04 explicitly derives the values a\u2081, a\u2082, a\u2083 and then block de7b0ecf displays the resulting rule, but they share no group_id despite being a derivation paragraph immediately followed by its result equation.",
+          "suggested_fix": "Assign both blocks 022e2f04 and de7b0ecf the same group_id (e.g., group=fixed-nodes-result)."
+        }
+      ]
+    },
+    {
+      "topic_id": "d9bd9fde-a50f-4db2-8f6d-f5d434ccccc8",
+      "topic_slug": "bisection-method",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7549,
+      "output_tokens": 679,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.033389699999999994,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "5cbea7c2-5138-4df0-8bc6-a69bc3f3d9e4",
+          "description": "The display-math formula uses $\\frac{b-a}{2^n} \\le \\varepsilon$ as the bound, but the established error bound in the preceding block is $\\frac{b-a}{2^{n+1}}$; the formula should be $\\frac{b-a}{2^{n+1}} \\le \\varepsilon$, giving $n \\ge \\lceil \\log_2((b-a)/\\varepsilon) \\rceil - 1$.",
+          "suggested_fix": "Change the left-hand side of the implication to $\\frac{b-a}{2^{n+1}} \\le \\varepsilon$ to be consistent with the error bound defined in block 72cb274b, or adjust the prose explanation accordingly."
+        },
+        {
+          "category": "factual_error",
+          "severity": "low",
+          "block_id": "52e5964b-e7f9-4dff-9c30-dd9c0ef745f4",
+          "description": "The prose says 'the bound $(b-a)/2^{n+1} \\le \\varepsilon$ gives $n+1 \\ge \\log_2(10^8) \\approx 26.6$, so at least $n=27$ steps are needed,' but $\\log_2(10^8) \\approx 26.6$ implies $n+1 \\ge 26.6$, so $n+1 = 27$ and $n = 26$, not $n = 27$.",
+          "suggested_fix": "Correct the conclusion to 'so at least $n = 26$ bisection steps are needed' (since $n+1 \\ge 27$ means $n \\ge 26$), or restate the derivation clearly."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "5cbea7c2-5138-4df0-8bc6-a69bc3f3d9e4",
+          "description": "The display-math block for the step-count formula is immediately followed by block 52e5964b which explicitly interprets and applies that exact formula, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 5cbea7c2 and 52e5964b."
+        }
+      ]
+    },
+    {
+      "topic_id": "20c0dab0-6f91-4a9a-82e8-997e84e3147f",
+      "topic_slug": "fixed-point-iteration",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8074,
+      "output_tokens": 1035,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0403047,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "6f6083d2-ff27-416b-9379-ed82e0f183f9",
+          "description": "The block states 'This is in contrast to Newton's method, which achieves quadratic convergence when g'(x*) = 0', but Newton's method is itself a fixed point iteration and the condition g'(x*) = 0 is a property of Newton's iteration function \u2014 saying Newton's method achieves quadratic convergence 'when g'(x*) = 0' conflates the condition with the method; more precisely, g'(x*) = 0 for Newton's g whenever f'(x*) \u2260 0 (simple root), not as a separate assumption.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "d86cfc3f-206d-44e6-b4c2-2fb6ee8ec9ca",
+      "topic_slug": "newtons-method",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8838,
+      "output_tokens": 935,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0410967,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "ecc98f23-e8ce-41a1-82cd-7226aef2bd44",
+          "description": "The paragraph introducing the multiple-root failure mode and the canonical example f(x)=(x-1)^m directly sets up the display-math block 62ac956c (group g-multiple-root) but shares no group_id with it.",
+          "suggested_fix": "Add group_id='g-multiple-root' to block ecc98f23 so it is coupled with the formula it introduces."
+        }
+      ]
+    },
+    {
+      "topic_id": "0e859be6-0986-46c9-8804-15e77ddde0a1",
+      "topic_slug": "secant-method",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8361,
+      "output_tokens": 995,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.040565699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "d89f3bc9-cebb-41e0-b9a0-721afe1eddf7",
+          "description": "The block claims the secant method needs 'roughly 8\u201310 iterations' to find $\\sqrt{2}$ to tolerance $10^{-12}$, but the secant method with superlinear (order ~1.618) convergence starting from x0=1, x1=2 typically converges in about 7\u20138 iterations, not 8\u201310; more importantly, the claim that Newton's method 'would need about 5' iterations is an overestimate \u2014 Newton's method with quadratic convergence typically converges in 4\u20135 iterations for this problem, so the comparison is imprecise but not clearly false. The more notable issue is that the block says the secant method needs 'noticeably more than Newton's method (which would need about 5)' when in practice both converge in a similar small number of steps for this easy problem.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "a434bec8-fb6a-4e52-89ed-d2256f7fddab",
+      "topic_slug": "gaussian-elimination-pivoting",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9245,
+      "output_tokens": 1028,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0437127,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "85c8ef1b-90a4-434e-91d7-a43b0245f1dd",
+          "description": "The back-substitution formula display-math block (85c8ef1b) immediately follows the paragraph (b4c24cfd, group=back-sub) that introduces it, but the formula block has no group_id linking it to that paragraph.",
+          "suggested_fix": "Add group_id='back-sub' to block 85c8ef1b so it is grouped with the preceding paragraph that introduces the back-substitution formula."
+        }
+      ]
+    },
+    {
+      "topic_id": "0ff76105-84f6-4d5f-a778-222d4b44c479",
+      "topic_slug": "tridiagonal-banded-systems",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8413,
+      "output_tokens": 968,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0403167,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "e30ba33a-2eaa-46b2-a4a3-8edb19c44ff7",
+      "topic_slug": "iterative-methods-linear-systems",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9400,
+      "output_tokens": 702,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.039287699999999995,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "54ff67c3-5b8f-4dd3-bf89-6f8497731985",
+      "topic_slug": "method-of-least-squares",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10185,
+      "output_tokens": 1351,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0513777,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "medium",
+          "block_id": "ad2d0008-70e4-4af3-bebb-bbce73746980",
+          "description": "The worked parabola example derives a specific curve g(x)=2.1x\u00b2+0.9 whose shape is central to the example, but no function2d plot block accompanies it.",
+          "suggested_fix": "Add a function2d plot block with expression '2.1*x^2 + 0.9' over domain x:[-2,2] immediately after this block."
+        },
+        {
+          "category": "prereq_gap",
+          "severity": "low",
+          "block_id": "e234bd14-5746-4cd9-ab48-badb20d3ee90",
+          "description": "The term 'positive definite' is used to characterize A^T A without definition, but positive definiteness is not in the listed prerequisites and is not introduced earlier in the topic.",
+          "suggested_fix": "Replace 'positive definite' with a brief inline description such as 'invertible (all eigenvalues positive)' or add a parenthetical defining the term."
+        }
+      ]
+    },
+    {
+      "topic_id": "391a4f3a-8ccd-4443-90bf-cd6b26be9944",
+      "topic_slug": "ode-euler-heun-runge-kutta",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10327,
+      "output_tokens": 1703,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.057083699999999994,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "ceca3b7c-b680-4c25-a29f-f6b5bb277c48",
+          "description": "The opening paragraph ('Many ordinary differential equations arising in science and engineering cannot be solved analytically\u2026') is a generic textbook opener that adds no specific content beyond what the heading already conveys.",
+          "suggested_fix": "Replace with a sentence that immediately states the IVP form and the three methods to be covered, skipping the boilerplate motivation."
+        }
+      ]
+    },
+    {
+      "topic_id": "892a524b-c12a-4924-9334-b7e1274a408c",
+      "topic_slug": "multistep-methods-adams-bashforth-moulton",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9104,
+      "output_tokens": 1519,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0506547,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "f5cb494e-d96f-4c0d-9c03-5f19e0473424",
+          "description": "The 2nd-order ABM method in PECE mode requires 2 new function evaluations per step (one for the predictor slope f_{n+1}^P and one for the corrector slope f(t_{n+1}, x_{n+1}) to refresh for the next step), not 1; claiming '1 new evaluation/step' understates the cost of a standard PECE implementation, though it is technically true for PEC mode where the corrected slope is not re-evaluated.",
+          "suggested_fix": "Clarify that '1 new evaluation/step' applies to PEC mode; a full PECE implementation uses 2 new evaluations per step (predictor slope + corrected slope refresh)."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "49b33a6f-afbe-407a-a959-c5009c4e729a",
+          "description": "Similarly, the 4th-order ABM entry claims '1 new predicted-slope evaluation/step after startup', but a PECE implementation evaluates f twice per step (once at the predicted point, once after correction); the claim is only accurate for PEC mode.",
+          "suggested_fix": "Qualify that '1 new evaluation/step' refers to PEC mode; PECE requires 2 new evaluations per step."
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "affe043a-96b2-4f5d-a49c-41d2ab979e9c",
+          "description": "The callout 'Multi-step methods are most advantageous when f(t,x) is expensive to evaluate\u2026' is a generic textbook observation that adds no information specific to the ABM formulas or examples developed in this topic.",
+          "suggested_fix": "Replace with a concrete comparison referencing the specific evaluation counts from the table above, or remove the block."
+        }
+      ]
+    },
+    {
+      "topic_id": "c2c72e14-5fc1-4dfc-a5db-1730bcc41423",
+      "topic_slug": "systems-odes-higher-order",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10079,
+      "output_tokens": 888,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0441147,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "6e7bffb6-ece7-40f5-844b-35f1cff15082",
+      "topic_slug": "two-point-bvp-shooting-methods",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9051,
+      "output_tokens": 716,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0384507,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "20f79721-0b86-42e4-840d-6e94a0ba32a6",
+      "topic_slug": "finite-difference-bvp-1d",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8575,
+      "output_tokens": 903,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.039827699999999994,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "4c6cb876-3088-41b2-ae82-630b42d5864e",
+          "description": "Block 4c6cb876 interprets the right-hand side vector entries and boundary corrections for the exact matrix shown in block de048c1a, but these two blocks do not share a group_id despite the second explicitly interpreting the first.",
+          "suggested_fix": "Assign both blocks de048c1a and 4c6cb876 the same group_id."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "adba477f-4fbf-470d-a2c9-f56320a03b60",
+          "description": "Block adba477f introduces the local truncation error formula and leads directly into the global error bound display-math in block 8259d7b2, but adba477f and 8259d7b2 do not share a group_id even though adba477f explicitly sets up the equation in 8259d7b2.",
+          "suggested_fix": "Assign blocks adba477f, 8259d7b2, and a92a46fa the same group_id."
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "fb22efa8-d45f-457d-8336-46b5366595f4",
+          "description": "The opening paragraph is a generic contrast of shooting vs. FDM that could appear verbatim in any FDM topic without containing information specific to this topic's content.",
+          "suggested_fix": "Add a concrete forward reference to the tridiagonal system or the specific BVP example that follows."
+        }
+      ]
+    },
+    {
+      "topic_id": "509c253e-7ca1-4bbf-bd47-ebc1918266f8",
+      "topic_slug": "finite-difference-elliptic-pde-2d",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 11173,
+      "output_tokens": 1363,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0545217,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "dfa7f728-59f4-4c0d-a9e6-1b0d0d5e549f",
+      "topic_slug": "finite-difference-heat-equation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8893,
+      "output_tokens": 927,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.041141699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    }
+  ],
+  "totals": {
+    "findings": 25,
+    "cost": 1.1086931999999998,
+    "in": 229146,
+    "out": 27117,
+    "cache_create": 0,
+    "cache_read": 48334,
+    "skipped": 0,
+    "severity_low": 8,
+    "severity_medium": 10,
+    "severity_high": 7
+  }
+}

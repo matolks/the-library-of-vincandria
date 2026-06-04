@@ -1,0 +1,694 @@
+{
+  "course_slug": "numerical-computation",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-03T22:03:41.348400+00:00",
+  "topics": [
+    {
+      "topic_id": "a14bb839-56e3-4950-b092-ff5adba44a06",
+      "topic_slug": "number-base-conversion-floating-point",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5153,
+      "output_tokens": 416,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0222567,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "9b9c5767-1729-4a4d-a14f-1fc3668e41cf",
+          "description": "The mantissa label says 'store these 23 bits' but the subscript brace only spans '000000101' (9 bits), implying only 9 bits are stored, whereas the full 23 stored bits are '00000010100000000000000' \u2014 the brace annotation is misleading and mathematically inconsistent with the claim.",
+          "suggested_fix": "Remove the underbrace annotation or extend it to cover all 23 stored fractional bits explicitly."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "cbdb27ea-ff74-487e-9117-4126df97876e",
+          "description": "The block claims the bias ensures 'the stored exponent c is always a non-negative integer', but the IEEE 754 standard reserves exponent field value 0 (all zeros) for subnormals/zero and 255 (all ones) for infinities/NaN, so the stored exponent for normal numbers ranges 1\u2013254, not 0\u2013255; more importantly, the statement that it is 'always non-negative' is only approximately true and omits that the minimum representable normal exponent is 1 (stored), not 0.",
+          "suggested_fix": "Soften the claim to say the bias allows the exponent field to be stored as an unsigned integer, avoiding a separate sign bit for the exponent."
+        }
+      ]
+    },
+    {
+      "topic_id": "bbc2312b-f8d4-42ca-a336-59036977ebda",
+      "topic_slug": "floating-point-error-propagation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5468,
+      "output_tokens": 459,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.023846700000000002,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "9cda150a-dbfd-4c61-bc11-aeab9e5a77f8",
+      "topic_slug": "loss-of-significance",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7269,
+      "output_tokens": 817,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.034619699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "fcef364a-ad66-43c7-aad7-7340c4467111",
+          "description": "The block states the naive formula gives r2 \u2248 1.74 \u00d7 10\u207b\u2078, but the source chunk (af838060) states the naive quadroots gives r2 = 1.7385e\u221208 while the accurate value from roots() is 1.6200e\u221208; the cancellation occurs in \u2212b + \u221a(b\u00b2\u22124ac) (the r1 computation in the naive formula), not in '\u2212b \u2212 \u221a(b\u00b2\u22124ac)' as implied \u2014 more importantly, the generated text says the error is caused by cancellation in '\u2212b \u2212 \u221a(b\u00b2\u22124ac)', but for b negative (b = \u2212123454321), the problematic root is the one where \u2212b and d nearly cancel, which is r1, not r2 as described.",
+          "suggested_fix": "Clarify which root suffers cancellation: with b = \u2212123454321 < 0, the formula r = (\u2212b \u2212 \u221a(b\u00b2\u22124ac))/(2a) = (123454321 \u2212 \u221a(b\u00b2\u22124ac))/(2a) subtracts two nearly equal large numbers, giving the inaccurate small root; label this consistently and correct the description of which sign combination causes the cancellation."
+        }
+      ]
+    },
+    {
+      "topic_id": "e2501766-7cc8-4769-bc7e-e572b7202b3b",
+      "topic_slug": "taylor-series-finite-difference",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9382,
+      "output_tokens": 1070,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0447537,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "broken_plot_spec",
+          "severity": "medium",
+          "block_id": "fd388977-5be6-4116-bc79-b193f8506bf3",
+          "description": "The plot expression 'log(abs(exp(1) / 3 * x^2)) / log(10)' uses natural log divided by log(10) to simulate log10, but in mathjs 'log(x)' is the natural logarithm and 'log(x, 10)' gives log base 10; the expression is valid but unnecessarily convoluted \u2014 more critically, the expression evaluates to log10(e/3 * x^2) which equals log10(e/3) + 2*log10(x), a line of slope 2 in log10(x), but the x-axis is h (linear), not log10(h), so the plot does not actually show a log-log relationship and will not display a straight line of slope 2 as claimed.",
+          "suggested_fix": "Use a log10 of x as the domain variable or note that a true log-log plot requires plotting log10(error) vs log10(h); alternatively change the expression to '2*log(x,10) + log(exp(1)/3, 10)' and label axes accordingly, or use a parametric approach."
+        }
+      ]
+    },
+    {
+      "topic_id": "8fe56866-e853-457c-bc59-5a4118b35610",
+      "topic_slug": "matlab-programming-numerical-methods",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9243,
+      "output_tokens": 586,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0370767,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "d4a8c91b-bc1a-4a7e-9886-c60020fe4bd9",
+      "topic_slug": "polynomial-interpolation-lagrange-newton",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10376,
+      "output_tokens": 1203,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.049730699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "ffd9924b-98d9-48a3-a930-bd3ab7a9024a",
+          "description": "The callout states the new term is $h(x) = p(x) + c\\,(x+2)(x+1)x(x-1)(x-2)(x-3)$, but the source chunk shows the correct extension to node $x=-3$ is $h(x) = p(x) + 0.1(x+2)(x+1)x(x-1)(x-2)(x-3)$; the product $(x+2)(x+1)x(x-1)(x-2)(x-3)$ has 6 factors covering nodes $-2,-1,0,1,2,3$, which are the original 6 nodes, not the new node $x=-3$ \u2014 the new factor should be $(x+3)$ and the product over the original nodes should be $(x+2)(x+1)x(x-1)(x-2)(x-3)$ only if $x=-3$ is the new node, making the correct new term $c\\cdot(x+2)(x+1)x(x-1)(x-2)(x-3)$ evaluated at $x=-3$ to find $c$; however the block's product already includes $(x-3)$ as a factor, meaning it vanishes at $x=3$ (an existing node) rather than encoding the new node $x=-3$, so the new basis polynomial should be $(x+3)(x+2)(x+1)x(x-1)(x-2)$ not $(x+2)(x+1)x(x-1)(x-2)(x-3)$.",
+          "suggested_fix": "Replace the new term with $h(x) = p(x) + c\\,(x+3)(x+2)(x+1)x(x-1)(x-2)$ where $c=0.1$ is found by substituting $x=-3$, matching the source which uses the product over the original nodes $x=-2,-1,0,1,2,3$ appended by the new node $x=-3$."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "088342c8-3661-4328-8ce3-56eb3bb70e21",
+          "description": "The bullet states 'Divided differences of order $k$ vanish identically when the underlying function is a polynomial of degree less than $k$', but the correct statement is that they vanish when the function is a polynomial of degree strictly less than $k$ (i.e., degree at most $k-1$); as stated this is technically correct but the preceding prose block (cd0a104c) correctly says 'order $d+1$ and higher will be zero' for a degree-$d$ polynomial, so the summary bullet's phrasing 'degree less than $k$' is consistent \u2014 no error here.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "2eb4da66-0e7d-46a6-9084-2eaa18ccacfd",
+      "topic_slug": "chebyshev-nodes-interpolation-error",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7481,
+      "output_tokens": 1588,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0468207,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "de007377-47ca-4be7-a991-af775a408a1f",
+          "description": "The block states that the zeros of T_{n+1}(x) are 'the Chebyshev nodes of Type II in the convention used here,' but by the source chunks and standard convention, the interior zeros (formula (2i+1)\u03c0/(2(n+1))) are Type II (or sometimes called Type I zeros), while the extrema (i\u03c0/n) are the boundary-including variant; more critically, the block then calls the interior zeros 'Type II' while the source chunk labels xi = 5cos((2i+1)\u03c0/(2(n+1))) as the nodes 'without boundary points' and xi = 5cos(i\u03c0/n) as 'Type I' \u2014 the labeling in the block contradicts the source's own Type I/Type II naming.",
+          "suggested_fix": "Remove or correct the 'Type II' label on the interior zeros to match the source convention, where xi = cos(i\u03c0/n) is Type I and xi = cos((2i+1)\u03c0/(2(n+1))) is Type II, or simply describe them as 'interior zeros' without assigning a type number."
+        },
+        {
+          "category": "broken_plot_spec",
+          "severity": "medium",
+          "block_id": "42e5f2dd-2ffa-4504-812d-7aa0a569d2f5",
+          "description": "The plot expression uses 'acos(x)' but the standard mathjs function name is 'acos' which is valid in mathjs; however the expression 'cos(acos(x))' simplifies to x identically and will just plot a straight line rather than T1(x)=x \u2014 this is technically correct but trivially so, and more importantly 'acos' is valid mathjs so no broken spec, but the first curve cos(acos(x)) = x is a degenerate representation of T1.",
+          "suggested_fix": "Replace 'cos(acos(x))' with 'x' or use the polynomial forms: 'x', '2*x^2-1', '4*x^3-3*x', '8*x^4-8*x^2+1' to avoid potential numerical issues and make the expressions clearly polynomial."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "803c780e-6f1c-46b9-a141-200b772dd458",
+          "description": "The section 'Comparing Uniform and Chebyshev Nodes: The Runge Example' describes specific interpolation results with quantitative error magnitudes (errors of 40\u201360 for uniform nodes, \u00b10.015 for Chebyshev nodes) that a learner needs to visualize, but no surface3d or function2d plot of the interpolating polynomial or error is provided; a function2d plot of the Chebyshev-interpolated function on [-5,5] could directly illustrate this.",
+          "suggested_fix": "Add a function2d plot showing f(x)=1/(x^2+1) alongside a description, or note that the interpolating polynomial itself cannot be shown as a simple function2d without precomputed coefficients."
+        }
+      ]
+    },
+    {
+      "topic_id": "96b63bbd-04dd-4a25-8c1f-15fadee755ad",
+      "topic_slug": "spline-interpolation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10402,
+      "output_tokens": 871,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0448287,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "7bded0e2-61f1-47d0-acbb-fe1071b14d10",
+          "description": "The paragraph in block 7bded0e2 introduces the assembled tridiagonal system and is immediately followed by the display-math block 1a630bf0, but these two blocks share no group_id, even though the paragraph explicitly sets up the equation shown in the math block.",
+          "suggested_fix": "Assign both block 7bded0e2 and block 1a630bf0 (and block 4551e296) to the same group_id, e.g., g-example-system."
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "8f2da738-cb55-4f5e-a1ce-0dc8d6cda49f",
+          "description": "The opening paragraph is a generic textbook gloss about the Runge phenomenon and splines that adds no specific content unique to this topic's construction or formulas.",
+          "suggested_fix": "Either delete it or replace it with a sentence that references the specific tridiagonal system or cubic piece formula developed in this topic."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "4e689667-aa2b-408d-8d9d-d17ad74cd60b",
+          "description": "Block 4e689667 promises a plot comparing the linear spline (with corners) and the cubic spline (smooth) on the five-point example data, but the plot block f7f1d3a7 shows only a generic smooth function unrelated to the example data, with no linear or cubic spline curves overlaid, creating a mismatch between the prose description and the actual plot.",
+          "suggested_fix": "Either update the prose to accurately describe what the plot shows (a sample smooth function, not a comparison of spline types), or replace the plot with one that actually shows the interpolated splines on the example data."
+        }
+      ]
+    },
+    {
+      "topic_id": "d439117c-3c21-4f69-88ac-5df7df81ee12",
+      "topic_slug": "numerical-integration-trapezoid-simpson",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9517,
+      "output_tokens": 930,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0430587,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "09232ece-28ca-406c-8536-5bc616496a40",
+          "description": "The comment '% odd interior indices get weight 4' is incorrect: the line `w(2:2:end) = 4` sets even MATLAB indices (positions 2, 4, 6, \u2026) to 4, not odd indices; the comment should say 'even-position (odd-subscripted node) indices get weight 4'.",
+          "suggested_fix": "Change the comment to '% even-position indices (x_1, x_3, \u2026 i.e. odd-subscripted nodes) get weight 4'."
+        }
+      ]
+    },
+    {
+      "topic_id": "86c0eda5-fadc-45a3-a81d-6fd1dfaec067",
+      "topic_slug": "romberg-richardson-extrapolation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8277,
+      "output_tokens": 1649,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0501237,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "9f2ba294-aff5-4594-ad10-35d7ed026378",
+          "description": "The block states 'The entry R(i,j) has error O(h^{2j}) where h = (b-a)/2^{i-1}', but the error order of R(i,j) is O(h_i^{2j}) where h_i = (b-a)/2^{i-1}; since h decreases as i increases, the error depends on both i and j together, and saying the error is O(h^{2j}) with h tied to row i conflates two independent indices, making the statement misleading \u2014 the correct characterization is that R(i,j) has error O(h_i^{2j}).",
+          "suggested_fix": "Clarify that R(i,j) has error O(h_i^{2j}) where h_i = (b-a)/2^{i-1} is the step size for row i, so accuracy improves both by increasing i (smaller h) and j (higher order)."
+        }
+      ]
+    },
+    {
+      "topic_id": "d5b0ffe8-c443-4ff0-ac11-6496d3079d86",
+      "topic_slug": "gaussian-quadrature",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9262,
+      "output_tokens": 1163,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.045788699999999995,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "fcaf19ca-7485-470d-ac57-de398d0c471a",
+          "description": "The block states 'the outer-pair weights are equal (a1=a3)' and 'inner-pair weights (a2=a4)', but from the node definitions x1 and x3 use (3\u22124\u221a0.3) making them the inner (smaller magnitude) nodes, while x2 and x4 use (3+4\u221a0.3) making them the outer (larger magnitude) nodes; the labeling of 'outer' and 'inner' pairs is swapped relative to the actual node magnitudes.",
+          "suggested_fix": "Correct the description to say the nodes x1,x3 (smaller magnitude) are the inner pair and x2,x4 (larger magnitude) are the outer pair, or simply remove the 'inner/outer' labels."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "de7b0ecf-4eab-4b81-a1f4-d70ec4321fa4",
+          "description": "The display-math block giving the final fixed-node rule is immediately followed by the callout block (dfe27680) that states a general principle, but the derivation paragraph (022e2f04) that walks through the solution of the linear system and the result equation (de7b0ecf) share no group_id despite being a worked-example math block followed by its result.",
+          "suggested_fix": "Add the same group_id to blocks 022e2f04 and de7b0ecf to link the derivation paragraph with its result equation."
+        }
+      ]
+    },
+    {
+      "topic_id": "d9bd9fde-a50f-4db2-8f6d-f5d434ccccc8",
+      "topic_slug": "bisection-method",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7544,
+      "output_tokens": 767,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.034694699999999995,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "20c0dab0-6f91-4a9a-82e8-997e84e3147f",
+      "topic_slug": "fixed-point-iteration",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8074,
+      "output_tokens": 791,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.036644699999999995,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "d86cfc3f-206d-44e6-b4c2-2fb6ee8ec9ca",
+      "topic_slug": "newtons-method",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8966,
+      "output_tokens": 1284,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0467157,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "a6524fb7-f9ec-4b7b-b43d-af87d465dfda",
+          "description": "The block claims that if g(x) = sin(x) - (1/2)x\u00b2 has a double root at r, then f(x) = sqrt(g(x)) also has a double root at r; in fact, sqrt of a double-zero function has a simple root (the zero of order 2 under the square root becomes order 1 outside), so f would have a simple root, not a double root.",
+          "suggested_fix": "Correct the statement to say that a double root of g(x) gives a simple root of f(x) = sqrt(g(x)), but f'(r) = 0 because the denominator of f'(x) = g'(x)/(2*sqrt(g(x))) blows up as x\u2192r while g'(r) may be nonzero \u2014 or restructure the example to work directly with g(x) instead of f(x)."
+        }
+      ]
+    },
+    {
+      "topic_id": "0e859be6-0986-46c9-8804-15e77ddde0a1",
+      "topic_slug": "secant-method",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8288,
+      "output_tokens": 1944,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0545817,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "a1c8bc37-fcd5-460b-bfbd-55c358d8ceef",
+          "description": "The worked example states the goal is to compute 43^(1/5) by solving x^5 - 43 = 0, but the source problem is computing 4^(3/5) (solving x^5 - 4^3 = 0 or equivalently finding the fifth root of 64... actually the source's exact value 2.2973967099407 matches 4^(3/5), not 43^(1/5) \u2248 2.124); the function and exact value are both wrong.",
+          "suggested_fix": "Correct the example to state the goal is computing 4^(3/5), with f(x) = x^5 - 4^3 = x^5 - 64, and update the exact value to 4^(3/5) \u2248 2.2974."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "4d5cd9f9-e053-41f1-ba18-241867627d1a",
+          "description": "The stated exact value 43^(1/5) \u2248 2.121747 is incorrect; the source gives the exact value as approximately 2.2973967099407 (consistent with 4^(3/5)), and the generated value 2.121747 does not match 43^(1/5) either (which is approximately 2.124).",
+          "suggested_fix": "Replace '43^{1/5} \\approx 2.121747' with the correct exact value matching the problem being solved."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "99ec0e45-ed94-459c-8410-14e053e2b882",
+          "description": "The generated iterate x2 \u2248 2.052133 contradicts the source value x2 = 2.1516587678 for the same starting points x0=3, x1=2.",
+          "suggested_fix": "Replace the three iterate values with those from the source: x2 \u2248 2.1517, x3 \u2248 2.3438, x4 \u2248 2.2913."
+        }
+      ]
+    },
+    {
+      "topic_id": "a434bec8-fb6a-4e52-89ed-d2256f7fddab",
+      "topic_slug": "gaussian-elimination-pivoting",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9246,
+      "output_tokens": 956,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0426357,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "85c8ef1b-90a4-434e-91d7-a43b0245f1dd",
+          "description": "The back-substitution formula display-math block (85c8ef1b) is directly introduced by the preceding paragraph (b4c24cfd, group=back-sub) but does not share that group_id, breaking the coupling between the interpretive paragraph and the equation it presents.",
+          "suggested_fix": "Add group_id='back-sub' to block 85c8ef1b so it is grouped with blocks 2b23b2db and b4c24cfd."
+        }
+      ]
+    },
+    {
+      "topic_id": "0ff76105-84f6-4d5f-a778-222d4b44c479",
+      "topic_slug": "tridiagonal-banded-systems",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8357,
+      "output_tokens": 1072,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.041708699999999994,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "0637a7f4-3025-4478-afd1-19284152dadd",
+          "description": "The claim that 'Gaussian elimination without pivoting produces no fill-in outside the band' is stated as a general fact, but for a general band matrix with both lower and upper half-bandwidth d, elimination can produce fill-in up to the full band width; the no-fill-in property holds specifically when the matrix has a special structure (e.g., symmetric positive definite) or when only one side of the band is considered \u2014 for a general banded matrix with pivoting, fill-in can extend beyond the original band.",
+          "suggested_fix": "Qualify the statement: 'For a banded matrix with lower and upper half-bandwidth d, Gaussian elimination without pivoting keeps fill-in within the band, provided no row interchanges are needed (e.g., for diagonally dominant or SPD matrices).'"
+        }
+      ]
+    },
+    {
+      "topic_id": "e30ba33a-2eaa-46b2-a4a3-8edb19c44ff7",
+      "topic_slug": "iterative-methods-linear-systems",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9402,
+      "output_tokens": 657,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0386187,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "fefaf3a3-0a93-4e26-83f5-1e4228380326",
+          "description": "The block claims 'The iteration matrix is identical in structure to the Gauss-Seidel-based SOR', but the Jacobi-based SOR iteration matrix is [(1-\u03c9)I - \u03c9D\u207b\u00b9(L+U)] while the Gauss-Seidel-based SOR iteration matrix is (D+\u03c9L)\u207b\u00b9[(1-\u03c9)D - \u03c9U]; these are structurally different matrices.",
+          "suggested_fix": "Replace 'The iteration matrix is identical in structure to the Gauss-Seidel-based SOR' with 'The iteration matrix [(1-\u03c9)I - \u03c9D\u207b\u00b9(L+U)] differs from the Gauss-Seidel-based SOR iteration matrix because it uses only old iterates rather than sequentially updated ones.'"
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "4526d91e-b2c7-42ac-84f2-7c69c24cc76b",
+          "description": "The block claims the iteration count curve 'rises much more steeply for \u03c9 > \u03c9* than for \u03c9 < \u03c9*', but the source chunk (Figure 1 and Figure 2) shows the curve rising steeply on both sides of the minimum, and the zoomed figure does not clearly support the asymmetry claim favoring steeper rise above \u03c9*.",
+          "suggested_fix": "Remove or soften the asymmetry claim, or verify it against the actual SOR iteration-count curve data before asserting a directional asymmetry."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "206c0676-f121-4542-8440-10685cb8692a",
+          "description": "The paragraph describes a specific function2d-plottable curve (iteration count vs. \u03c9 for a 9\u00d79 tridiagonal system) with a sharp minimum around \u03c9 \u2248 1.5\u20131.6, but no plot block accompanies it despite this being directly renderable as a function2d or equivalent discrete plot.",
+          "suggested_fix": "Add a plot block showing iteration count as a function of \u03c9 for the described 9\u00d79 system, or note that the data comes from a numerical experiment and reference the source figure."
+        }
+      ]
+    },
+    {
+      "topic_id": "54ff67c3-5b8f-4dd3-bf89-6f8497731985",
+      "topic_slug": "method-of-least-squares",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10191,
+      "output_tokens": 1657,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0559857,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "d82aaed0-e333-41e9-892b-fd57d889ee60",
+          "description": "The normal equations matrix shows the right-hand side entry $\\sum x_i y_i = 14$, but the correct value is $0\\cdot1 + 1\\cdot2 + 1\\cdot3 + 2\\cdot4 = 13$, making the displayed $2\\times2$ system inconsistent with the stated solution $a=-0.5,\\,b=0.6$.",
+          "suggested_fix": "Change the RHS vector from $\\begin{pmatrix}4\\\\14\\end{pmatrix}$ to $\\begin{pmatrix}4\\\\13\\end{pmatrix}$."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "medium",
+          "block_id": "ad2d0008-70e4-4af3-bebb-bbce73746980",
+          "description": "The parabolic fit worked example derives a specific curve $g(x)=1.05x^2+0.9$ whose shape (upward-opening parabola with vertex at $x=0$) is central to understanding the fit, but no function2d plot accompanies it.",
+          "suggested_fix": "Add a function2d plot block with expression '1.05*x^2 + 0.9' over domain x in [-2, 2] immediately after this paragraph."
+        }
+      ]
+    },
+    {
+      "topic_id": "391a4f3a-8ccd-4443-90bf-cd6b26be9944",
+      "topic_slug": "ode-euler-heun-runge-kutta",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10321,
+      "output_tokens": 2152,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0638007,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "ceca3b7c-b680-4c25-a29f-f6b5bb277c48",
+          "description": "The opening paragraph contains the generic boilerplate claim 'Many ordinary differential equations arising in science and engineering cannot be solved analytically' without adding any content specific to this topic that could not appear in any ODE numerical methods introduction.",
+          "suggested_fix": "Replace the generic opener with a sentence that directly previews the specific methods (Euler, Heun, RK4) and their order of accuracy."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "d6615bdd-31f5-46d7-bd3e-50c5ae9ebf84",
+          "description": "Block d6615bdd (paragraph interpreting the RK4 weights and Simpson's rule analogy) immediately follows the RK4 formula block 7aed0052 and explicitly interprets the weights 1,2,2,1 and the LTE, but the two blocks share no group_id.",
+          "suggested_fix": "Add a common group_id (e.g., group=rk4-defn) to both block 7aed0052 and block d6615bdd."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "03db8c01-ca48-46a8-b36a-1ac939339369",
+          "description": "Block 03db8c01 (paragraph deriving the Euler stability condition |1+h\u03bb|\u22641 and the bound h\u22642/|\u03bb|) immediately follows the test equation display-math block 9e3ca1a7 and group=stability-test paragraph 37b8f186, but 03db8c01 has no group_id and directly interprets the stability function for Euler applied to that test equation.",
+          "suggested_fix": "Add group=stability-test (or a new group=euler-stability) to block 03db8c01 so it is coupled with the test equation it references."
+        }
+      ]
+    },
+    {
+      "topic_id": "892a524b-c12a-4924-9334-b7e1274a408c",
+      "topic_slug": "multistep-methods-adams-bashforth-moulton",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9018,
+      "output_tokens": 710,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.038261699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "373d799b-6221-4425-9add-1b11cc82387f",
+          "description": "The bullet states the 2nd-order ABM method uses 'two function evaluations per step', but the corrector only requires one new evaluation per step (the predicted slope f_{n+1}^P); the second slope f_n is already stored from the previous step.",
+          "suggested_fix": "Change to 'one new function evaluation per step (after startup)' to match the description in the worked example and comparison table."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "42bb52d7-1608-41ef-9a29-112d9d4db808",
+          "description": "The bullet claims the 4th-order ABM method uses 'only two evaluations per step (after startup)', but it uses only one new evaluation per step (the predicted slope); the other slopes are reused from past steps.",
+          "suggested_fix": "Change 'two evaluations per step' to 'one new evaluation per step' to be consistent with the rest of the topic."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "195341b2-7617-440a-a40a-0d9a0d2e2dfe",
+          "description": "The paragraph says 'The coefficients 3/2 and -1/2 come from integrating the linear polynomial\u2026' but the formula shows h/2*(3f_n - f_{n-1}), whose coefficients are 3h/2 and -h/2, not 3/2 and -1/2; the h factor is part of the coefficient.",
+          "suggested_fix": "Rephrase to 'The coefficients 3 and -1 (multiplied by h/2) come from integrating the linear interpolating polynomial\u2026' or simply remove the parenthetical coefficient description."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "f72f6790-29c5-439f-afba-d3e22c11df0f",
+          "description": "The paragraph states the corrector 'remains explicit in practice' because the predicted value is substituted, but the Adams-Moulton corrector is an implicit method that is made explicit only by the predictor-corrector substitution; calling it 'explicit' without qualification is misleading.",
+          "suggested_fix": "Rephrase to 'Because the predicted value is substituted directly, the corrector is applied explicitly (without solving a nonlinear equation), even though the underlying Adams-Moulton formula is implicit.'"
+        }
+      ]
+    },
+    {
+      "topic_id": "c2c72e14-5fc1-4dfc-a5db-1730bcc41423",
+      "topic_slug": "systems-odes-higher-order",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10079,
+      "output_tokens": 826,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0431847,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "c6864772-0137-4b81-96b4-c247cd3e267d",
+          "description": "The paragraph describes the Lorenz attractor's butterfly shape and the time-series plots of x(t), y(t), z(t) as visible features, but no surface3d or function2d plot block accompanies this description; however, the Lorenz attractor is a parametric 3D curve, not a function2d or surface3d, so the renderer cannot honestly display it \u2014 this is infrastructure debt, not a content finding.",
+          "suggested_fix": null
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "f4e31ac2-7458-4c75-adff-b901a5e008fe",
+          "description": "The paragraph 'Reducing a higher-order ODE to a system does not eliminate stability concerns \u2014 it can actually expose them. Two important scenarios arise in practice.' is a generic transitional gloss that adds no specific information not already conveyed by the bullet points that follow it.",
+          "suggested_fix": "Delete the paragraph and let the two bullet points stand on their own under the heading."
+        }
+      ]
+    },
+    {
+      "topic_id": "6e7bffb6-ece7-40f5-844b-35f1cff15082",
+      "topic_slug": "two-point-bvp-shooting-methods",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9051,
+      "output_tokens": 530,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0356607,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "20f79721-0b86-42e4-840d-6e94a0ba32a6",
+      "topic_slug": "finite-difference-bvp-1d",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8567,
+      "output_tokens": 1090,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0426087,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "adba477f-4fbf-470d-a2c9-f56320a03b60",
+          "description": "The block claims the FDM matrix is 'diagonally dominant for small h', but the tridiagonal matrix with diagonal -2/h\u00b2 and off-diagonals 1/h\u00b2 satisfies |-2/h\u00b2| = 2*(1/h\u00b2), which is only weakly (not strictly) diagonally dominant and this property does not depend on h being small \u2014 it holds for all h, making the qualifier 'for small h' factually misleading.",
+          "suggested_fix": "Remove 'for small h' and state that the matrix is weakly diagonally dominant (diagonal magnitude equals the sum of off-diagonal magnitudes) for all h."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "3fd6f6da-9973-46c7-9880-483e2273c461",
+          "description": "The paragraph 'Multiply through by 2h\u00b2 and collect terms...' immediately follows the display-math block d2f85d51 and explicitly interprets that equation's manipulation, but they share no group_id.",
+          "suggested_fix": "Assign both block d2f85d51 and block 3fd6f6da to the same group_id (e.g., g-substitution-step)."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "f83650c6-2f05-4260-9e06-159c25c32733",
+          "description": "The paragraph 'Substituting the centered-difference approximations into the ODE at interior node x_i gives:' immediately precedes display-math block d2f85d51 and sets up that exact equation, but they share no group_id.",
+          "suggested_fix": "Add f83650c6 to the same group as d2f85d51 and 3fd6f6da."
+        }
+      ]
+    },
+    {
+      "topic_id": "509c253e-7ca1-4bbf-bd47-ebc1918266f8",
+      "topic_slug": "finite-difference-elliptic-pde-2d",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 11107,
+      "output_tokens": 1162,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0513087,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "dc5b4618-ffae-4533-b578-2af797bf2e6b",
+          "description": "The cost of banded Gaussian elimination for this system is stated as O(n\u00b7(N-1)\u00b2) = O(N\u2074), but with n = (N-1)\u00b2 \u2248 N\u00b2 unknowns and bandwidth N-1, the correct cost of banded LU is O(n\u00b7(N-1)\u00b2) = O(N\u00b2\u00b7N\u00b2) = O(N\u2074) \u2014 this arithmetic is internally consistent, but the MATLAB code's comment in block b4fcb288 says the backslash cost 'scales roughly as O(N\u00b3)', which contradicts the O(N\u2074) stated here; one of these two claims is wrong.",
+          "suggested_fix": "Reconcile: banded LU for this problem costs O(N\u2074) as stated in the bullet; update the code explanation block to say O(N\u2074) rather than O(N\u00b3)."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "b4fcb288-0ef4-414e-9a6a-32e80d8c76d4",
+          "description": "The paragraph states the sparse direct solver cost 'scales roughly as O(N\u00b3) for this banded structure', but banded Gaussian elimination on an (N-1)\u00b2\u00d7(N-1)\u00b2 matrix with bandwidth N-1 costs O((N-1)\u00b2\u00b7(N-1)\u00b2) = O(N\u2074), not O(N\u00b3).",
+          "suggested_fix": "Change 'O(N\u00b3)' to 'O(N\u2074)' to match the correct cost of banded LU factorization stated in the sparsity section."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "010ed434-ceb7-4bc5-8ae7-622c0f2c8bc9",
+          "description": "The paragraph in block 010ed434 introduces the exact Laplace solution u(x,y)=sin(\u03c0x)sinh(\u03c0y)/sinh(\u03c0) and describes the surface, but it is not grouped with the plot block 138daa65 that immediately follows it, even though it directly sets up what the plot shows.",
+          "suggested_fix": "Assign the same group_id to blocks 010ed434 and 138daa65 (and eb25b3ed) so they form a coherent grouped unit."
+        }
+      ]
+    },
+    {
+      "topic_id": "dfa7f728-59f4-4c0d-a9e6-1b0d0d5e549f",
+      "topic_slug": "finite-difference-heat-equation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8893,
+      "output_tokens": 1909,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.055871699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "d0944541-b5fc-4656-8134-bb376aa1e973",
+          "description": "The bullet block listing Forward Euler LTE and the following bullet block listing Backward Euler LTE are adjacent and coupled by meaning (they form a paired comparison) but share no group_id.",
+          "suggested_fix": "Assign both bullet blocks the same group_id so they are rendered as a unit."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "be1cc859-1de5-472d-99df-069c5a942346",
+          "description": "With r = 0.48, the diagonal of A_exp is 1 - 2(0.48) = 0.04 and off-diagonals are 0.48, which matches the displayed matrix \u2014 no error in the numerical values.",
+          "suggested_fix": null
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "72046f83-4103-4101-9c63-525a2aeebc10",
+          "description": "The opening paragraph is a high-level orientation that could apply to any parabolic PDE topic without naming any specific formula, scheme, or result unique to this topic.",
+          "suggested_fix": "Add a concrete forward reference to the CFL condition r \u2264 1/2 or the tridiagonal system to anchor the paragraph to this topic's specific content."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 45,
+    "cost": 1.1251872,
+    "in": 228934,
+    "out": 28259,
+    "cache_create": 0,
+    "cache_read": 48334,
+    "skipped": 0,
+    "severity_low": 5,
+    "severity_medium": 19,
+    "severity_high": 21
+  }
+}
