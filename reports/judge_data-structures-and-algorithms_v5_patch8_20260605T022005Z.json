@@ -1,0 +1,648 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-05T02:28:58.271114+00:00",
+  "topics": [
+    {
+      "topic_id": "a6cd1242-3507-4600-ab54-0e2131482ae5",
+      "topic_slug": "dsa-asymptotic-notation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4831,
+      "output_tokens": 565,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0235257,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "85bb0c7a-5b19-4a7c-8aaf-dab983a68305",
+      "topic_slug": "dsa-divide-and-conquer-recurrences",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7662,
+      "output_tokens": 776,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0351837,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "7f90b5c2-3f69-4a2a-8c2a-4ef1a960089a",
+      "topic_slug": "dsa-heaps",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5010,
+      "output_tokens": 1337,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0356427,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "015584d7-6abe-4d87-952c-87bbc47169e5",
+          "description": "The block claims a naive sorted list gives O(1) GetMax but O(n) insertion, and an unsorted list gives O(1) insertion but O(n) lookup \u2014 but the source chunk shows the sorted list has O(1) GetMax and O(n) insertion while the 'list with pointer to max' (unsorted with a max pointer) has O(1) GetMax and O(1) insertion; the block conflates these two structures and misrepresents the unsorted list's GetMax as O(n) lookup.",
+          "suggested_fix": "Clarify that a sorted list gives O(1) GetMax but O(n) insertion, while an unsorted list with a pointer to the max gives O(1) GetMax and O(1) insertion but O(n) deletion and ChangePriority, matching the source table."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "53e9bb18-2548-4103-a081-3aa76550db65",
+          "description": "The callout asks whether [1, 2, 2, 3, 7, 7, 8, 10] sorted in non-decreasing order is a valid max-heap; the hint says 'consider what position 1 holds in a non-decreasing vs. non-increasing sort,' implying the answer is nuanced, but the answer is clearly NO \u2014 H[1]=1 is the minimum, not the maximum, so the max-heap property H[i] \u2264 H[parent(i)] is violated immediately (e.g., H[2]=2 > H[1]=1). The hint is misleading because it suggests the answer depends on the sort direction rather than being a straightforward 'no'.",
+          "suggested_fix": "Simplify the hint to: 'What is H[1] in a non-decreasing sorted array? Is it the largest or smallest element? The max-heap property requires H[1] to be the maximum.'"
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "809cf8cc-effb-425d-9a53-08c24ed8ec9a",
+          "description": "The HeapifyUp pseudocode block (809cf8cc) is immediately followed by a paragraph (7f624dd0) that walks through a specific insertion example using that exact pseudocode, but the two blocks share no group_id.",
+          "suggested_fix": null
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "75d14787-747b-4725-996b-4f9c3a4c46c8",
+          "description": "The HeapifyDown pseudocode block (75d14787) is immediately followed by a paragraph (0802541f) that explicitly explains the logic of choosing the larger child in that pseudocode, but the two blocks share no group_id.",
+          "suggested_fix": null
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "3a02f8ab-f703-49b2-8532-0a007bb70730",
+          "description": "The BuildHeap pseudocode block (3a02f8ab) is immediately followed by a paragraph (9b0057c8) that explains why its complexity is O(n) rather than O(n log n), directly interpreting that algorithm, but the two blocks share no group_id.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "c716460c-d96b-4b8e-acba-5b62f3f17a78",
+      "topic_slug": "dsa-heapsort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3918,
+      "output_tokens": 654,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0221217,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "9072f571-3714-44ef-ab1a-0c3695daef9c",
+      "topic_slug": "dsa-quicksort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3352,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0108687,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "96b25d94-c33b-4274-91d8-3e8ff7cb0677",
+      "topic_slug": "dsa-mom-select",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5220,
+      "output_tokens": 547,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.024422700000000002,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "28450f95-d067-4de1-b9c3-1f25b1520885",
+      "topic_slug": "dsa-strassen",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5477,
+      "output_tokens": 1087,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.033293699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "broken_plot_spec",
+          "severity": "medium",
+          "block_id": "a0da690a-ce6e-4fb7-8b3f-7b055fb60f39",
+          "description": "The expression array uses `log(7)/log(2)` which is valid mathjs, but the expression `x^(log(7)/log(2))` should evaluate correctly; however, the first expression `x^3` paired with an array form \u2014 the plot spec uses an array `[\"x^3\", \"x^(log(7)/log(2))\"]` for the expression field, which is not a supported format for function2d (expects a single string expression, not an array).",
+          "suggested_fix": "Split into two separate function2d plot blocks, or confirm the renderer supports array expressions; if not, use a single expression and annotate the second curve separately."
+        }
+      ]
+    },
+    {
+      "topic_id": "e0069a95-8dae-40e8-9f40-ae0d4dc67b8e",
+      "topic_slug": "dsa-sorting-lower-bounds",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4468,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0142167,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "61691b1e-2002-4317-b6b0-3d79bd04cb0e",
+      "topic_slug": "dsa-graph-basics",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3327,
+      "output_tokens": 812,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0227187,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "0a3f5fc7-ae23-47a3-8545-c91cbb6e8edf",
+          "description": "The callout states that for a simple graph $|E| \\leq |V|^2$, but for a simple undirected graph the correct bound is $|E| \\leq \\binom{|V|}{2} = |V|(|V|-1)/2$, and for a simple directed graph $|E| \\leq |V|(|V|-1)$; neither allows $|V|^2$ edges in a simple graph (which forbids self-loops).",
+          "suggested_fix": "Change the bound to $|E| \\leq |V|(|V|-1)/2$ for undirected simple graphs, or note the directed case separately as $|E| \\leq |V|(|V|-1)$."
+        }
+      ]
+    },
+    {
+      "topic_id": "26cbda85-9d77-4941-a6fb-1a9bdf26e500",
+      "topic_slug": "dsa-dfs",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4821,
+      "output_tokens": 1048,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0307407,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "86ada1b5-5cda-45e7-901b-70a6f39509c9",
+          "description": "The display-math states a biconditional (\u27fa) between the interval nesting condition and 'w is an ancestor of v', but the source chunks state this as a one-directional fact ('If vertex w is an ancestor of vertex v \u2026 then pre[w] < pre[v] < post[v] < post[w]'); the converse is true in DFS trees but the source does not assert it as a biconditional, and more importantly the generated block's biconditional conflates tree-ancestor with the broader 'w is an ancestor of v' relationship without qualification.",
+          "suggested_fix": "Change the biconditional (\u27fa) to a one-directional implication (\u27f9) to match the source fact, or add a note that this holds specifically within the DFS tree."
+        }
+      ]
+    },
+    {
+      "topic_id": "11ad0046-1a8a-4be3-a06d-54f31229af97",
+      "topic_slug": "dsa-topological-sort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3634,
+      "output_tokens": 1013,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0266547,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "96331f21-b541-4a5c-879b-3ba865b3f786",
+          "description": "The worked example assigns post(C)=7, but if DFS starts at A and visits B before C, DFS would explore A\u2192B\u2192D (D finishes first, then B, then backtrack to A and visit C\u2192D, but D is already visited so C finishes next, then A finishes last), making a consistent assignment post(D)=2, post(B)=3, post(C)=5, post(A)=6 (or similar); the specific value post(C)=7 with post(B)=5 implies C finishes after B, which is consistent, but post(C)=7 and post(A)=8 leaves only one slot between them, while post(B)=5 and post(D)=4 are plausible \u2014 however with 4 vertices and 2n=8 timestamps, each vertex gets a pre and post, so valid timestamps are 1\u20138; post(A)=8, post(C)=7, post(B)=5, post(D)=4 would require pre(C) < 7 and pre(B) < 5, but pre(A)=1, and the sequence A(pre=1)\u2192B(pre=2)\u2192D(pre=3), D(post=4), B(post=5), back to A\u2192C(pre=6), C(post=7), A(post=8) is actually self-consistent and correct, so this is not an error.",
+          "suggested_fix": null
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "72e49dfe-0a23-47fd-9744-d3b2f69aea98",
+          "description": "The display-math block showing the complexity equation is immediately followed by block f1a6a8aa which explicitly interprets and extends that equation, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 72e49dfe and f1a6a8aa."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "300818a5-ba8f-447d-a091-ad3559b630ed",
+          "description": "The callout stating the post-number fact is immediately followed by block 5db73ac3 which explicitly proves that exact fact, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 300818a5 and 5db73ac3."
+        }
+      ]
+    },
+    {
+      "topic_id": "fca2ea25-8c15-4652-af09-73907c63baf8",
+      "topic_slug": "dsa-scc",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5671,
+      "output_tokens": 1028,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0329907,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "confusing_transition",
+          "severity": "medium",
+          "block_id": "c60aa34d-a4eb-4e1a-8cf6-bfcc995afe37",
+          "description": "The callout says SCCs are discovered in 'reverse topological order of the meta-graph', but block 0b0fab5e also says this without establishing what the topological order of the meta-graph is or why sink-first equals reverse topological order, creating a logical leap for learners.",
+          "suggested_fix": "Add a brief sentence explaining that topological order goes from source to sink, so discovering sink SCCs first is reverse topological order."
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "ab24b322-c09a-47eb-9675-ddeb47490c47",
+          "description": "The sentence 'Consider a directed graph G on vertices v1, v2, \u2026, v10. We apply Kosaraju's algorithm as follows.' is a boilerplate opener that adds no information beyond what the subsequent steps provide.",
+          "suggested_fix": "Delete this block or merge its content into the first step block."
+        }
+      ]
+    },
+    {
+      "topic_id": "8581a60e-301f-404d-a21c-75ed65f44724",
+      "topic_slug": "dsa-bfs",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3567,
+      "output_tokens": 8,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0113787,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "87c40aac-1c34-4222-aaf2-270be803f6fa",
+      "topic_slug": "dsa-2-colorability",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6702,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0208587,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "b66e1a60-ee11-41d5-a27f-c1a7f4feed9b",
+      "topic_slug": "dsa-dijkstra",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4296,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.013700700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "614955fd-93a6-40a5-8749-9caa9cdf81ae",
+      "topic_slug": "dsa-bellman-ford",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5083,
+      "output_tokens": 650,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0255567,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "a55c0e8f-6fd9-484b-8e27-11cf9d885dd8",
+      "topic_slug": "dsa-floyd-warshall",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5106,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0161307,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "62f74876-b1c5-4edc-9b93-f20c93f6b90b",
+      "topic_slug": "dsa-max-flow",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10242,
+      "output_tokens": 748,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0425037,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "116726c1-021d-45ee-97c8-a4e957a98db5",
+      "topic_slug": "dsa-lis",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8735,
+      "output_tokens": 743,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.037907699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "4b12e2e5-c31e-4004-834b-8e05513c7ca7",
+      "topic_slug": "dsa-edit-distance",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7777,
+      "output_tokens": 346,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0290787,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "4eba4701-fe9e-4a75-b776-7addf23751c6",
+      "topic_slug": "dsa-lcs",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8861,
+      "output_tokens": 1113,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0438357,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "7966575b-5e81-4cad-b27f-231b7417f439",
+          "description": "The block says 'remove duplicate values from L' only' (i.e., do not alter the original sequence L), but the source chunks state that to get strictly decreasing subsequences one should remove duplicates from L' (the sorted copy), not from L; the block correctly says remove duplicates from L' only and not from L, so this is actually consistent with the source.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "dfea5034-f406-4d90-8488-dac9bf8d04ca",
+      "topic_slug": "dsa-rna-secondary-structure",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8092,
+      "output_tokens": 580,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0335337,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "dfbc638c-decf-41f5-bd4e-da90fcdc4c45",
+      "topic_slug": "dsa-knapsack",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7569,
+      "output_tokens": 504,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0308247,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "b0d64fee-1328-4acd-990c-d207482c1f00",
+          "description": "The paragraph introducing the worked example (block b0d64fee) and the follow-up paragraph giving the result (block 34a688c9) are adjacent and tightly coupled \u2014 the second explicitly interprets the table computation started in the first \u2014 but they share no group_id.",
+          "suggested_fix": "Assign both blocks the same group_id, e.g., group=worked-example-w10."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "34a688c9-fb34-4b64-85fc-638c65ee425b",
+          "description": "Block 34a688c9 jumps from 'we want to compute P(4,10)' directly to 'after filling the table the optimal value is 14' with no intermediate table rows shown, leaving learners unable to verify the claim or understand how the table was filled.",
+          "suggested_fix": "Add at least a partial table trace (e.g., key rows for k=1 and k=4) between the problem setup and the final answer."
+        }
+      ]
+    },
+    {
+      "topic_id": "1d085190-854d-4bbf-b023-8b9b9137a5f0",
+      "topic_slug": "dsa-greedy-interval-scheduling",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6962,
+      "output_tokens": 789,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.033278699999999994,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "c76b03e7-5212-4742-8e80-949666a76ccf",
+      "topic_slug": "dsa-huffman-encoding",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6821,
+      "output_tokens": 586,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0298107,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "c27fd329-6deb-42b2-98c3-13716aefbe1f",
+      "topic_slug": "dsa-horn-formulas",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7049,
+      "output_tokens": 358,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0270747,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "4143ebda-f971-45f8-9ec2-a496f46a71dd",
+          "description": "The correctness argument states variables set to true were forced by implications starting from 'unconditionally-true clauses (empty-premise implications)' but does not clarify that forced variables can also be set by chains starting from other already-forced variables, which may confuse learners about the full scope of forward chaining.",
+          "suggested_fix": "Clarify that the chain can propagate through any sequence of implications, not only those rooted directly in empty-premise clauses."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "36eafc2a-3ce6-4801-b4c8-ef0a228aa866",
+          "description": "The unsatisfiable example paragraph walks through a specific computation (adding \u21d2z, forward chaining, detecting violation) but shares no group_id with any related block, and the step-by-step reasoning is embedded in prose without grouping to the formula it references.",
+          "suggested_fix": "Assign a shared group_id to the unsatisfiable example paragraph and any display-math block showing the extended formula, or at minimum group the prose with the original formula block it extends."
+        }
+      ]
+    },
+    {
+      "topic_id": "9065365a-eeca-4e43-951e-b8cd443a8ec4",
+      "topic_slug": "dsa-set-cover",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6473,
+      "output_tokens": 660,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0298767,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "cd54058f-6fef-4400-826d-5c1e9055f5e8",
+          "description": "The claim that greedy 'needs one set containing 5 (for example B or D) and one set containing 6 (set C)' is incorrect: after picking A, the remaining uncovered elements are {5, 6}, and C = {3,4,6} covers 6 but B = {1,2,5} covers 5 \u2014 however D = {5} covers only 5 and no set covers both 5 and 6 simultaneously, so greedy actually needs two more sets (e.g., B or D for element 5, and C for element 6), giving 3 total, which is stated correctly, but the description implies B covers only 5 when in fact B = {1,2,5} covers three elements and would be preferred over D by greedy; the prose misleadingly equates B and D as equivalent greedy choices when greedy would pick B (3 new elements vs 1).",
+          "suggested_fix": "Clarify that after picking A, greedy picks B (covering 2 new elements: 5, since 1 and 2 are already covered) over D (covering 1), then picks C for element 6, totaling 3 sets; or simplify the adversarial example so D is not present to avoid the confusion."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "cd54058f-6fef-4400-826d-5c1e9055f5e8",
+          "description": "After greedy picks A = {1,2,3,4}, the remaining uncovered elements are {5,6}, not just needing separate sets for 5 and 6 independently \u2014 B = {1,2,5} covers only 1 new element (5) at that point, and C = {3,4,6} covers only 1 new element (6), so greedy sees a three-way tie among B, C, and the implicit need; but D = {5} covers only 1 element, so greedy would prefer B over D, yet the prose presents them as equivalent alternatives, which is misleading.",
+          "suggested_fix": "Remove D from the adversarial example or explicitly note that at round 2 both B and C each cover exactly 1 new element ({5} and {6} respectively), so greedy picks one then the other, yielding 3 sets total versus the optimal {B,C} = 2 sets."
+        }
+      ]
+    },
+    {
+      "topic_id": "18b4269d-841f-400d-bc3a-b8ee402aeefd",
+      "topic_slug": "dsa-kruskal",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6941,
+      "output_tokens": 877,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.034535699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "34ec06ea-0000-0000-0000-000000000000",
+          "description": "This finding is about block 1a152d7c: the source chunk (chunk=34ec06ea) states 'Given an directed graph G=(V,E)' which is a typo in the source for 'undirected', and block 1a152d7c correctly says 'connected, undirected, weighted graph' \u2014 no error in the generated block.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "841c8fe2-b8b5-42e7-8577-ed6af58fca2a",
+      "topic_slug": "dsa-prim",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7881,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0244557,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "3524dd16-d4e4-488d-b6a5-87ae63c4108b",
+      "topic_slug": "dsa-mst-theory",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8796,
+      "output_tokens": 667,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.036950699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "67884828-61f9-466a-a87a-fd132d523a71",
+      "topic_slug": "dsa-union-find",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5951,
+      "output_tokens": 623,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0277557,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "88363650-a77c-4a05-99fd-cac7667b2052",
+      "topic_slug": "dsa-linear-programming",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8369,
+      "output_tokens": 938,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0397347,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "c84f39c7-9a5d-45b5-bada-360241a39f38",
+      "topic_slug": "dsa-binary-search",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7949,
+      "output_tokens": 1033,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.039899699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "9efbb7fb-b3f8-4469-bef5-1e15bdb5d6d6",
+          "description": "The display-math block showing B[i+1] \u2265 B[i] is immediately followed by block 8f9d00fe which explicitly interprets that inequality and derives the search direction logic, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 9efbb7fb and 8f9d00fe."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "2da0bc4c-9b6b-448d-8407-f00041cb6536",
+          "description": "The display-math block showing the rotated array example is immediately followed by block 241c9b51 which explicitly interprets it (identifying k=7 and the minimum index), but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 2da0bc4c and 241c9b51."
+        }
+      ]
+    },
+    {
+      "topic_id": "db8fb73c-a0d9-4117-8ed4-70d0aa083b86",
+      "topic_slug": "dsa-graph-modeling",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4222,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0134187,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "28a68be0-0ba5-4ef4-a297-05b8804b049f",
+      "topic_slug": "dsa-non-adjacent-dp",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8759,
+      "output_tokens": 393,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0327297,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    }
+  ],
+  "totals": {
+    "findings": 23,
+    "cost": 0.9872114999999999,
+    "in": 219594,
+    "out": 20594,
+    "cache_create": 0,
+    "cache_read": 65065,
+    "skipped": 0,
+    "severity_low": 3,
+    "severity_medium": 13,
+    "severity_high": 7
+  }
+}

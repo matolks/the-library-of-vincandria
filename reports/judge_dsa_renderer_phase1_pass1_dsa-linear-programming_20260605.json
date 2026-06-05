@@ -1,0 +1,48 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-05T11:09:41.076362+00:00",
+  "topics": [
+    {
+      "topic_id": "88363650-a77c-4a05-99fd-cac7667b2052",
+      "topic_slug": "dsa-linear-programming",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8369,
+      "output_tokens": 1075,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0417897,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "e474be61-0cbe-46d6-95d8-d0b02ac1a935",
+          "description": "The paragraph describes the feasible region as a convex polygon in the first quadrant bounded by two resource constraints, a geometric object that warrants a function2d plot of the constraint boundary lines, but no plot accompanies this description of the feasible region.",
+          "suggested_fix": "Add a function2d plot showing the two constraint lines (e.g., x2 = (24 - 6x1)/4 and x2 = (6 - x1)/2) over x in [0,5] to illustrate the feasible region boundary."
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "2af25770-f09c-4129-a1ca-dabbc9f10dba",
+          "description": "The sentence 'The power of LP lies in its generality: scheduling, resource allocation, network flow, and many combinatorial problems can all be cast as LPs, and the simplex method solves them efficiently in practice' is a boilerplate applications gloss that adds no specific content to the topic.",
+          "suggested_fix": "Remove or replace with a concrete statement about what the topic will cover."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 2,
+    "cost": 0.0417897,
+    "in": 8369,
+    "out": 1075,
+    "cache_create": 0,
+    "cache_read": 1859,
+    "skipped": 0,
+    "severity_low": 1,
+    "severity_medium": 0,
+    "severity_high": 1
+  }
+}

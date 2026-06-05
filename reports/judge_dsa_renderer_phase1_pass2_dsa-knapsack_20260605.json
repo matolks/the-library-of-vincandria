@@ -1,0 +1,55 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-05T11:11:38.521925+00:00",
+  "topics": [
+    {
+      "topic_id": "dfbc638c-decf-41f5-bd4e-da90fcdc4c45",
+      "topic_slug": "dsa-knapsack",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3,
+      "output_tokens": 491,
+      "cache_creation_tokens": 7566,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.036304199999999995,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "low",
+          "block_id": "5e5a56fc-b255-4510-80dc-b9ce82e52a0f",
+          "description": "The summary states greedy fails because of 'sort by value', but the greedy described in the topic sorts by value (v_i descending), not by value-to-weight ratio; the summary is accurate on that point but omits that other greedy variants (e.g., sort by v/w ratio) also fail \u2014 this is not an error per se, but the block correctly reflects the topic's greedy definition.",
+          "suggested_fix": null
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "b0d64fee-1328-4acd-990c-d207482c1f00",
+          "description": "The paragraph introducing the worked example (W=10, four items) is immediately followed by the result paragraph (block 34a688c9) but neither is grouped with the other, even though the second paragraph explicitly interprets the computation set up in the first.",
+          "suggested_fix": "Assign both blocks the same group_id so they are rendered as a coupled unit."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "low",
+          "block_id": "34a688c9-fb34-4b64-85fc-638c65ee425b",
+          "description": "Block 34a688c9 states 'After filling the table, the optimal value is P(4,10)=14' without showing any intermediate table rows, making the leap from setup to final answer abrupt for a section titled 'Tracing the DP Table'.",
+          "suggested_fix": "Either include a partial table trace (at least a few key rows) or retitle the section to 'Worked Example: Result' to match the actual content."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 3,
+    "cost": 0.036304199999999995,
+    "in": 3,
+    "out": 491,
+    "cache_create": 7566,
+    "cache_read": 1859,
+    "skipped": 0,
+    "severity_low": 2,
+    "severity_medium": 1,
+    "severity_high": 0
+  }
+}

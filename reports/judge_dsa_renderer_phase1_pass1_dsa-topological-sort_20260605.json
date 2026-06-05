@@ -1,0 +1,48 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-05T11:08:07.296335+00:00",
+  "topics": [
+    {
+      "topic_id": "11ad0046-1a8a-4be3-a06d-54f31229af97",
+      "topic_slug": "dsa-topological-sort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3634,
+      "output_tokens": 550,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0197097,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "96331f21-b541-4a5c-879b-3ba865b3f786",
+          "description": "The worked example assigns post(C)=7, but in the described DFS traversal starting at A that visits B before C, DFS would explore A\u2192B\u2192D (D finishes first, post(D)=2 or similar), then backtrack to B (post(B)), then backtrack to A and visit C\u2192D (D already visited), so C would finish before B, not after; assigning post(C)=7 and post(B)=5 is inconsistent with visiting B before C in a standard DFS on A\u2192B\u2192D, A\u2192C\u2192D, because B's subtree (including D) must finish before C is even started, making post(B) > post(C) impossible when B is visited first.",
+          "suggested_fix": "If DFS visits B before C, then B's subtree finishes before C is explored, so post(B) > post(C); swap the assignments to post(B)=7 and post(C)=5 (or renumber consistently) so the example is self-consistent."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "74f39375-b931-4101-bdcf-50d727fa6afb",
+          "description": "The paragraph concludes the topological order is A, C, B, D from the post numbers post(A)=8, post(C)=7, post(B)=5, post(D)=4, but if DFS visits B before C (as stated), the correct decreasing-post-number order consistent with that traversal would be A, B, C, D (with post(B) > post(C)), not A, C, B, D.",
+          "suggested_fix": "Correct the post-number assignments so they are consistent with visiting B before C, yielding the order A, B, C, D, or change the narrative to say DFS visits C before B to justify post(C)=7 > post(B)=5."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 2,
+    "cost": 0.0197097,
+    "in": 3634,
+    "out": 550,
+    "cache_create": 0,
+    "cache_read": 1859,
+    "skipped": 0,
+    "severity_low": 0,
+    "severity_medium": 0,
+    "severity_high": 2
+  }
+}

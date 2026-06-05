@@ -1,0 +1,33 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-05T11:08:42.516297+00:00",
+  "topics": [
+    {
+      "topic_id": "dfbc638c-decf-41f5-bd4e-da90fcdc4c45",
+      "topic_slug": "dsa-knapsack",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7569,
+      "output_tokens": 380,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0289647,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    }
+  ],
+  "totals": {
+    "findings": 0,
+    "cost": 0.0289647,
+    "in": 7569,
+    "out": 380,
+    "cache_create": 0,
+    "cache_read": 1859,
+    "skipped": 0,
+    "severity_low": 0,
+    "severity_medium": 0,
+    "severity_high": 0
+  }
+}

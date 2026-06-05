@@ -1,0 +1,55 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-05T11:12:31.423727+00:00",
+  "topics": [
+    {
+      "topic_id": "88363650-a77c-4a05-99fd-cac7667b2052",
+      "topic_slug": "dsa-linear-programming",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3,
+      "output_tokens": 1034,
+      "cache_creation_tokens": 8366,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0474492,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "2af25770-f09c-4129-a1ca-dabbc9f10dba",
+          "description": "The sentence 'The power of LP lies in its generality: scheduling, resource allocation, network flow, and many combinatorial problems can all be cast as LPs, and the simplex method solves them efficiently in practice' is a boilerplate applications gloss that adds no specific content to the topic.",
+          "suggested_fix": "Remove or replace with a concrete statement about what the topic will cover step by step."
+        },
+        {
+          "category": "missing_plot",
+          "severity": "high",
+          "block_id": "e474be61-0cbe-46d6-95d8-d0b02ac1a935",
+          "description": "The paragraph describes the feasible region as a convex polygon in the first quadrant bounded by two resource constraints, a specific geometric object that a learner needs to visualize, but no function2d plot of the constraint boundary lines is provided alongside this description.",
+          "suggested_fix": "Add a function2d plot showing the two constraint lines (x2 = (24 - 6*x1)/4 and x2 = (6 - x1)/2) over x in [0,4] to illustrate the feasible polygon."
+        },
+        {
+          "category": "confusing_transition",
+          "severity": "medium",
+          "block_id": "be6f71c8-ccef-466b-a13e-dd6db4d7eedf",
+          "description": "The plot block shows only the single optimal iso-profit line with no constraint lines or feasible region, yet the preceding paragraph (9a207894) describes the simplex method walking along vertices of the feasible polygon, creating a confusing gap between the geometric description and what is actually shown.",
+          "suggested_fix": "Either add constraint boundary lines to the plot or clarify in the caption that only the optimal objective line is shown and the feasible region is not depicted."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 3,
+    "cost": 0.0474492,
+    "in": 3,
+    "out": 1034,
+    "cache_create": 8366,
+    "cache_read": 1859,
+    "skipped": 0,
+    "severity_low": 1,
+    "severity_medium": 1,
+    "severity_high": 1
+  }
+}

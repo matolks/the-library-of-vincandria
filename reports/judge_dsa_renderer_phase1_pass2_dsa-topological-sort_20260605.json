@@ -1,0 +1,48 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-05T11:11:03.924691+00:00",
+  "topics": [
+    {
+      "topic_id": "11ad0046-1a8a-4be3-a06d-54f31229af97",
+      "topic_slug": "dsa-topological-sort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3,
+      "output_tokens": 437,
+      "cache_creation_tokens": 3631,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.02073795,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "96331f21-b541-4a5c-879b-3ba865b3f786",
+          "description": "In the worked example with edges A\u2192B\u2192D and A\u2192C\u2192D, if DFS starts at A and visits B before C, post(C)=7 is inconsistent: after finishing B (post=5) and D (post=4), DFS would backtrack to A and then visit C\u2192D, but D is already visited so C would finish immediately after, giving post(C)=6, not 7; post(A) would then be 7, not 8.",
+          "suggested_fix": "Reassign post numbers consistently with the stated DFS order: post(D)=2, post(B)=3, post(C)=5, post(A)=6 (using 1-indexed pre/post pairs), or use a self-consistent numbering such as post(D)=1, post(B)=2, post(C)=3, post(A)=4 in a simplified scheme, and update the bullet list accordingly."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "72e49dfe-0a23-47fd-9744-d3b2f69aea98",
+          "description": "The display-math block showing the complexity equation is immediately followed by paragraph f1a6a8aa which explicitly interprets and extends that equation, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 72e49dfe and f1a6a8aa."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 2,
+    "cost": 0.02073795,
+    "in": 3,
+    "out": 437,
+    "cache_create": 3631,
+    "cache_read": 1859,
+    "skipped": 0,
+    "severity_low": 0,
+    "severity_medium": 1,
+    "severity_high": 1
+  }
+}

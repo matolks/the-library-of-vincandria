@@ -1,0 +1,41 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-05T11:08:30.275018+00:00",
+  "topics": [
+    {
+      "topic_id": "fca2ea25-8c15-4652-af09-73907c63baf8",
+      "topic_slug": "dsa-scc",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5671,
+      "output_tokens": 1139,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0346557,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "confusing_transition",
+          "severity": "medium",
+          "block_id": "55899718-9ce1-4bd9-bf54-374eefe36c31",
+          "description": "Block 55899718 states the vertex with the highest post number in a DFS of 'the original graph' lies in a source SCC, then immediately says 'To flip this, we run DFS on the reverse graph instead' \u2014 but the next block (9b659203) discusses the highest post number in G^R lying in a source SCC of G^R; the transition never explicitly states that pass 1 is on G^R, leaving a learner uncertain whether the first DFS is on G or G^R.",
+          "suggested_fix": "Add a sentence explicitly stating: 'Therefore, in Kosaraju's algorithm, pass 1 runs DFS on G^R (not G), so the vertex finishing last is in a source SCC of G^R and hence a sink SCC of G.'"
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 1,
+    "cost": 0.0346557,
+    "in": 5671,
+    "out": 1139,
+    "cache_create": 0,
+    "cache_read": 1859,
+    "skipped": 0,
+    "severity_low": 0,
+    "severity_medium": 1,
+    "severity_high": 0
+  }
+}

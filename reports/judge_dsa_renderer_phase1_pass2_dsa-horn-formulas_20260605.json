@@ -1,0 +1,48 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-05T11:11:51.918949+00:00",
+  "topics": [
+    {
+      "topic_id": "c27fd329-6deb-42b2-98c3-13716aefbe1f",
+      "topic_slug": "dsa-horn-formulas",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3,
+      "output_tokens": 457,
+      "cache_creation_tokens": 7046,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0338442,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "4143ebda-f971-45f8-9ec2-a496f46a71dd",
+          "description": "The correctness argument states that variables set to true were forced by chains starting from 'unconditionally-true clauses (empty-premise implications)' and that any satisfying assignment \u03c3 must also set those same variables to true \u2014 but this is only true for variables reachable from empty-premise clauses; variables can also be forced by chains starting from variables that \u03c3 happens to set true for other reasons, so the argument as stated is incomplete and potentially misleading about why \u03c3 must agree with the algorithm's forced assignments.",
+          "suggested_fix": "Clarify that the inductive argument is: any satisfying \u03c3 must set to true every variable the algorithm sets to true, proved by induction on the order of forcing \u2014 base case is empty-premise clauses (\u03c3 must satisfy them), and inductive step is that if \u03c3 sets all premise variables true, it must set the head true too."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "8b34da28-34ed-4472-998a-38932bb74192",
+          "description": "The display-math block [54fe1019] showing the Horn formula is immediately followed by a paragraph [8b34da28] that explicitly interprets specific clauses of that formula (identifying the empty-premise clause and the negative clauses), but the paragraph does not share the same group_id as the display-math block.",
+          "suggested_fix": "Add both block 54fe1019 and block 8b34da28 to the same group_id (e.g., extend the existing worked-example-group or create a new one)."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 2,
+    "cost": 0.0338442,
+    "in": 3,
+    "out": 457,
+    "cache_create": 7046,
+    "cache_read": 1859,
+    "skipped": 0,
+    "severity_low": 0,
+    "severity_medium": 1,
+    "severity_high": 1
+  }
+}

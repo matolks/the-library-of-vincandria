@@ -1,0 +1,48 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-05T11:13:01.864939+00:00",
+  "topics": [
+    {
+      "topic_id": "c84f39c7-9a5d-45b5-bada-360241a39f38",
+      "topic_slug": "dsa-binary-search",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3,
+      "output_tokens": 1360,
+      "cache_creation_tokens": 7946,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.050764199999999995,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "9efbb7fb-b3f8-4469-bef5-1e15bdb5d6d6",
+          "description": "The display-math block showing B[i+1] \u2265 B[i] is immediately followed by block 8f9d00fe which explicitly interprets that exact equation and derives the consequence for binary search, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 9efbb7fb and 8f9d00fe."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "2da0bc4c-9b6b-448d-8407-f00041cb6536",
+          "description": "The display-math block showing the rotated array example is immediately followed by block 241c9b51 which explicitly interprets that array (identifying k=7 and the minimum index), but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 2da0bc4c and 241c9b51."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 2,
+    "cost": 0.050764199999999995,
+    "in": 3,
+    "out": 1360,
+    "cache_create": 7946,
+    "cache_read": 1859,
+    "skipped": 0,
+    "severity_low": 0,
+    "severity_medium": 2,
+    "severity_high": 0
+  }
+}

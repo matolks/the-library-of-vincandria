@@ -1,0 +1,41 @@
+{
+  "course_slug": "numerical-computation",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-05T01:21:31.477665+00:00",
+  "topics": [
+    {
+      "topic_id": "8fe56866-e853-457c-bc59-5a4118b35610",
+      "topic_slug": "matlab-programming-numerical-methods",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9243,
+      "output_tokens": 895,
+      "cache_creation_tokens": 1859,
+      "cache_read_tokens": 0,
+      "usd_cost": 0.04812525,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "8446538d-45c5-4624-a4f8-99a9840d54e9",
+          "description": "The block states that quad applies 'adaptive Simpson quadrature', but Matlab's quad uses adaptive recursive Simpson's rule while integral (its successor) uses adaptive Gauss-Kronrod quadrature; calling both 'adaptive Simpson' is misleading for integral.",
+          "suggested_fix": "State that quad uses adaptive recursive Simpson's rule, and that integral uses adaptive Gauss-Kronrod quadrature."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 1,
+    "cost": 0.04812525,
+    "in": 9243,
+    "out": 895,
+    "cache_create": 1859,
+    "cache_read": 0,
+    "skipped": 0,
+    "severity_low": 0,
+    "severity_medium": 0,
+    "severity_high": 1
+  }
+}

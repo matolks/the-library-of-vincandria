@@ -1,0 +1,41 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-05T11:07:53.242674+00:00",
+  "topics": [
+    {
+      "topic_id": "28450f95-d067-4de1-b9c3-1f25b1520885",
+      "topic_slug": "dsa-strassen",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5477,
+      "output_tokens": 1127,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0338937,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "broken_plot_spec",
+          "severity": "medium",
+          "block_id": "a0da690a-ce6e-4fb7-8b3f-7b055fb60f39",
+          "description": "The plot expression uses an array [\"x^3\", \"x^(log(7)/log(2))\"] but the function2d kind expects a single expression string, not an array; additionally it is unclear whether the renderer supports multi-series arrays in this format.",
+          "suggested_fix": "Split into two separate function2d plot blocks, one with expression \"x^3\" and one with \"x^(log(7)/log(2))\", or confirm the renderer supports array expressions."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 1,
+    "cost": 0.0338937,
+    "in": 5477,
+    "out": 1127,
+    "cache_create": 0,
+    "cache_read": 1859,
+    "skipped": 0,
+    "severity_low": 0,
+    "severity_medium": 1,
+    "severity_high": 0
+  }
+}

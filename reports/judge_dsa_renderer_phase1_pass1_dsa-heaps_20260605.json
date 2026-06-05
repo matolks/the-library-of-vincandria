@@ -1,0 +1,41 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-05T11:07:25.804810+00:00",
+  "topics": [
+    {
+      "topic_id": "7f90b5c2-3f69-4a2a-8c2a-4ef1a960089a",
+      "topic_slug": "dsa-heaps",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5010,
+      "output_tokens": 1303,
+      "cache_creation_tokens": 1859,
+      "cache_read_tokens": 0,
+      "usd_cost": 0.04154625,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "53e9bb18-2548-4103-a081-3aa76550db65",
+          "description": "The callout asks whether [1, 2, 2, 3, 7, 7, 8, 10] (non-decreasing) is a valid max-heap, with a hint implying the answer relates to non-increasing sort; an array sorted in non-decreasing order has its smallest element at the root (H[1]=1) and largest at the end, which clearly violates the max-heap property (root must be maximum), so the answer is 'no' \u2014 but the hint 'consider what position 1 holds in a non-decreasing vs. non-increasing sort' is misleading because it suggests the answer might be nuanced, when in fact any non-decreasing sorted array with distinct elements trivially fails the max-heap property at the root.",
+          "suggested_fix": null
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 1,
+    "cost": 0.04154625,
+    "in": 5010,
+    "out": 1303,
+    "cache_create": 1859,
+    "cache_read": 0,
+    "skipped": 0,
+    "severity_low": 0,
+    "severity_medium": 0,
+    "severity_high": 1
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-05T11:11:25.262199+00:00",
+  "topics": [
+    {
+      "topic_id": "fca2ea25-8c15-4652-af09-73907c63baf8",
+      "topic_slug": "dsa-scc",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3,
+      "output_tokens": 1047,
+      "cache_creation_tokens": 5668,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.037526699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "99f3b810-be7f-4d0d-b9b1-b480b3e74018",
+          "description": "The pitfall block states 'Running the first DFS on G instead of G^R' will cause failure, but Kosaraju's algorithm can equivalently be stated as: run DFS on G first to get post-order, then run DFS on G^R in decreasing post-order \u2014 this is a valid alternative formulation, so claiming the first DFS must be on G^R (and that doing it on G 'will fail') is a factual error; the algorithm works correctly either way as long as the second pass uses the transposed graph.",
+          "suggested_fix": "Restate the pitfall as: 'Running both DFS passes on the same graph (either both on G or both on G^R) without transposing for one pass will cause failure; the two passes must use G and G^R respectively.'"
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 1,
+    "cost": 0.037526699999999996,
+    "in": 3,
+    "out": 1047,
+    "cache_create": 5668,
+    "cache_read": 1859,
+    "skipped": 0,
+    "severity_low": 0,
+    "severity_medium": 0,
+    "severity_high": 1
+  }
+}

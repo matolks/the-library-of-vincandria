@@ -1,0 +1,55 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-05T11:09:01.994535+00:00",
+  "topics": [
+    {
+      "topic_id": "c27fd329-6deb-42b2-98c3-13716aefbe1f",
+      "topic_slug": "dsa-horn-formulas",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7049,
+      "output_tokens": 714,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0324147,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "4143ebda-f971-45f8-9ec2-a496f46a71dd",
+          "description": "The correctness argument states that variables set to true were forced by implications starting from 'unconditionally-true clauses (empty-premise implications)' and that any satisfying assignment \u03c3 must also set those variables to true \u2014 but this is only true for variables directly forced by empty-premise clauses; variables forced by chains of implications from those roots are not necessarily true in every satisfying assignment (a satisfying assignment could set some intermediate or downstream variable to true for a different reason, or the chain argument needs to be stated inductively). More critically, the argument as written claims \u03c3 'must also set those variables to true' without establishing the inductive step that \u03c3 must satisfy each link in the implication chain, making the proof sketch incomplete and potentially misleading.",
+          "suggested_fix": "Revise to state the argument inductively: the base case is that empty-premise clauses force a variable true in every satisfying assignment; the inductive step is that if all premises of an implication are forced true in every satisfying assignment, the head must also be true in every satisfying assignment \u2014 therefore the greedy assignment is a subset of every satisfying assignment."
+        },
+        {
+          "category": "prereq_gap",
+          "severity": "medium",
+          "block_id": "427b739e-2aae-4061-8e7a-0e70ba200484",
+          "description": "The block uses 'CNF formula', 'literal', 'clause', and 'SAT' as foundational concepts without introduction, but the only listed prerequisite is interval scheduling \u2014 a learner with only that background would not know these propositional-logic terms.",
+          "suggested_fix": "Add a brief definitional sentence for literal, clause, and CNF before using them, or add propositional logic / Boolean satisfiability as a prerequisite."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "54fe1019-b36d-493d-b7b3-9ae96037925a",
+          "description": "The display-math block (id=54fe1019) listing the Horn formula is immediately followed by a paragraph (id=8b34da28) that explicitly interprets specific clauses in that formula, but both blocks share group_id 'worked-example-group' while the step-by-step trace blocks (ids 405526e7 onward) that walk through the computation of that exact formula are outside the group, breaking the coupling.",
+          "suggested_fix": "Extend the 'worked-example-group' group_id to cover all numbered trace blocks (405526e7 through 73b697c6) and the concluding callout (148156f6) so the full worked example is grouped together."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 3,
+    "cost": 0.0324147,
+    "in": 7049,
+    "out": 714,
+    "cache_create": 0,
+    "cache_read": 1859,
+    "skipped": 0,
+    "severity_low": 0,
+    "severity_medium": 2,
+    "severity_high": 1
+  }
+}

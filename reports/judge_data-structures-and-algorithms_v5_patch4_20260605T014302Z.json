@@ -1,0 +1,639 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-05T01:51:04.181951+00:00",
+  "topics": [
+    {
+      "topic_id": "a6cd1242-3507-4600-ab54-0e2131482ae5",
+      "topic_slug": "dsa-asymptotic-notation",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4826,
+      "output_tokens": 646,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0247257,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "85bb0c7a-5b19-4a7c-8aaf-dab983a68305",
+      "topic_slug": "dsa-divide-and-conquer-recurrences",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7660,
+      "output_tokens": 903,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.037082699999999996,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "7f90b5c2-3f69-4a2a-8c2a-4ef1a960089a",
+      "topic_slug": "dsa-heaps",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5014,
+      "output_tokens": 895,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0290247,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "c716460c-d96b-4b8e-acba-5b62f3f17a78",
+      "topic_slug": "dsa-heapsort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3918,
+      "output_tokens": 654,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0221217,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "9072f571-3714-44ef-ab1a-0c3695daef9c",
+      "topic_slug": "dsa-quicksort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3352,
+      "output_tokens": 316,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.015353700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "c6e45aa2-e9fb-46c8-921b-d852d16634a9",
+          "description": "The display-math block for the worst-case recurrence is immediately followed by a paragraph (36a7ebe8) that explicitly interprets that equation and explains the unrolling, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks c6e45aa2 and 36a7ebe8 so they are rendered as a coupled unit."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "bd449880-39ae-42a2-a72a-695ce4f7b47b",
+          "description": "The display-math block for the 10%/90% unbalanced-split recurrence is immediately followed by a paragraph (180e791d) that explicitly interprets its depth and cost, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks bd449880 and 180e791d."
+        }
+      ]
+    },
+    {
+      "topic_id": "96b25d94-c33b-4274-91d8-3e8ff7cb0677",
+      "topic_slug": "dsa-mom-select",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5229,
+      "output_tokens": 902,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0297747,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "28450f95-d067-4de1-b9c3-1f25b1520885",
+      "topic_slug": "dsa-strassen",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5477,
+      "output_tokens": 1054,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0327987,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "broken_plot_spec",
+          "severity": "medium",
+          "block_id": "a0da690a-ce6e-4fb7-8b3f-7b055fb60f39",
+          "description": "The expression array uses `log(7)/log(2)` which is valid mathjs, but the expression `x^(log(7)/log(2))` should evaluate correctly; however, the expression is passed as a JSON array `[\"x^3\", \"x^(log(7)/log(2))\"]` and it is unclear if the function2d renderer supports an array of expressions rather than a single string expression \u2014 if only a single expression string is supported, the spec is malformed.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "e0069a95-8dae-40e8-9f40-ae0d4dc67b8e",
+      "topic_slug": "dsa-sorting-lower-bounds",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4468,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0142167,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "61691b1e-2002-4317-b6b0-3d79bd04cb0e",
+      "topic_slug": "dsa-graph-basics",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3327,
+      "output_tokens": 780,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0222387,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "0a3f5fc7-ae23-47a3-8545-c91cbb6e8edf",
+          "description": "The callout states that for a simple graph $|E| \\leq |V|^2$, but for a simple undirected graph the correct bound is $|E| \\leq |V|(|V|-1)/2$, and for a simple directed graph $|E| \\leq |V|(|V|-1)$; neither allows $|V|^2$ edges in a simple graph (which forbids self-loops).",
+          "suggested_fix": "Replace $|E| \\leq |V|^2$ with $|E| \\leq |V|(|V|-1)/2$ for undirected simple graphs, or note the directed bound $|E| \\leq |V|(|V|-1)$."
+        }
+      ]
+    },
+    {
+      "topic_id": "26cbda85-9d77-4941-a6fb-1a9bdf26e500",
+      "topic_slug": "dsa-dfs",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4802,
+      "output_tokens": 692,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0253437,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "11ad0046-1a8a-4be3-a06d-54f31229af97",
+      "topic_slug": "dsa-topological-sort",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3634,
+      "output_tokens": 633,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0209547,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "96331f21-b541-4a5c-879b-3ba865b3f786",
+          "description": "The worked example assigns post(C)=7, but if DFS starts at A, visits B before C, and the graph is A\u2192B\u2192D and A\u2192C\u2192D, then after finishing D (post=4) and B (post=5), DFS backtracks to A and visits C; C then visits D (already visited), so C finishes next \u2014 post(C) should be 6, not 7, and post(A) should be 7, not 8, given only 4 vertices yielding post numbers 1\u20138 with the described traversal order.",
+          "suggested_fix": "Reassign post numbers consistently: post(D)=2, post(B)=3, post(C)=5, post(A)=6 (or another self-consistent assignment), and update the surrounding bullets and explanation to match."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "72e49dfe-0a23-47fd-9744-d3b2f69aea98",
+          "description": "The display-math block showing the complexity equation is immediately followed by block f1a6a8aa which explicitly interprets and extends that equation, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 72e49dfe and f1a6a8aa."
+        }
+      ]
+    },
+    {
+      "topic_id": "fca2ea25-8c15-4652-af09-73907c63baf8",
+      "topic_slug": "dsa-scc",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5671,
+      "output_tokens": 875,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0306957,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "8581a60e-301f-404d-a21c-75ed65f44724",
+      "topic_slug": "dsa-bfs",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3567,
+      "output_tokens": 8,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0113787,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "87c40aac-1c34-4222-aaf2-270be803f6fa",
+      "topic_slug": "dsa-2-colorability",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6702,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0208587,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "b66e1a60-ee11-41d5-a27f-c1a7f4feed9b",
+      "topic_slug": "dsa-dijkstra",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4296,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.013700700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "614955fd-93a6-40a5-8749-9caa9cdf81ae",
+      "topic_slug": "dsa-bellman-ford",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5083,
+      "output_tokens": 800,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0278067,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "a55c0e8f-6fd9-484b-8e27-11cf9d885dd8",
+      "topic_slug": "dsa-floyd-warshall",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5106,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0161307,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "62f74876-b1c5-4edc-9b93-f20c93f6b90b",
+      "topic_slug": "dsa-max-flow",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 10242,
+      "output_tokens": 844,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.043943699999999995,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "3f5f3f5a-0787-4c93-8d6e-4456fe3f0c46",
+      "topic_slug": "dsa-dp-fundamentals",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8258,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0255867,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "116726c1-021d-45ee-97c8-a4e957a98db5",
+      "topic_slug": "dsa-lis",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8735,
+      "output_tokens": 375,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0323877,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "4b12e2e5-c31e-4004-834b-8e05513c7ca7",
+      "topic_slug": "dsa-edit-distance",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7777,
+      "output_tokens": 559,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0322737,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "4eba4701-fe9e-4a75-b776-7addf23751c6",
+      "topic_slug": "dsa-lcs",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8866,
+      "output_tokens": 1123,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0440007,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "7966575b-5e81-4cad-b27f-231b7417f439",
+          "description": "The step says to sort the 'distinct values of L' in descending order and remove duplicates from L', but the source chunks indicate the correct procedure is to sort a full copy of L in descending order (not just distinct values), and then separately remove duplicates from L' only when strict decrease is required \u2014 conflating the two steps misrepresents the algorithm by implying distinct-value sorting is always done first.",
+          "suggested_fix": "Rewrite as: 'Create a copy L\u2032 of L sorted in descending order. If strictly decreasing is required, additionally remove duplicate values from L\u2032.'"
+        }
+      ]
+    },
+    {
+      "topic_id": "dfea5034-f406-4d90-8488-dac9bf8d04ca",
+      "topic_slug": "dsa-rna-secondary-structure",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8094,
+      "output_tokens": 1021,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.040154699999999995,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "67fc4f1e-b75c-4fff-a4c3-23dffe5b9d3d",
+          "description": "The block claims pair (2,7) lies 'entirely within [2,7]', but (2,7) spans exactly the interval [2,7] and is not nested inside it; only (4,6) is nested inside (2,7), while (2,7) is nested inside (1,8).",
+          "suggested_fix": "Restate as: pair (1,8) contains (2,7) entirely within [2,7], and (4,6) is nested inside (2,7) within [3,6]; no pair straddles the boundary of another."
+        }
+      ]
+    },
+    {
+      "topic_id": "dfbc638c-decf-41f5-bd4e-da90fcdc4c45",
+      "topic_slug": "dsa-knapsack",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7569,
+      "output_tokens": 393,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0291597,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "1d085190-854d-4bbf-b023-8b9b9137a5f0",
+      "topic_slug": "dsa-greedy-interval-scheduling",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6962,
+      "output_tokens": 704,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0320037,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "c76b03e7-5212-4742-8e80-949666a76ccf",
+      "topic_slug": "dsa-huffman-encoding",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6821,
+      "output_tokens": 530,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.028970700000000002,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "c27fd329-6deb-42b2-98c3-13716aefbe1f",
+      "topic_slug": "dsa-horn-formulas",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7048,
+      "output_tokens": 501,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0292167,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "prereq_gap",
+          "severity": "medium",
+          "block_id": "427b739e-2aae-4061-8e7a-0e70ba200484",
+          "description": "The block uses 'CNF formula', 'literal', 'clause', and 'propositional formula' as foundational concepts without introducing them, but the only listed prerequisite is interval scheduling \u2014 a learner with that background would not know these logic terms.",
+          "suggested_fix": "Add a brief inline definition of literal, clause, and CNF before using them, or add a logic/propositional-satisfiability prerequisite."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "54fe1019-b36d-493d-b7b3-9ae96037925a",
+          "description": "The display-math block listing the Horn formula clauses is immediately followed by block 8b34da28 which explicitly interprets each clause (identifying the empty-premise clause and the negative clauses), but the two blocks do not share a group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 54fe1019 and 8b34da28 so they are rendered as a coupled unit."
+        },
+        {
+          "category": "generic_prose",
+          "severity": "low",
+          "block_id": "ac3a5b2d-7bf2-48c6-a317-e37d48da8f46",
+          "description": "The sentence 'General SAT and 3-SAT are NP-complete: no polynomial-time algorithm is known' and the mention of 2-SAT being 'outside this topic' add no information beyond what the following callout already summarizes, making this paragraph deletable without loss.",
+          "suggested_fix": "Remove the paragraph and rely on the summary callout (76dac448) alone, or merge the unique content into the callout."
+        }
+      ]
+    },
+    {
+      "topic_id": "9065365a-eeca-4e43-951e-b8cd443a8ec4",
+      "topic_slug": "dsa-set-cover",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6462,
+      "output_tokens": 1010,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0350937,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "prereq_gap",
+          "severity": "medium",
+          "block_id": "84bdfcf6-46bf-461b-9888-e1214c89866a",
+          "description": "The concept of approximation algorithms and approximation ratio is introduced and used without prior definition, but it is not listed as a prerequisite and is not defined before this point in the topic.",
+          "suggested_fix": "Add a brief inline definition of 'approximation algorithm' and 'approximation ratio' before or within this block."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "161bd3e9-c561-4a56-950b-1b1c6bf65a8c",
+          "description": "The formal argument callout (block 161bd3e9) directly continues and formalizes the proof sketch in the immediately preceding paragraph (block b9cfdff0), but the two blocks share no group_id.",
+          "suggested_fix": "Assign both blocks b9cfdff0 and 161bd3e9 the same group_id (e.g., 'proof-sketch-group')."
+        }
+      ]
+    },
+    {
+      "topic_id": "18b4269d-841f-400d-bc3a-b8ee402aeefd",
+      "topic_slug": "dsa-kruskal",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6941,
+      "output_tokens": 773,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0329757,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "02a6c9ec-35b9-4f11-820b-5dd47f43be08",
+          "description": "The correctness argument claims that among edges crossing the cut (S, V\\S), e* is 'the lightest one available in sorted order,' but this is not precisely correct: Kruskal's processes edges globally in sorted order, so e* is the lightest edge overall that crosses some cut separating two different components \u2014 it need not be the lightest crossing edge for the specific cut (S, V\\S) among all edges in E, only among those not yet rejected; the argument as stated could be read as claiming e* is the minimum-weight cut edge for that specific cut among all graph edges, which is what the cut property actually requires and is true, but the phrase 'available in sorted order' introduces an unnecessary and potentially misleading qualification.",
+          "suggested_fix": null
+        }
+      ]
+    },
+    {
+      "topic_id": "841c8fe2-b8b5-42e7-8577-ed6af58fca2a",
+      "topic_slug": "dsa-prim",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7881,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0244557,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "3524dd16-d4e4-488d-b6a5-87ae63c4108b",
+      "topic_slug": "dsa-mst-theory",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8796,
+      "output_tokens": 829,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0393807,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "cb0b3f18-f9e4-48f0-97a6-54819e3b2cf9",
+          "description": "The block states the MST problem is defined on a 'connected, undirected graph', but the source chunk (chunk=34ec06ea) explicitly states 'Given an directed graph G = (V,E)' \u2014 however, the source chunk itself appears to have a typo and the rest of the course material consistently treats MST on undirected graphs; the real issue is that the source chunk chunk=3a12106b and the problem setup in chunk=34ec06ea do not require the graph to be connected as a precondition (a spanning tree exists iff the graph is connected, so it is implied but not always stated as a precondition). This is not a material error. Separately, the block says Kruskal's exploits 'pick |V|-1 acyclic edges' and Prim's exploits 'pick |V|-1 edges that keep all vertices connected', which matches the source correctly.",
+          "suggested_fix": null
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "022ff7ba-7ea2-4ca3-a41f-27ece4a443d7",
+          "description": "The block claims 'any lighter edge crossing C would also span two different components and would have been chosen earlier', but this is only true if the lighter edge has not already been added to E1 or rejected for creating a cycle; a lighter edge crossing C could have been rejected because it connected two vertices within the same component Si, meaning it would not have been chosen earlier \u2014 the argument as stated is not fully correct and could mislead learners.",
+          "suggested_fix": "Clarify that any lighter edge crossing C either was already added to E1 (impossible since E1 has no edges crossing C) or was rejected for creating a cycle within a component, but since it crosses C it spans two different components and thus would not create a cycle, so it would have been added earlier \u2014 making e* truly the minimum cut-edge."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "131d51e3-99bf-4ea3-a75f-acdf26e8eadd",
+          "description": "The display-math block defining E(C) is immediately followed by paragraph 54690439 which explicitly interprets the formula and defines its symbols, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 131d51e3 and 54690439."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "683f1533-b1fc-4b4f-8389-def92365ea92",
+          "description": "The paragraph describing the cycle C formed by adding e' to T is immediately followed by two bullet blocks (1fc46896 and 24196afc) that walk through the two cases of that specific computation, but none of the three blocks share a group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 683f1533, 1fc46896, and 24196afc."
+        }
+      ]
+    },
+    {
+      "topic_id": "67884828-61f9-466a-a87a-fd132d523a71",
+      "topic_slug": "dsa-union-find",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5951,
+      "output_tokens": 644,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0280707,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "88363650-a77c-4a05-99fd-cac7667b2052",
+      "topic_slug": "dsa-linear-programming",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8369,
+      "output_tokens": 938,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0397347,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "c84f39c7-9a5d-45b5-bada-360241a39f38",
+      "topic_slug": "dsa-binary-search",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 7949,
+      "output_tokens": 982,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.039134699999999994,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "9efbb7fb",
+          "description": "The display-math block proving B[i+1] >= B[i] is immediately followed by paragraph 8f9d00fe that explicitly interprets that inequality and draws conclusions about fixed-point search direction, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 9efbb7fb and 8f9d00fe."
+        },
+        {
+          "category": "missing_group",
+          "severity": "medium",
+          "block_id": "2da0bc4c",
+          "description": "The display-math block showing the rotated array example is immediately followed by paragraph 241c9b51 that explicitly interprets the labeling and identifies k and the minimum index, but the two blocks share no group_id.",
+          "suggested_fix": "Assign the same group_id to blocks 2da0bc4c and 241c9b51."
+        }
+      ]
+    },
+    {
+      "topic_id": "db8fb73c-a0d9-4117-8ed4-70d0aa083b86",
+      "topic_slug": "dsa-graph-modeling",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4222,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0134187,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "28a68be0-0ba5-4ef4-a297-05b8804b049f",
+      "topic_slug": "dsa-non-adjacent-dp",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8759,
+      "output_tokens": 384,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0325947,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    }
+  ],
+  "totals": {
+    "findings": 20,
+    "cost": 1.0167642,
+    "in": 227834,
+    "out": 20879,
+    "cache_create": 0,
+    "cache_read": 66924,
+    "skipped": 0,
+    "severity_low": 1,
+    "severity_medium": 13,
+    "severity_high": 6
+  }
+}

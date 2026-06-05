@@ -1,0 +1,48 @@
+{
+  "course_slug": "data-structures-and-algorithms",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-05T11:10:32.119064+00:00",
+  "topics": [
+    {
+      "topic_id": "7f90b5c2-3f69-4a2a-8c2a-4ef1a960089a",
+      "topic_slug": "dsa-heaps",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3,
+      "output_tokens": 1319,
+      "cache_creation_tokens": 5007,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.039127949999999995,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "97a1c334-09ae-4e8b-8c41-3de559cef163",
+          "description": "The paragraph states 'every node's key is greater than or equal to the keys of its children,' but the source chunks define the max-heap property as H[i] \u2264 H[parent(i)], meaning each node's key is less than or equal to its parent's key \u2014 the property is stated from the child's perspective in the source, but the generated prose restates it correctly from the parent's perspective; however, this is consistent with the source so no error exists here.",
+          "suggested_fix": null
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "015584d7-6abe-4d87-952c-87bbc47169e5",
+          "description": "The block claims 'A naive sorted list gives O(1) GetMax but O(n) insertion,' but the source chunk shows a sorted list has O(n) Deletion and O(n) ChangePriority \u2014 more importantly, the block also implies an unsorted list gives O(1) insertion, which the source labels as a 'List with pointer to max' giving O(1) GetMax and O(1) Insertion; the characterization of 'unsorted list gives O(n) lookup' conflates two different data structures described in the source.",
+          "suggested_fix": null
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "findings": 2,
+    "cost": 0.039127949999999995,
+    "in": 3,
+    "out": 1319,
+    "cache_create": 5007,
+    "cache_read": 1859,
+    "skipped": 0,
+    "severity_low": 0,
+    "severity_medium": 0,
+    "severity_high": 2
+  }
+}
