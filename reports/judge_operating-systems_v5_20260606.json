@@ -1,0 +1,536 @@
+{
+  "course_slug": "operating-systems",
+  "judge_version": "judge.v5",
+  "model": "claude-sonnet-4-6",
+  "generated_at": "2026-06-06T14:11:47.705380+00:00",
+  "topics": [
+    {
+      "topic_id": "2da14ccb-bd02-48e9-a4ab-ebf44e8ebf42",
+      "topic_slug": "os-c-programming-techniques",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4930,
+      "output_tokens": 217,
+      "cache_creation_tokens": 1859,
+      "cache_read_tokens": 0,
+      "usd_cost": 0.02501625,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "3eca3f83-56f5-45af-af60-16144f3b0397",
+          "description": "The right-to-left reading given for 'const int* p' is stated as 'p is a pointer to int that is const', but the correct right-to-left reading is 'p is a pointer to const int' \u2014 it is the int (the data) that is const, not the pointer; the callout's phrasing contradicts the code block above it which correctly states '*p cannot change'.",
+          "suggested_fix": "Change the reading to: \"const int* p reads as 'p is a pointer to const int' (the data is const, not the pointer)\"."
+        }
+      ]
+    },
+    {
+      "topic_id": "7bda26c6-32d0-43ad-b12c-ea0238492c7e",
+      "topic_slug": "os-gdb-debugging",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3887,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.012413700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "4b2f4a67-d497-418f-8502-bf6f81d19d85",
+      "topic_slug": "os-malloc",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4678,
+      "output_tokens": 414,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0208017,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "1ded5b56-dd41-4150-bbfb-a534e4102c55",
+          "description": "The block states 'Use the current block's footer to find the previous block's footer, then its header' \u2014 but to find the previous block's start, you read the *previous* block's footer (located immediately before the current block's header), not the current block's footer.",
+          "suggested_fix": "Change to: 'Use the previous block's footer (the word immediately before the current block's header) to get its size, then compute its header address.'"
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "1fe79229-b32a-4f0d-9b91-972136f1c8f7",
+          "description": "The block claims a request 'previously required a 48-byte block (payload + header + footer)' but the source chunk specifies the example is malloc(24), where 24 bytes of payload + 8-byte header + 8-byte footer = 40 bytes (rounded to 48 with alignment), not a generic 'payload + header + footer = 48'; the description conflates payload size with total block size without specifying the payload, making the arithmetic misleading.",
+          "suggested_fix": "Specify the concrete example: 'a malloc(24) request that previously required a 48-byte block (24-byte payload + header + footer, rounded for alignment) can now be satisfied by a 32-byte block.'"
+        }
+      ]
+    },
+    {
+      "topic_id": "b5961c08-4146-4d8c-be7f-3572260725b5",
+      "topic_slug": "os-buddy-slab-allocators",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 2744,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.009044700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "7bb2bce1-38c5-4e9a-a2de-ddff668374cf",
+      "topic_slug": "os-consistency-checking",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3963,
+      "output_tokens": 314,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0171567,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "c88f22f4-7897-403b-ae92-3fbc4064a066",
+      "topic_slug": "os-virtual-memory-page-tables",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5371,
+      "output_tokens": 926,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0305607,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "17c562c2-fbdc-4fcc-a1f4-e12be438ee68",
+          "description": "The block claims reading physical address 0xe3 gives 0x90, but the source memory dump shows row 0xe0 as '00 60 10 30 40 f0 20 90 10 c0 70 90 60 f0 50 80', making byte at offset 3 (0xe3) equal to 0x30, not 0x90.",
+          "suggested_fix": "Correct the L2 table lookup: entry 3 at 0xe3 = 0x30, so the target page base PA is 0x30, then update the subsequent step accordingly."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "edf71c85-ad85-419a-bee0-09f5182af26e",
+          "description": "This step propagates the error from the previous block: if the correct page base PA is 0x30, the target byte is at 0x30 + 10 = 0x3a, not 0x9a, and the value at 0x3a in the dump is 0xd0, not 0x50.",
+          "suggested_fix": "Correct to: target byte is at PA 0x30 + 10 = 0x3a; reading 0x3a from the dump gives 0xd0, so *p = 0xd0."
+        }
+      ]
+    },
+    {
+      "topic_id": "761f73b4-e139-42e6-9a12-ed9b6f0d0b17",
+      "topic_slug": "os-tlb-caching",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 2867,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0094137,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "aa115627-3b15-4a8f-a316-cada7b3bcf8e",
+      "topic_slug": "os-page-table-updates",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3870,
+      "output_tokens": 566,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0206577,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "3f18dbb7-d21b-4139-93f4-ca64478f36a0",
+          "description": "The block claims that writing CR3 'automatically flushes the TLB', but this is not universally true \u2014 on x86, loading CR3 flushes non-global TLB entries, but pages marked global (PTE G bit set) are not flushed; stating it as a complete automatic flush is misleading.",
+          "suggested_fix": "Qualify the statement: 'Writing CR3 flushes most TLB entries (non-global entries), so the new process starts with a largely clean translation cache.'"
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "5f02d5bb-7621-4e9d-8081-54c31d8926a4",
+          "description": "The block describes the naive fork as copying the parent's memory into newly allocated physical pages, but the source chunk (chunk_e2) and the COW section both indicate that modern fork uses COW and does not eagerly copy pages; presenting eager copy as what 'the OS does' in the fork steps contradicts the COW optimization described immediately after.",
+          "suggested_fix": "Label this step as the naive/conceptual description and note that in practice COW is used, or move the COW explanation before these steps."
+        }
+      ]
+    },
+    {
+      "topic_id": "3f6dce60-783c-4f5b-84eb-1cbcbb4a9766",
+      "topic_slug": "os-page-swapping",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4460,
+      "output_tokens": 1052,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0297177,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "040e93fb-4b7e-4ccb-82d3-c60c617053c3",
+          "description": "The cache table shows slot A containing page 1 for all 14 accesses, but the eviction list states page 1 is evicted (evictions: 2, 1, 3), and the companion paragraph (b9a9f584) explicitly says page 1 is evicted at access 7 \u2014 the table directly contradicts both the stated evictions and the prose explanation.",
+          "suggested_fix": "Update the cache table so that after access 7 (page 5), slot A changes from [1] to [5], reflecting that page 1 is evicted and page 5 takes its place."
+        }
+      ]
+    },
+    {
+      "topic_id": "562a6d1c-5a1a-48f1-a72c-1eea4c27184c",
+      "topic_slug": "os-page-faulting",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 2678,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.008786700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "39f548a8-043e-46df-b465-5bbd199e0c0b",
+      "topic_slug": "os-kernel-syscalls",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3988,
+      "output_tokens": 498,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0199917,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "fc2e75aa-7926-4f58-8b39-bfaed66628ef",
+          "description": "The code example uses 64-bit registers (rdi, rsi, rdx) but invokes int 0x80, which is the 32-bit Linux syscall ABI; on x86-64, int 0x80 uses 32-bit registers (eax, ebx, ecx, edx) and the syscall number for write in the 32-bit ABI is 4, not 1 \u2014 mixing 64-bit registers with int 0x80 is incorrect and misleading.",
+          "suggested_fix": "Either use the 64-bit syscall instruction with rax=1 and rdi/rsi/rdx, or use int 0x80 with eax=4 and ebx/ecx/edx; do not mix 64-bit registers with int 0x80."
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "54f65f48-e6a5-4474-8004-b0db034928d1",
+          "description": "The paragraph states arguments go into 'rdi, rsi, rdx, r10, r8, r9 in order' for the int 0x80 ABI, but int 0x80 uses ebx, ecx, edx, esi, edi, ebp; the register order rdi/rsi/rdx/r10/r8/r9 belongs to the syscall instruction ABI, not int 0x80.",
+          "suggested_fix": "Clarify that the argument registers listed (rdi, rsi, rdx, r10, r8, r9) apply to the modern syscall instruction, not to int 0x80, or consistently use one ABI throughout."
+        }
+      ]
+    },
+    {
+      "topic_id": "2918b952-6eba-4546-9fd7-ea2b0e038d8d",
+      "topic_slug": "os-processes-threads",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3801,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.012215700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "9b64c996-936d-4b9c-8836-1f363214ae7a",
+      "topic_slug": "os-kernel-thread-models",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3664,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.011804700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "fdb9940c-c83f-498a-8ead-13f1c5d34923",
+      "topic_slug": "os-context-switching",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 2921,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.009575700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "517db157-9a59-4450-950e-95d8bd4e6297",
+      "topic_slug": "os-interrupt-handling",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3387,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.010973700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "95b259d5-63b5-47ae-9e96-74988c7b403f",
+      "topic_slug": "os-cpu-scheduling",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 5258,
+      "output_tokens": 1232,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.034811699999999994,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "9851296d-72f3-4e21-89a1-2e828490aae7",
+          "description": "The block claims PSJF compares the new job's total size to the remaining size of the running job; in standard definitions PSJF (Preemptive SJF) compares the new job's total size to the running job's total size (not remaining size), but the example in the next block shows preemption based on total size of new job vs. remaining size of running job, which is actually the SRPT rule \u2014 the distinction drawn here between PSJF and SRPT is non-standard and internally inconsistent with the example.",
+          "suggested_fix": "Clarify that PSJF preempts when a new job's total size is less than the running job's total size (not remaining size), and that SRPT preempts when a new job's remaining size is less than the running job's remaining size; adjust the example accordingly."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "1289e748-895e-4c22-a0cb-7745fc654e4e",
+          "description": "The PSJF example shows preemption of a size-5 job (with 3 units remaining) by a size-3 job, which is consistent with SRPT (remaining size comparison) but contradicts the preceding paragraph's claim that PSJF uses total job size for comparison \u2014 under a strict total-size PSJF rule, the size-3 new job (total=3) would preempt the size-5 job (total=5), so the preemption decision is the same, but the finishing times are wrong: size-3 job runs from t=2 to t=5 (correct), then size-5 job resumes with 3 units remaining and finishes at t=8 (correct); however the block says 'the size-5 job (which has run 2 units)' implying remaining-size logic, mixing the two definitions.",
+          "suggested_fix": "Make the example consistent with whichever definition of PSJF is chosen; if PSJF uses total-size comparison, note that the preemption trigger is the new job's total size being smaller, not its remaining size."
+        },
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "308a3d84-e70e-4642-bf3f-b77ef706df49",
+          "description": "The bullet reads '- N / N$N_Q$' which is a formatting artifact \u2014 it appears to duplicate 'N' and render '$N_Q$' incorrectly, making the intended meaning ('N: number of jobs in the system / $N_Q$: number of jobs in the queue') garbled.",
+          "suggested_fix": "Separate into two bullets: '- $N$: number of jobs in the system' and '- $N_Q$: number of jobs in the queue (not yet being served)'."
+        }
+      ]
+    },
+    {
+      "topic_id": "5cd25c48-1e1d-4a97-824d-eb97dd17e2d9",
+      "topic_slug": "os-mutex-synchronization",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4630,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0147027,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "1d5494ca-76ee-46ed-84f1-5266443f2dc5",
+      "topic_slug": "os-condition-variables",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3947,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.012593700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "00bc8bc7-0daf-4fe4-a611-c8e4e178be41",
+      "topic_slug": "os-semaphores",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3616,
+      "output_tokens": 518,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0191757,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "2cf35299-4381-474f-b42b-3492743f9c01",
+      "topic_slug": "os-reader-writer-locks",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3094,
+      "output_tokens": 8,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0099597,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "91e6a004-0688-4f76-a694-c503913dadd2",
+      "topic_slug": "os-race-conditions",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4678,
+      "output_tokens": 473,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0216867,
+      "status": "ok",
+      "error": null,
+      "findings": [
+        {
+          "category": "factual_error",
+          "severity": "high",
+          "block_id": "6806e8c7-0a54-4b1b-92f4-af11f5de24b2",
+          "description": "The summary states 'Use ThreadSanitizer to catch races the happens-before analysis misses at review time,' but TSan *uses* happens-before analysis as its core algorithm \u2014 it does not catch races that happens-before misses; rather, it catches races that manual review misses by automating happens-before tracking.",
+          "suggested_fix": "Change to 'Use ThreadSanitizer to catch races that manual code review misses, by automatically tracking the happens-before relationship at runtime.'"
+        },
+        {
+          "category": "factual_error",
+          "severity": "medium",
+          "block_id": "dd6b4c20-a514-40ca-a8d1-57bc485ea3bd",
+          "description": "The block says to acquire the lock 'between L2\u20133' (just before x = i) and release it 'between L8\u20139' (after the dereference inside foo), but the source chunk (chunk_5f) states the correct answer is lock between L2\u20133 and unlock between L8\u20139, which matches \u2014 however the block also says the lock is released 'after the dereference inside foo (between L8\u20139)', yet L8 is the printf and L9 is the closing brace, so the unlock is after the printf, not after the dereference at L7; this misidentifies which line is the dereference vs. the printf as the boundary for the unlock.",
+          "suggested_fix": "Clarify that the unlock is placed between L8\u20139 (after the printf at L8), and that the dereference at L7 and the printf at L8 are both inside the critical section."
+        }
+      ]
+    },
+    {
+      "topic_id": "0a52e771-ee43-4117-b98f-45e3fc974d3e",
+      "topic_slug": "os-deadlocks",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4328,
+      "output_tokens": 8,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0136617,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "d35c3451-ef50-4090-b2a4-40f133eb678e",
+      "topic_slug": "os-thread-sanitizer",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4803,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.015221700000000001,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "94ad17e8-b853-4dad-b85f-f2a2a8e66f45",
+      "topic_slug": "os-channels",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4056,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0129207,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "31c07098-f82a-4709-bc67-f1147fb1d7cc",
+      "topic_slug": "os-hard-drives",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4083,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0130617,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "6403828b-4b71-4d42-bfac-e35bbf890d4f",
+      "topic_slug": "os-ssds",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4329,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0137397,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "722dfaf5-bd9d-46c1-a550-34dc4eadd309",
+      "topic_slug": "os-raid",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4545,
+      "output_tokens": 363,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0196377,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "f9921cb1-1c39-4e50-8617-8ce7b69ba0c8",
+      "topic_slug": "os-io-devices",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3195,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0103377,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "1d4e6ba0-fe4f-41b2-8a83-140605c4c99b",
+      "topic_slug": "os-mmap",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 2979,
+      "output_tokens": 17,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0097497,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "5a0ec146-1411-4495-b064-b668c611682b",
+      "topic_slug": "os-filesystems",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3283,
+      "output_tokens": 8,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0105267,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    },
+    {
+      "topic_id": "f25721a2-e1fb-42f2-8897-c43a400fd45f",
+      "topic_slug": "os-filesystem-consistency",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 3505,
+      "output_tokens": 13,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 1859,
+      "usd_cost": 0.0112677,
+      "status": "ok",
+      "error": null,
+      "findings": []
+    }
+  ],
+  "totals": {
+    "findings": 15,
+    "cost": 0.49118625000000005,
+    "in": 121538,
+    "out": 6858,
+    "cache_create": 1859,
+    "cache_read": 55770,
+    "skipped": 0,
+    "severity_low": 0,
+    "severity_medium": 4,
+    "severity_high": 11
+  }
+}
