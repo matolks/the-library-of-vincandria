@@ -54,6 +54,7 @@ def run_course_pipeline(
     skip_chunker: bool = False,
     chunk_file: str | None = None,
     force_all: bool = False,
+    allow_degraded_mapper: bool = False,
     agent3_model: str | None = None,
     agent3_max_tokens: int | None = None,
     agent3_temperature: float | None = None,
@@ -172,8 +173,23 @@ def run_course_pipeline(
             },
         )
     else:
-        mapper_stage = _run_mapper(course_slug, dry_run=dry_run)
-        if mapper_stage.status in {"ok", "dry_run"} and not dry_run:
+        try:
+            mapper_stage = _run_mapper(course_slug, dry_run=dry_run)
+        except Exception as exc:
+            if course_id and not dry_run:
+                db.upsert_pipeline_state(
+                    course_id,
+                    "mapper",
+                    "course",
+                    mapper_fingerprint,
+                    "failed",
+                    {
+                        "error_type": type(exc).__name__,
+                        "error": str(exc),
+                    },
+                )
+            raise
+        if course_id and not dry_run:
             db.upsert_pipeline_state(
                 course_id,
                 "mapper",
@@ -197,6 +213,8 @@ def run_course_pipeline(
         course_slug,
         dry_run=dry_run,
         force_all=force_all,
+        mapper_stage_status=mapper_stage.status,
+        allow_degraded_mapper=allow_degraded_mapper,
         model=agent3_model,
         max_tokens=agent3_max_tokens,
         temperature=agent3_temperature,
@@ -278,23 +296,7 @@ def _mapper_fingerprint(course_slug: str) -> str:
     from pipeline import mapper
 
     _course_id, topics = mapper.get_course_topics(course_slug)
-    return fingerprint_payload(
-        {
-            "stage": "mapper.v1",
-            "model": mapper.MODEL,
-            "k_candidates": mapper.K_CANDIDATES,
-            "system_prompt": mapper.SYSTEM_PROMPT,
-            "manual_excluded_edges": sorted(mapper.MANUAL_EXCLUDED_EDGES),
-            "topics": [
-                {
-                    "slug": t["slug"],
-                    "title": t["title"],
-                    "summary": t.get("summary"),
-                }
-                for t in topics
-            ],
-        }
-    )
+    return mapper.compute_fingerprint(topics)
 
 
 def _enricher_fingerprint(
@@ -440,17 +442,24 @@ def _run_mapper(course_slug: str, *, dry_run: bool) -> StageReport:
     from pipeline import mapper
 
     course_id, topics = mapper.get_course_topics(course_slug)
-    edges, tok_in, tok_out = mapper.extract_dependencies(course_slug, course_id, topics)
-    cycle = mapper.detect_cycle(edges)
+    edges, pre_dropped_edges, tok_in, tok_out = mapper.extract_dependencies(
+        course_slug, course_id, topics
+    )
+    id_to_slug = {topic["id"]: topic["slug"] for topic in topics}
     cost = (tok_in * mapper.PRICE_IN + tok_out * mapper.PRICE_OUT) / 1_000_000
-    details = {"topics": len(topics), "edges": len(edges)}
-    if cycle:
-        details["cycle"] = cycle
-        return StageReport(
-            "mapper", "cycle_detected", tok_in, tok_out, usd_cost=cost, details=details
-        )
+    resolved_edges, dropped_edges = mapper.resolve_cycles(
+        edges,
+        id_to_slug=id_to_slug,
+        initial_dropped=pre_dropped_edges,
+    )
+    details = {
+        "topics": len(topics),
+        "raw_edges": len(edges),
+        "edges": len(resolved_edges),
+        "dropped_edges": mapper._dropped_edges_metadata(dropped_edges, id_to_slug),
+    }
     if not dry_run:
-        mapper.write_dependencies(edges, {t["id"] for t in topics})
+        mapper.write_dependencies(resolved_edges, {t["id"] for t in topics})
     return StageReport(
         "mapper",
         "dry_run" if dry_run else "ok",
@@ -538,6 +547,8 @@ def _run_block_gen(
     *,
     dry_run: bool,
     force_all: bool = False,
+    mapper_stage_status: str = "ok",
+    allow_degraded_mapper: bool = False,
     model: str | None = None,
     max_tokens: int | None = None,
     temperature: float | None = None,
@@ -547,8 +558,32 @@ def _run_block_gen(
         _resolve_generation_targets,
         agent3_generation_config,
         explain_topic_staleness,
+        get_mapper_readiness,
     )
     from pipeline.orchestrator import generate_blocks_for_topic
+
+    if not allow_degraded_mapper and mapper_stage_status not in {"ok", "skipped"}:
+        return StageReport(
+            "block_gen",
+            "blocked",
+            details={
+                "reason": "mapper_stage_not_ok",
+                "mapper_status": mapper_stage_status,
+            },
+        )
+
+    readiness = get_mapper_readiness(course_slug)
+    if not allow_degraded_mapper and not readiness.ready:
+        return StageReport(
+            "block_gen",
+            "blocked",
+            details={
+                "reason": readiness.reason,
+                "expected_fingerprint": readiness.expected_fingerprint,
+                "actual_fingerprint": readiness.actual_fingerprint,
+                "actual_status": readiness.actual_status,
+            },
+        )
 
     targets = _resolve_generation_targets(course_slug, None)
     resolved_max_tokens = (
@@ -654,6 +689,8 @@ def main() -> None:
     parser.add_argument("--chunks", help="precomputed chunk JSON file")
     parser.add_argument("--force-all", action="store_true",
                         help="ignore stored fingerprints and regenerate all stages/topics")
+    parser.add_argument("--allow-degraded-mapper", action="store_true",
+                        help="allow block generation to run without a current successful mapper stage")
     parser.add_argument("--agent3-model",
                         help="Agent 3 model override; included in block fingerprints")
     parser.add_argument("--agent3-max-tokens", type=int,
@@ -670,6 +707,7 @@ def main() -> None:
             skip_chunker=args.skip_chunker,
             chunk_file=args.chunks,
             force_all=args.force_all,
+            allow_degraded_mapper=args.allow_degraded_mapper,
             agent3_model=args.agent3_model,
             agent3_max_tokens=args.agent3_max_tokens,
             agent3_temperature=args.agent3_temperature,

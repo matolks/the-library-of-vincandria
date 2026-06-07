@@ -19,7 +19,9 @@ from pipeline.db_guard import ensure_writable
 from pipeline.db import (
     get_conn,
     nearest_topic_candidates,
+    upsert_pipeline_state,
 )
+from pipeline.fingerprints import fingerprint_payload
 
 MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-5-20250929")
 K_CANDIDATES = 30
@@ -28,6 +30,7 @@ REQUEST_TIMEOUT_SECONDS = float(os.environ.get("CLAUDE_MAPPER_TIMEOUT", "90"))
 # Claude Sonnet pricing per million tokens. Update if model changes.
 PRICE_IN = 3.00
 PRICE_OUT = 15.00
+CYCLE_DROP_FLOOR = 0.70
 
 MANUAL_EXCLUDED_EDGES = {
     # MVC eval-grade false positives.
@@ -52,6 +55,27 @@ MANUAL_EXCLUDED_EDGES = {
     ("dsa-graph-modeling", "dsa-max-flow"),
     ("dsa-kruskal", "dsa-mst-theory"),
     ("dsa-prim", "dsa-mst-theory"),
+    # Operating systems: consistency checking is a validation/debugging aid
+    # applied to malloc implementations, not a prerequisite for learning malloc.
+    ("os-consistency-checking", "os-malloc"),
+}
+
+PROTECTED_EDGES = {
+    ("os-page-faulting", "os-page-table-updates"),
+    ("os-page-swapping", "os-page-faulting"),
+    ("os-context-switching", "os-race-conditions"),
+    ("os-processes-threads", "os-virtual-memory-page-tables"),
+    ("os-mutex-synchronization", "os-race-conditions"),
+}
+
+AUDITED_DROP_EDGES = {
+    ("os-page-table-updates", "os-page-swapping"),
+    ("os-context-switching", "os-kernel-thread-models"),
+    ("os-kernel-syscalls", "os-virtual-memory-page-tables"),
+    ("os-race-conditions", "os-interrupt-handling"),
+    ("os-virtual-memory-page-tables", "os-kernel-syscalls"),
+    ("os-interrupt-handling", "os-kernel-syscalls"),
+    ("os-filesystems", "os-io-devices"),
 }
 
 
@@ -97,6 +121,33 @@ class Edge:
     reason: str
 
 
+@dataclass(frozen=True)
+class DroppedEdge:
+    from_id: str
+    to_id: str
+    confidence: float
+    reason: str
+    drop_type: str
+
+
+class CycleUnresolved(RuntimeError):
+    def __init__(
+        self,
+        cycle: list[str],
+        cycle_edges: list[Edge],
+        *,
+        id_to_slug: dict[str, str] | None = None,
+    ) -> None:
+        self.cycle = cycle
+        self.cycle_edges = cycle_edges
+        self.id_to_slug = id_to_slug or {}
+        self.rendered_cycle = _render_cycle(cycle, self.id_to_slug)
+        super().__init__(
+            "No non-protected cycle edge below "
+            f"{CYCLE_DROP_FLOOR:.2f}: {self.rendered_cycle}"
+        )
+
+
 def get_course_topics(course_slug: str) -> list[dict]:
     """Return all topics in a course with id, slug, title, summary."""
     with get_conn() as conn, conn.cursor() as cur:
@@ -138,6 +189,29 @@ def build_user_prompt(target: dict, candidates: list[dict]) -> str:
         lines.append("")
     lines.append("Which candidates are prerequisites of the target? Return JSON.")
     return "\n".join(lines)
+
+
+def compute_fingerprint(topics: list[dict]) -> str:
+    return fingerprint_payload(
+        {
+            "stage": "mapper.v1",
+            "model": MODEL,
+            "k_candidates": K_CANDIDATES,
+            "system_prompt": SYSTEM_PROMPT,
+            "manual_excluded_edges": sorted(MANUAL_EXCLUDED_EDGES),
+            "protected_edges": sorted(PROTECTED_EDGES),
+            "audited_drop_edges": sorted(AUDITED_DROP_EDGES),
+            "cycle_drop_floor": CYCLE_DROP_FLOOR,
+            "topics": [
+                {
+                    "slug": t["slug"],
+                    "title": t["title"],
+                    "summary": t.get("summary"),
+                }
+                for t in topics
+            ],
+        }
+    )
 
 
 def parse_response(text: str) -> list[dict]:
@@ -195,15 +269,250 @@ def detect_cycle(edges: list[Edge]) -> list[str] | None:
     return None
 
 
+def _cycle_edges(cycle: list[str], edges: list[Edge]) -> list[Edge]:
+    by_pair = {(edge.from_id, edge.to_id): edge for edge in edges}
+    cycle_edges: list[Edge] = []
+    for i in range(len(cycle) - 1):
+        pair = (cycle[i], cycle[i + 1])
+        edge = by_pair.get(pair)
+        if edge is None:
+            raise ValueError(f"Cycle references missing edge {pair}")
+        cycle_edges.append(edge)
+    return cycle_edges
+
+
+def _render_cycle(cycle: list[str], id_to_slug: dict[str, str]) -> str:
+    return " -> ".join(id_to_slug.get(node, node) for node in cycle)
+
+
+def _edge_pair(edge: Edge, id_to_slug: dict[str, str]) -> tuple[str, str]:
+    return (
+        id_to_slug.get(edge.from_id, edge.from_id),
+        id_to_slug.get(edge.to_id, edge.to_id),
+    )
+
+
+def _drop_known_edges(
+    edges: list[Edge],
+    *,
+    id_to_slug: dict[str, str],
+) -> tuple[list[Edge], list[DroppedEdge]]:
+    remaining: list[Edge] = []
+    dropped: list[DroppedEdge] = []
+
+    for edge in edges:
+        pair = _edge_pair(edge, id_to_slug)
+        if pair in AUDITED_DROP_EDGES:
+            dropped.append(
+                DroppedEdge(
+                    from_id=edge.from_id,
+                    to_id=edge.to_id,
+                    confidence=edge.confidence,
+                    reason=edge.reason,
+                    drop_type="audited_drop",
+                )
+            )
+            continue
+        if pair in MANUAL_EXCLUDED_EDGES:
+            dropped.append(
+                DroppedEdge(
+                    from_id=edge.from_id,
+                    to_id=edge.to_id,
+                    confidence=edge.confidence,
+                    reason=edge.reason,
+                    drop_type="manual_seed",
+                )
+            )
+            continue
+        remaining.append(edge)
+
+    return remaining, dropped
+
+
+def _resolve_mutual_edges(
+    edges: list[Edge],
+    *,
+    id_to_slug: dict[str, str],
+) -> tuple[list[Edge], list[DroppedEdge]]:
+    by_pair = {(edge.from_id, edge.to_id): edge for edge in edges}
+    consumed: set[tuple[str, str]] = set()
+    resolved: list[Edge] = []
+    dropped: list[DroppedEdge] = []
+
+    for edge in edges:
+        pair = (edge.from_id, edge.to_id)
+        if pair in consumed:
+            continue
+        reverse_pair = (edge.to_id, edge.from_id)
+        reverse_edge = by_pair.get(reverse_pair)
+        if reverse_edge is None:
+            resolved.append(edge)
+            consumed.add(pair)
+            continue
+
+        consumed.add(pair)
+        consumed.add(reverse_pair)
+        pair_slug = _edge_pair(edge, id_to_slug)
+        reverse_pair_slug = _edge_pair(reverse_edge, id_to_slug)
+
+        if pair_slug in PROTECTED_EDGES and reverse_pair_slug not in PROTECTED_EDGES:
+            keep_edge = edge
+            drop_edge = reverse_edge
+            drop_type = "reverse_protected"
+            drop_reason = "spurious reverse of protected prerequisite"
+        elif reverse_pair_slug in PROTECTED_EDGES and pair_slug not in PROTECTED_EDGES:
+            keep_edge = reverse_edge
+            drop_edge = edge
+            drop_type = "reverse_protected"
+            drop_reason = "spurious reverse of protected prerequisite"
+        else:
+            if (
+                edge.confidence,
+                id_to_slug.get(edge.from_id, edge.from_id),
+                id_to_slug.get(edge.to_id, edge.to_id),
+            ) >= (
+                reverse_edge.confidence,
+                id_to_slug.get(reverse_edge.from_id, reverse_edge.from_id),
+                id_to_slug.get(reverse_edge.to_id, reverse_edge.to_id),
+            ):
+                keep_edge = edge
+                drop_edge = reverse_edge
+            else:
+                keep_edge = reverse_edge
+                drop_edge = edge
+            drop_type = "mutual_lower_confidence"
+            drop_reason = drop_edge.reason
+
+        resolved.append(keep_edge)
+        dropped.append(
+            DroppedEdge(
+                from_id=drop_edge.from_id,
+                to_id=drop_edge.to_id,
+                confidence=drop_edge.confidence,
+                reason=drop_reason,
+                drop_type=drop_type,
+            )
+        )
+
+    return resolved, dropped
+
+
+def _drop_reverse_protected_edges(
+    edges: list[Edge],
+    *,
+    id_to_slug: dict[str, str],
+) -> tuple[list[Edge], list[DroppedEdge]]:
+    """Backward-compatible alias while callers migrate to mutual-edge resolution."""
+    return _resolve_mutual_edges(edges, id_to_slug=id_to_slug)
+
+
+def resolve_cycles(
+    edges: list[Edge],
+    *,
+    id_to_slug: dict[str, str] | None = None,
+    initial_dropped: list[DroppedEdge] | None = None,
+) -> tuple[list[Edge], list[DroppedEdge]]:
+    """Drop known bad edges first, then break only low-confidence unprotected cycles."""
+    id_to_slug = id_to_slug or {}
+    remaining, known_drops = _drop_known_edges(edges, id_to_slug=id_to_slug)
+    remaining, mutual_drops = _resolve_mutual_edges(
+        remaining, id_to_slug=id_to_slug
+    )
+    dropped: list[DroppedEdge] = list(initial_dropped or [])
+    dropped.extend(known_drops)
+    dropped.extend(mutual_drops)
+
+    while True:
+        cycle = detect_cycle(remaining)
+        if not cycle:
+            return remaining, dropped
+
+        cycle_edges = _cycle_edges(cycle, remaining)
+        droppable_edges = [
+            edge
+            for edge in cycle_edges
+            if _edge_pair(edge, id_to_slug) not in PROTECTED_EDGES
+        ]
+        if not droppable_edges:
+            raise CycleUnresolved(cycle, cycle_edges, id_to_slug=id_to_slug)
+
+        weakest = min(
+            droppable_edges,
+            key=lambda edge: (
+                edge.confidence,
+                id_to_slug.get(edge.from_id, edge.from_id),
+                id_to_slug.get(edge.to_id, edge.to_id),
+            ),
+        )
+        if weakest.confidence >= CYCLE_DROP_FLOOR:
+            raise CycleUnresolved(cycle, cycle_edges, id_to_slug=id_to_slug)
+        dropped_edge = DroppedEdge(
+            from_id=weakest.from_id,
+            to_id=weakest.to_id,
+            confidence=weakest.confidence,
+            reason=weakest.reason,
+            drop_type="cycle_collateral",
+        )
+        dropped.append(dropped_edge)
+        remaining = [
+            edge
+            for edge in remaining
+            if (edge.from_id, edge.to_id) != (weakest.from_id, weakest.to_id)
+        ]
+        from_slug = id_to_slug.get(weakest.from_id, weakest.from_id)
+        to_slug = id_to_slug.get(weakest.to_id, weakest.to_id)
+        print(
+            "DROPPED CYCLE EDGE: "
+            f"{from_slug} -> {to_slug} "
+            f"(confidence={weakest.confidence:.2f}) "
+            f"reason={weakest.reason}",
+            file=sys.stderr,
+        )
+
+
+def _dropped_edges_metadata(
+    dropped_edges: list[DroppedEdge],
+    id_to_slug: dict[str, str],
+) -> list[dict]:
+    return [
+        {
+            "from_slug": id_to_slug.get(edge.from_id, edge.from_id),
+            "to_slug": id_to_slug.get(edge.to_id, edge.to_id),
+            "confidence": edge.confidence,
+            "reason": edge.reason,
+            "drop_type": edge.drop_type,
+        }
+        for edge in dropped_edges
+    ]
+
+
+def _persist_mapper_state(
+    course_id: str,
+    topics: list[dict],
+    *,
+    status: str,
+    metadata: dict,
+) -> None:
+    upsert_pipeline_state(
+        course_id,
+        "mapper",
+        "course",
+        compute_fingerprint(topics),
+        status,
+        metadata,
+    )
+
+
 def extract_dependencies(
     course_slug: str,
     course_id: str,
     topics: list[dict],
-) -> tuple[list[Edge], int, int]:
+) -> tuple[list[Edge], list[DroppedEdge], int, int]:
     """For each topic, retrieve candidates and ask LLM for prereqs."""
     client = anthropic.Anthropic(timeout=REQUEST_TIMEOUT_SECONDS)
     slug_to_id = {t["slug"]: t["id"] for t in topics}
     edges: list[Edge] = []
+    dropped_edges: list[DroppedEdge] = []
     total_in = 0
     total_out = 0
 
@@ -255,7 +564,27 @@ def extract_dependencies(
             if conf < 0.6:
                 continue  # low confidence
             if (from_slug, target["slug"]) in MANUAL_EXCLUDED_EDGES:
-                continue  # known false positive promoted from eval triage
+                dropped_edges.append(
+                    DroppedEdge(
+                        from_id=slug_to_id[from_slug],
+                        to_id=target["id"],
+                        confidence=conf,
+                        reason=reason,
+                        drop_type="manual_seed",
+                    )
+                )
+                continue
+            if (from_slug, target["slug"]) in AUDITED_DROP_EDGES:
+                dropped_edges.append(
+                    DroppedEdge(
+                        from_id=slug_to_id[from_slug],
+                        to_id=target["id"],
+                        confidence=conf,
+                        reason=reason,
+                        drop_type="audited_drop",
+                    )
+                )
+                continue
 
             edges.append(
                 Edge(
@@ -276,7 +605,13 @@ def extract_dependencies(
             deduped[key] = e
     edges = list(deduped.values())
 
-    return edges, total_in, total_out
+    deduped_dropped: dict[tuple[str, str], DroppedEdge] = {}
+    for edge in dropped_edges:
+        key = (edge.from_id, edge.to_id)
+        if key not in deduped_dropped or edge.confidence > deduped_dropped[key].confidence:
+            deduped_dropped[key] = edge
+
+    return edges, list(deduped_dropped.values()), total_in, total_out
 
 
 def write_dependencies(edges: list[Edge], course_topic_ids: set[str]) -> None:
@@ -312,36 +647,94 @@ def write_dependencies(edges: list[Edge], course_topic_ids: set[str]) -> None:
 def run(course_slug: str, dry_run: bool = False) -> None:
     course_id, topics = get_course_topics(course_slug)
     print(f"course: {course_slug} ({len(topics)} topics)\n")
-
-    edges, tok_in, tok_out = extract_dependencies(course_slug, course_id, topics)
-
-    cost = (tok_in * PRICE_IN + tok_out * PRICE_OUT) / 1_000_000
-    print(f"\ntokens: {tok_in} in / {tok_out} out  cost: ${cost:.4f}")
-    print(f"total edges: {len(edges)}")
-
     id_to_slug = {t["id"]: t["slug"] for t in topics}
+    edges: list[Edge] = []
+    resolved_edges: list[Edge] = []
+    dropped_edges: list[DroppedEdge] = []
+    tok_in = 0
+    tok_out = 0
+    cost = 0.0
 
-    if dry_run:
-        print("\n--dry-run, edges that would be written:\n")
-        for e in sorted(edges, key=lambda x: (id_to_slug[x.to_id], -x.confidence)):
-            print(
-                f"  {id_to_slug[e.from_id]:<40} -> {id_to_slug[e.to_id]:<40} "
-                f"({e.confidence:.2f})  {e.reason}"
-            )
+    try:
+        edges, pre_dropped_edges, tok_in, tok_out = extract_dependencies(
+            course_slug, course_id, topics
+        )
+        dropped_edges = list(pre_dropped_edges)
+        cost = (tok_in * PRICE_IN + tok_out * PRICE_OUT) / 1_000_000
+        resolved_edges, dropped_edges = resolve_cycles(
+            edges,
+            id_to_slug=id_to_slug,
+            initial_dropped=dropped_edges,
+        )
+        print(f"\ntokens: {tok_in} in / {tok_out} out  cost: ${cost:.4f}")
+        print(
+            "total edges: "
+            f"{len(edges)} raw / {len(resolved_edges)} after cycle resolution"
+        )
 
-    cycle = detect_cycle(edges)
-    if cycle:
-        path = " -> ".join(id_to_slug.get(n, n) for n in cycle)
-        print(f"\nCYCLE DETECTED: {path}", file=sys.stderr)
+        if dropped_edges:
+            print("\ndropped mapper edges:\n", file=sys.stderr)
+            for row in _dropped_edges_metadata(dropped_edges, id_to_slug):
+                print(
+                    f"  {row['from_slug']:<40} -> {row['to_slug']:<40} "
+                    f"({row['confidence']:.2f}) [{row['drop_type']}] {row['reason']}",
+                    file=sys.stderr,
+                )
+
+        if dry_run:
+            print("\n--dry-run, edges that would be written:\n")
+            for e in sorted(
+                resolved_edges, key=lambda x: (id_to_slug[x.to_id], -x.confidence)
+            ):
+                print(
+                    f"  {id_to_slug[e.from_id]:<40} -> {id_to_slug[e.to_id]:<40} "
+                    f"({e.confidence:.2f})  {e.reason}"
+                )
+            return
+
+        course_topic_ids = {t["id"] for t in topics}
+        write_dependencies(resolved_edges, course_topic_ids)
+        _persist_mapper_state(
+            course_id,
+            topics,
+            status="ok",
+            metadata={
+                "topics": len(topics),
+                "edges": len(resolved_edges),
+                "raw_edges": len(edges),
+                "input_tokens": tok_in,
+                "output_tokens": tok_out,
+                "usd_cost": cost,
+                "dropped_edges": _dropped_edges_metadata(dropped_edges, id_to_slug),
+            },
+        )
+    except Exception as exc:
         if not dry_run:
-            sys.exit(1)
-        return
-
-    if dry_run:
-        return
-
-    course_topic_ids = {t["id"] for t in topics}
-    write_dependencies(edges, course_topic_ids)
+            metadata = {
+                "topics": len(topics),
+                "edges": len(resolved_edges),
+                "raw_edges": len(edges),
+                "input_tokens": tok_in,
+                "output_tokens": tok_out,
+                "usd_cost": cost,
+                "dropped_edges": _dropped_edges_metadata(dropped_edges, id_to_slug),
+                "error_type": type(exc).__name__,
+                "error": str(exc),
+            }
+            if isinstance(exc, CycleUnresolved):
+                metadata["cycle"] = exc.rendered_cycle
+                metadata["cycle_edges"] = [
+                    {
+                        "from_slug": id_to_slug.get(edge.from_id, edge.from_id),
+                        "to_slug": id_to_slug.get(edge.to_id, edge.to_id),
+                        "confidence": edge.confidence,
+                        "reason": edge.reason,
+                        "protected": _edge_pair(edge, id_to_slug) in PROTECTED_EDGES,
+                    }
+                    for edge in exc.cycle_edges
+                ]
+            _persist_mapper_state(course_id, topics, status="failed", metadata=metadata)
+        raise
 
 
 if __name__ == "__main__":

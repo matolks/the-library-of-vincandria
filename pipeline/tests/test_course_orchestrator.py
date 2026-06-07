@@ -6,6 +6,8 @@ only verifies sequencing and aggregate status/token/cost reporting.
 """
 from __future__ import annotations
 
+import pytest
+
 from pipeline import course_orchestrator as orch
 from pipeline.enricher import EnrichmentResult
 
@@ -62,6 +64,8 @@ def test_course_pipeline_chains_stages_and_aggregates(monkeypatch):
         *,
         dry_run,
         force_all=False,
+        mapper_stage_status="ok",
+        allow_degraded_mapper=False,
         model=None,
         max_tokens=None,
         temperature=None,
@@ -139,6 +143,8 @@ def test_course_pipeline_skips_unchanged_course_stages(monkeypatch):
         *,
         dry_run,
         force_all=False,
+        mapper_stage_status="ok",
+        allow_degraded_mapper=False,
         model=None,
         max_tokens=None,
         temperature=None,
@@ -199,6 +205,8 @@ def test_course_pipeline_force_all_bypasses_stage_fingerprint_skips(monkeypatch)
         *,
         dry_run,
         force_all=False,
+        mapper_stage_status="ok",
+        allow_degraded_mapper=False,
         model=None,
         max_tokens=None,
         temperature=None,
@@ -278,6 +286,8 @@ def test_course_pipeline_loads_chunker_artifact_when_chunker_skipped_but_extract
         *,
         dry_run,
         force_all=False,
+        mapper_stage_status="ok",
+        allow_degraded_mapper=False,
         model=None,
         max_tokens=None,
         temperature=None,
@@ -368,4 +378,108 @@ def test_run_enricher_stores_post_enrichment_fingerprint(monkeypatch):
         "course",
         "post-fp",
         "ok",
+    )
+
+
+def test_run_block_gen_blocks_when_mapper_stage_failed():
+    stage = orch._run_block_gen(
+        "course-slug",
+        dry_run=True,
+        mapper_stage_status="failed",
+    )
+
+    assert stage.status == "blocked"
+    assert stage.details == {
+        "reason": "mapper_stage_not_ok",
+        "mapper_status": "failed",
+    }
+
+
+def test_run_block_gen_blocks_when_mapper_state_not_ready(monkeypatch):
+    import pipeline.block_gen as bg
+
+    monkeypatch.setattr(
+        bg,
+        "get_mapper_readiness",
+        lambda course_slug: bg.MapperReadiness(
+            False,
+            "missing_pipeline_state",
+            expected_fingerprint="mapper-fp",
+        ),
+    )
+
+    stage = orch._run_block_gen(
+        "course-slug",
+        dry_run=True,
+        mapper_stage_status="skipped",
+    )
+
+    assert stage.status == "blocked"
+    assert stage.details["reason"] == "missing_pipeline_state"
+    assert stage.details["expected_fingerprint"] == "mapper-fp"
+
+
+def test_run_block_gen_override_allows_degraded_mapper(monkeypatch):
+    import pipeline.block_gen as bg
+
+    monkeypatch.setattr(
+        bg,
+        "get_mapper_readiness",
+        lambda course_slug: bg.MapperReadiness(False, "status_not_ok", actual_status="failed"),
+    )
+    monkeypatch.setattr(bg, "_resolve_generation_targets", lambda *args, **kwargs: [])
+
+    stage = orch._run_block_gen(
+        "course-slug",
+        dry_run=True,
+        mapper_stage_status="failed",
+        allow_degraded_mapper=True,
+    )
+
+    assert stage.status == "dry_run"
+    assert stage.details["topics"] == 0
+
+
+def test_course_pipeline_persists_failed_mapper_state(monkeypatch):
+    state_writes = []
+
+    monkeypatch.setattr(orch.db, "upsert_course", lambda *args, **kwargs: "course-id")
+    monkeypatch.setattr(orch.db, "pipeline_state_matches", lambda *args, **kwargs: False)
+    monkeypatch.setattr(
+        orch.db,
+        "upsert_pipeline_state",
+        lambda *args, **kwargs: state_writes.append(args),
+    )
+    monkeypatch.setattr(orch, "_chunker_fingerprint", lambda *args, **kwargs: "chunker-fp")
+    monkeypatch.setattr(orch, "_extractor_fingerprint", lambda *args, **kwargs: "extractor-fp")
+    monkeypatch.setattr(orch, "_mapper_fingerprint", lambda *args, **kwargs: "mapper-fp")
+    monkeypatch.setattr(
+        orch,
+        "_load_chunks",
+        lambda *args, **kwargs: [{"chunk_index": 0}],
+    )
+    monkeypatch.setattr(
+        orch,
+        "_run_extractor",
+        lambda *args, **kwargs: (orch.StageReport("extractor", "ok"), {}),
+    )
+
+    def raise_mapper(*args, **kwargs):
+        raise RuntimeError("mapper blew up")
+
+    monkeypatch.setattr(orch, "_run_mapper", raise_mapper)
+
+    with pytest.raises(RuntimeError, match="mapper blew up"):
+        orch.run_course_pipeline("course-slug")
+
+    assert state_writes[-1] == (
+        "course-id",
+        "mapper",
+        "course",
+        "mapper-fp",
+        "failed",
+        {
+            "error_type": "RuntimeError",
+            "error": "mapper blew up",
+        },
     )

@@ -100,6 +100,15 @@ class StaleDecision:
     stored_fingerprints: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class MapperReadiness:
+    ready: bool
+    reason: str
+    expected_fingerprint: Optional[str] = None
+    actual_fingerprint: Optional[str] = None
+    actual_status: Optional[str] = None
+
+
 # ---- main entrypoint ------------------------------------------------------
 
 def get_topic_context(
@@ -287,6 +296,77 @@ def _resolve_topic_id(slug: str) -> str:
     if row is None:
         raise SystemExit(f"No topic with slug={slug!r}")
     return row[0]
+
+
+def get_mapper_readiness(course_slug: str) -> MapperReadiness:
+    course_id = db.get_course_id(course_slug)
+    if course_id is None:
+        return MapperReadiness(False, "missing_course")
+
+    from pipeline import mapper
+
+    _course_id, topics = mapper.get_course_topics(course_slug)
+    expected_fingerprint = mapper.compute_fingerprint(topics)
+    state = db.get_pipeline_state(course_id, "mapper", "course")
+    if state is None:
+        return MapperReadiness(
+            False,
+            "missing_pipeline_state",
+            expected_fingerprint=expected_fingerprint,
+        )
+    if state["fingerprint"] != expected_fingerprint:
+        return MapperReadiness(
+            False,
+            "fingerprint_mismatch",
+            expected_fingerprint=expected_fingerprint,
+            actual_fingerprint=state["fingerprint"],
+            actual_status=state["status"],
+        )
+    if state["status"] != "ok":
+        return MapperReadiness(
+            False,
+            "status_not_ok",
+            expected_fingerprint=expected_fingerprint,
+            actual_fingerprint=state["fingerprint"],
+            actual_status=state["status"],
+        )
+    return MapperReadiness(
+        True,
+        "ok",
+        expected_fingerprint=expected_fingerprint,
+        actual_fingerprint=state["fingerprint"],
+        actual_status=state["status"],
+    )
+
+
+def ensure_mapper_ready_for_block_gen(
+    course_slug: str,
+    *,
+    allow_degraded_mapper: bool = False,
+) -> None:
+    if allow_degraded_mapper:
+        return
+    readiness = get_mapper_readiness(course_slug)
+    if readiness.ready:
+        return
+
+    parts = [
+        f"Refusing block_gen for course={course_slug!r}: "
+        f"mapper stage is not ready ({readiness.reason})."
+    ]
+    if readiness.actual_status:
+        parts.append(f"status={readiness.actual_status!r}.")
+    if (
+        readiness.expected_fingerprint
+        and readiness.actual_fingerprint
+        and readiness.expected_fingerprint != readiness.actual_fingerprint
+    ):
+        parts.append("The stored mapper fingerprint does not match the current topic graph.")
+    parts.append(
+        "Rerun the mapper successfully first, or pass "
+        "--allow-degraded-mapper for a deliberate degraded run."
+    )
+    raise SystemExit(" ".join(parts))
 
 
 def _resolve_generation_targets(
@@ -596,6 +676,11 @@ def _main() -> None:
                         help="with --dry-run --json, include the validated reconciler sequence")
     parser.add_argument("--pause-seconds", type=float, default=0.0,
                         help="sleep between topic generations to respect API rate limits")
+    parser.add_argument(
+        "--allow-degraded-mapper",
+        action="store_true",
+        help="allow block generation to proceed without a current successful mapper stage",
+    )
     parser.add_argument("--topic-slug",
                         help="legacy context-inspection mode for one topic")
     parser.add_argument("--k", type=int, default=8, help="top-K chunks (default: 8)")
@@ -620,6 +705,11 @@ def _main() -> None:
 
         if not args.course:
             raise SystemExit("--course is required unless --topic-slug is used")
+
+        ensure_mapper_ready_for_block_gen(
+            args.course,
+            allow_degraded_mapper=args.allow_degraded_mapper,
+        )
 
         from dataclasses import asdict
 
