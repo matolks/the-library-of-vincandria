@@ -8,14 +8,14 @@ A pipeline with multiple agents that turns raw course materials into a structure
 
 ## Current
 
-| Metric                     | Value                                                                           |
-| -------------------------- | ------------------------------------------------------------------------------- |
-| Courses processed          | 3 (Multivariable Calculus, Numerical Computation, Data Structures & Algorithms) |
-| Topics extracted           | 81                                                                              |
-| Teaching blocks generated  | ~3,900                                                                          |
-| Prerequisite edges         | 187, zero cycles                                                                |
-| Mapper cost per course run | ~$0.13                                                                          |
-| QA                         | Deterministic regression evals plus scoring from an LLM judge for each topic    |
+| Metric                     | Value                                                                                              |
+| -------------------------- | -------------------------------------------------------------------------------------------------- |
+| Courses processed          | 4 (Multivariable Calculus, Numerical Computation, Data Structures & Algorithms, Operating Systems) |
+| Topics extracted           | 112                                                                                                |
+| Teaching blocks generated  | ~5,200                                                                                             |
+| Prerequisite edges         | 277, zero cycles                                                                                   |
+| Mapper cost per course run | ~$0.13                                                                                             |
+| QA                         | Deterministic regression evals plus scoring from an LLM judge for each topic                       |
 
 Every generated topic page is grounded in specific source chunks recorded in metadata for validation, regeneration, and review.
 
