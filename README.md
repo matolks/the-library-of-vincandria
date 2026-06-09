@@ -25,7 +25,7 @@ Every generated topic page is grounded in specific source chunks recorded in met
 
 ```mermaid
 flowchart LR
-    A["AIStack drive (local)<br/>docs/&lt;course&gt;/ course files"]
+    A["Storage drive (local)<br/>docs/&lt;course&gt;/ course files"]
     B["This repo<br/>pipeline parses + processes"]
     C[("Supabase<br/>Postgres + pgvector")]
     D["Public site<br/>renders topics"]
