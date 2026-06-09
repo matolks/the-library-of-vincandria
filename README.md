@@ -25,7 +25,7 @@ Every generated topic page is grounded in specific source chunks recorded in met
 
 ```mermaid
 flowchart LR
-    A["Storage drive (local)<br/>docs/&lt;course&gt;/ course files"]
+    A["Storage drive (local)<br/>knowledge/docs/&lt;course&gt;/ course files"]
     B["This repo<br/>pipeline parses + processes"]
     C[("Supabase<br/>Postgres + pgvector")]
     D["Public site<br/>renders topics"]
@@ -208,6 +208,32 @@ the-library-of-vincandria/
 | Reasoning    | Claude API, for extraction, mapping, generation, and judging                                               |
 | Embeddings   | Voyage `voyage-3.5-lite`                                                                                   |
 | Ingestion    | Local drive with support for PDF (pymupdf), DOCX, PPTX, XLSX, IPYNB, and source code with language tagging |
+
+### Local storage
+
+The pipeline expects course files and Ollama models in separate directories on the storage drive:
+
+```text
+/Volumes/storage/
+├── knowledge/docs/<course>/
+└── ollama-models/
+```
+
+Set the repo-side paths in `.env`:
+
+```bash
+KNOWLEDGE_DOCS_PATH=/Volumes/storage/knowledge/docs
+OLLAMA_HOST=http://localhost:11434
+OLLAMA_MODEL=llama3.2:latest
+```
+
+`OLLAMA_MODELS` configures the Ollama server, not this Python client. For `Ollama.app` on macOS, set it in the user launch environment and restart the app:
+
+```bash
+launchctl setenv OLLAMA_MODELS /Volumes/storage/ollama-models
+```
+
+For a terminal-launched `ollama serve`, export the same value in the shell instead.
 
 Everything below the serving layer runs as an offline pipeline driven by a single orchestrator command per course. Source files are parsed and chunked locally. Only the embedding and reasoning steps call external APIs. The pipeline is idempotent, so adding material and rerunning reconciles the course rather than duplicating it.
 

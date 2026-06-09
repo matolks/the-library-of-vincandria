@@ -248,7 +248,7 @@ def _chunker_fingerprint(
     elif skip_chunker:
         subject = {"mode": "skip_chunker"}
     else:
-        course_dir = Path(chunker.AISTACK_DOCS) / course_slug
+        course_dir = Path(chunker.KNOWLEDGE_DOCS_PATH) / course_slug
         files = []
         if course_dir.exists():
             for path in sorted(p for p in course_dir.rglob("*") if p.is_file()):

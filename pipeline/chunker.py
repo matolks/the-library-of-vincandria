@@ -27,10 +27,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-AISTACK_DOCS = os.getenv(
-    "AISTACK_DOCS", "/Volumes/AIStack/modules/knowledge/docs")
+KNOWLEDGE_DOCS_PATH = os.getenv(
+    "KNOWLEDGE_DOCS_PATH",
+    os.getenv("AISTACK_DOCS", "/Volumes/storage/knowledge/docs"),
+)
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2:latest")
 OLLAMA_SUMMARIZE = os.getenv("OLLAMA_SUMMARIZE", "false").lower() == "true"
 
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "400"))     # words
@@ -157,7 +159,7 @@ def chunk_file(filepath: str, course: str, source_type: str = "other") -> list[d
 def chunk_course(course: str, single_file: str | None = None) -> list[dict]:
     from pipeline.parsers import is_supported
 
-    course_dir = Path(AISTACK_DOCS) / course
+    course_dir = Path(KNOWLEDGE_DOCS_PATH) / course
     if not course_dir.exists():
         raise FileNotFoundError(f"Course directory not found: {course_dir}")
 
@@ -205,7 +207,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Chunk course files (Stage 1).")
     parser.add_argument("--course", required=True,
-                        help="Course directory name under AISTACK_DOCS")
+                        help="Course directory name under KNOWLEDGE_DOCS_PATH")
     parser.add_argument("--file", default=None,
                         help="Single file to chunk (optional)")
     parser.add_argument("--out", default=None,
